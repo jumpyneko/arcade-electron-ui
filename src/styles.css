@@ -3,8 +3,13 @@ html, body {
   padding: 0;
   background: black;
   overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 canvas {
   display: block;
+  image-rendering: pixelated; /* Optional: for crisp pixel art */
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
