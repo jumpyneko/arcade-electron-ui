@@ -18,9 +18,10 @@ const SCREEN_SEQUENCE = [
   class ScreenManager {
     constructor() {
       this.currentIndex = 0;
-      this.screens = new Map(); // screenName -> { init, render, cleanup }
+      this.screens = new Map();
       this.isTransitioning = false;
-      this.transitionCallback = null; // For future animations
+      this.transitionCallback = null;
+      this.sharedData = {}; // e.g. { lastRouletteSector: number }
     }
   
     // Register a screen with its functions
@@ -34,9 +35,11 @@ const SCREEN_SEQUENCE = [
     }
   
     // Move to next screen in sequence
-    async next() {
+    async next(data = {}) {
       if (this.isTransitioning) return;
       if (this.currentIndex >= SCREEN_SEQUENCE.length - 1) return;
+
+      Object.assign(this.sharedData, data);
   
       const currentScreen = this.getCurrentScreen();
       const screenData = this.screens.get(currentScreen);
