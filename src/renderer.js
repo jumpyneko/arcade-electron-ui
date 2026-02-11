@@ -7,6 +7,8 @@ import * as infomodeScreen from "./screens/infomodeScreen.js";
 import * as slotmachineScreen from "./screens/slotmachineScreen.js";
 import * as modelpickerScreen from "./screens/modelpickerScreen.js";
 import * as endScreen from "./screens/endScreen.js";
+import * as inputManager from "./inputManager.js";
+window.inputManager = inputManager; // temporary, for testing
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");

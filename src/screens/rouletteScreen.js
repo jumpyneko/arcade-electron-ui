@@ -1,18 +1,19 @@
 // src/screens/rouletteScreen.js
 import { screenManager } from "../screenManager.js";
 import { POVS } from "../povData.js";
+import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
+import { startPlaymode } from "../maxOutput.js";
 
 // State variables
-let wheelAngle = 0; // Current rotation angle in radians
-let targetAngle = 0; // Target angle to stop at
+let wheelAngle = 0;
+let targetAngle = 0;
 let isSpinning = false;
 let isStopping = false;
 let spinSpeed = 0;
 let deceleration = 0.02;
+let targetPovId = null; // POV id received from Max (via nextPOV)
 
-// Key to stop wheel (for testing; later arcade button will call stopSpin())
-const STOP_KEY = "x";
-let stopKeyHandler = null;
+const TIMER_SECONDS = 20;
 
 // 16 different colors for the sectors
 const sectorColors = [
@@ -27,122 +28,156 @@ const SECTOR_ANGLE = (2 * Math.PI) / NUM_SECTORS;
 
 export function init() {
   console.log("Roulette screen initialized");
-  
+
   // Reset state
   wheelAngle = 0;
   targetAngle = 0;
   isSpinning = false;
   isStopping = false;
   spinSpeed = 0;
-  
-  // Listen for stop key (for testing; later arcade button will trigger stopSpin())
-  stopKeyHandler = (e) => {
-    if (e.key.toLowerCase() === STOP_KEY) {
-      stopSpin();
-    }
-  };
+  targetPovId = null;
 
-  window.addEventListener("keydown", stopKeyHandler);
+  // Start the countdown — auto-stops when it expires
+  startTimer(TIMER_SECONDS, () => {
+    stopSpin();
+  });
 
-  // Wheel already spinning when entering screen
+  // Wheel starts spinning immediately
   startSpin();
 }
 
+// --- Input handlers ---
+
+export function onButton(action) {
+  if (action === "buttonA") {
+    stopSpin();
+  }
+}
+
+export function onData(type, data) {
+  if (type === "nextPOV") {
+    targetPovId = data; // Max tells us which POV the wheel should land on
+    console.log(`Roulette received target POV: ${targetPovId}`);
+  }
+}
+
+// --- Wheel logic ---
+
 function startSpin() {
   if (isSpinning) return;
-  
   isSpinning = true;
   isStopping = false;
-  spinSpeed = 0.3; // Initial spin speed (radians per frame)
+  spinSpeed = 0.3;
 }
 
 function stopSpin() {
   if (!isSpinning || isStopping) return;
-  
   isStopping = true;
-  
-  // Calculate which sector we'll stop on
-  // Add some random full rotations for visual effect
-  const randomRotations = 3 + Math.random() * 5; // 3-8 full rotations
-  const randomSector = Math.floor(Math.random() * NUM_SECTORS);
-  targetAngle = wheelAngle + (randomRotations * 2 * Math.PI) + (randomSector * SECTOR_ANGLE);
+
+  // Determine which sector to land on
+  let landingSector;
+  if (targetPovId != null) {
+    // Max told us the POV — find its index (0-based)
+    landingSector = POVS.findIndex(p => p.id === targetPovId);
+    if (landingSector === -1) landingSector = Math.floor(Math.random() * NUM_SECTORS);
+  } else {
+    // No instruction from Max — pick random
+    landingSector = Math.floor(Math.random() * NUM_SECTORS);
+  }
+
+  // The pointer sits at -π/2 (top of canvas).
+  // We need the wheel rotated so that sector landingSector's center is under the pointer.
+  // Sector center in wheel-local coords = landingSector * SECTOR_ANGLE + SECTOR_ANGLE / 2
+  // Pointer in wheel-local coords = -π/2 - wheelAngle
+  // We want: -π/2 - targetAngle ≡ sectorCenter (mod 2π)
+  // So:      targetAngle = -π/2 - sectorCenter
+
+  const sectorCenter = landingSector * SECTOR_ANGLE + SECTOR_ANGLE / 2;
+  let baseAngle = -Math.PI / 2 - sectorCenter;
+
+  // Normalize baseAngle into [0, 2π)
+  baseAngle = ((baseAngle % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
+
+  // Advance past current wheelAngle, then add extra full rotations for drama
+  const randomRotations = 3 + Math.floor(Math.random() * 5);
+  const fullRotationsNeeded = Math.ceil((wheelAngle - baseAngle) / (2 * Math.PI));
+  targetAngle = baseAngle + (fullRotationsNeeded + randomRotations) * (2 * Math.PI);
 }
 
 function updateWheel() {
-  if (isSpinning) {
-    if (isStopping) {
-      // Gradually slow down
-      spinSpeed = Math.max(0, spinSpeed - deceleration);
-      wheelAngle += spinSpeed;
-      
-      // Check if we've reached the target (with some tolerance)
-      if (spinSpeed <= 0.001) {
-        // Snap to final position
-        wheelAngle = targetAngle;
-        isSpinning = false;
-        isStopping = false;
-        
-        // Calculate which sector the pointer (top) points to
-        // Pointer is at top = -π/2. In wheel local coords, that is -π/2 - wheelAngle
-        const pointerAngle = -Math.PI / 2;
-        const localAngleUnderPointer =
-          ((pointerAngle - wheelAngle) % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI);
-        const sectorIndex = Math.floor(localAngleUnderPointer / SECTOR_ANGLE) % NUM_SECTORS;
-        const sectorNumber = sectorIndex + 1; // 1–16
-        console.log(`Wheel stopped on sector: ${sectorNumber}`);
+  if (!isSpinning) return;
 
-        const DELAY_MS = 3000; // Short delay before opening playmode
-        setTimeout(() => {
-          screenManager.next({ lastRouletteSector: sectorNumber });
-        }, DELAY_MS);
-      }
-    } else {
-      // Accelerate while spinning
-      wheelAngle += spinSpeed;
-      spinSpeed = Math.min(spinSpeed + 0.005, 0.5); // Cap max speed
+  if (isStopping) {
+    spinSpeed = Math.max(0, spinSpeed - deceleration);
+    wheelAngle += spinSpeed;
+
+    if (spinSpeed <= 0.001) {
+      wheelAngle = targetAngle;
+      isSpinning = false;
+      isStopping = false;
+
+      // Stop the timer (player pressed in time, or timer already expired)
+      stopTimer();
+
+      // Determine which sector the pointer landed on
+      const pointerAngle = -Math.PI / 2;
+      const localAngleUnderPointer =
+        ((pointerAngle - wheelAngle) % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI);
+      const sectorIndex = Math.floor(localAngleUnderPointer / SECTOR_ANGLE) % NUM_SECTORS;
+      const povId = POVS[sectorIndex].id;
+      console.log(`Wheel stopped on POV: ${povId}`);
+
+      // Tell Max to start playmode with this POV
+      startPlaymode(povId);
+
+      // Move to next screen after a short delay
+      const DELAY_MS = 3000;
+      setTimeout(() => {
+        screenManager.next({ lastRouletteSector: povId });
+      }, DELAY_MS);
     }
+  } else {
+    wheelAngle += spinSpeed;
+    spinSpeed = Math.min(spinSpeed + 0.005, 0.5);
   }
 }
+
+// --- Rendering ---
 
 export function render(ctx, canvas) {
   // Background
   ctx.fillStyle = "#2d1b4e";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
+
+  // Update timer (checks expiry)
+  updateTimer();
+
   // Update wheel animation
   updateWheel();
-  
+
   // Draw wheel
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
   const radius = Math.min(canvas.width, canvas.height) * 0.35;
-  
-  // Save context
+
   ctx.save();
-  
-  // Move to center and rotate
   ctx.translate(centerX, centerY);
   ctx.rotate(wheelAngle);
-  
-  // Draw each sector
+
   for (let i = 0; i < NUM_SECTORS; i++) {
     const startAngle = i * SECTOR_ANGLE;
     const endAngle = (i + 1) * SECTOR_ANGLE;
-    
-    // Draw sector
+
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.arc(0, 0, radius, startAngle, endAngle);
     ctx.closePath();
     ctx.fillStyle = sectorColors[i];
     ctx.fill();
-    
-    // Draw sector border
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 2;
     ctx.stroke();
-    
-    // Draw number in sector
+
     ctx.save();
     ctx.rotate(startAngle + SECTOR_ANGLE / 2);
     ctx.fillStyle = "#000";
@@ -152,8 +187,8 @@ export function render(ctx, canvas) {
     ctx.fillText(POVS[i].id.toString(), radius * 0.7, 0);
     ctx.restore();
   }
-  
-  // Draw center circle
+
+  // Center circle
   ctx.beginPath();
   ctx.arc(0, 0, radius * 0.15, 0, 2 * Math.PI);
   ctx.fillStyle = "#fff";
@@ -161,8 +196,8 @@ export function render(ctx, canvas) {
   ctx.strokeStyle = "#000";
   ctx.lineWidth = 3;
   ctx.stroke();
-  
-  // Draw pointer/indicator at top
+
+  // Pointer
   ctx.restore();
   ctx.beginPath();
   ctx.moveTo(centerX, centerY - radius - 20);
@@ -175,17 +210,18 @@ export function render(ctx, canvas) {
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Text under wheel: "Press S to stop"
+  // Hint text
   ctx.fillStyle = "white";
   ctx.font = "28px monospace";
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  ctx.fillText(`Press ${STOP_KEY.toUpperCase()} to stop`, centerX, centerY + radius + 30);
+  ctx.fillText("Press A to stop", centerX, centerY + radius + 30);
+
+  // Draw countdown timer (top-right)
+  drawTimer(ctx, canvas);
 }
 
 export function cleanup() {
-  if (stopKeyHandler) {
-    window.removeEventListener("keydown", stopKeyHandler);
-    stopKeyHandler = null;
-  }
+  stopTimer();
+  targetPovId = null;
 }

@@ -1,31 +1,23 @@
 import { screenManager } from "../screenManager.js";
 
 let backgroundImage = null;
-let coinInserted = false;
-let keyHandler = null;
+let coinIsInserted = false;
 
 export function init() {
   console.log("Start screen initialized");
-  coinInserted = false;
+  coinIsInserted = false;
 
   // Load background image
   backgroundImage = new Image();
   backgroundImage.src = "assets/StartScreen.png";
+}
 
-  // Listen for key presses
-  keyHandler = (e) => {
-    const key = e.key.toLowerCase();
-
-    if (!coinInserted && key === "c") {
-      // Coin inserted
-      coinInserted = true;
-    } else if (coinInserted && (key === "1" || key === "2")) {
-      // Player 1 or Player 2 pressed — both go to roulette
-      screenManager.next();
-    }
-  };
-
-  window.addEventListener("keydown", keyHandler);
+export function onButton(action) {
+  if (!coinIsInserted && action === "coinInserted") {
+    coinIsInserted = true;
+  } else if (coinIsInserted && (action === "player1Pressed" || action === "player2Pressed")) {
+    screenManager.next();
+  }
 }
 
 export function render(ctx, canvas) {
@@ -43,7 +35,7 @@ export function render(ctx, canvas) {
 
   ctx.textAlign = "center";
 
-  if (!coinInserted) {
+  if (!coinIsInserted) {
     ctx.fillStyle = "white";
     ctx.font = "28px monospace";
     ctx.fillText("Insert coin to play", centerX, centerY + 30);
@@ -56,10 +48,5 @@ export function render(ctx, canvas) {
 }
 
 export function cleanup() {
-  // Remove key listener to prevent leaks
-  if (keyHandler) {
-    window.removeEventListener("keydown", keyHandler);
-    keyHandler = null;
-  }
-  coinInserted = false;
+  coinIsInserted = false;
 }
