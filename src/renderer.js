@@ -4,6 +4,7 @@ import * as startScreen from "./screens/startScreen.js";
 import * as rouletteScreen from "./screens/rouletteScreen.js";
 import * as playmodeScreen from "./screens/playmodeScreen.js";
 import * as infomodeScreen from "./screens/infomodeScreen.js";
+import * as slotmachineScreen from "./screens/slotmachineScreen.js";
 import * as modelpickerScreen from "./screens/modelpickerScreen.js";
 import * as endScreen from "./screens/endScreen.js";
 
@@ -47,6 +48,7 @@ screenManager.register("start", startScreen);
 screenManager.register("roulette", rouletteScreen);
 screenManager.register("playmode", playmodeScreen);
 screenManager.register("infomode", infomodeScreen);
+screenManager.register("slotmachine", slotmachineScreen);
 screenManager.register("modelpicker", modelpickerScreen);
 screenManager.register("end", endScreen);
 

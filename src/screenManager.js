@@ -11,6 +11,7 @@ const SCREEN_SEQUENCE = [
     "infomode",
     "roulette",
     "playmode",
+    "slotmachine",
     "modelpicker",
     "end"
   ];

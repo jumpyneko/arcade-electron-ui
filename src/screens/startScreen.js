@@ -1,35 +1,65 @@
+import { screenManager } from "../screenManager.js";
+
 let backgroundImage = null;
+let coinInserted = false;
+let keyHandler = null;
 
 export function init() {
-    // Initialize start screen state
-    console.log("Start screen initialized");
-    
-    // Load background image
-    backgroundImage = new Image();
-    backgroundImage.src = "assets/StartScreen.png";
-  }
-  
-  export function render(ctx, canvas) {
-    // Draw start screen background image
-    if (backgroundImage && backgroundImage.complete) {
-      // Draw image to fill the entire canvas
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(backgroundImage, 0, 0, 180, 180, 0, 0, canvas.width, canvas.height);
-    } else {
-      // Fallback background while image loads
-      ctx.fillStyle = "#1a1a2e";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  console.log("Start screen initialized");
+  coinInserted = false;
+
+  // Load background image
+  backgroundImage = new Image();
+  backgroundImage.src = "assets/StartScreen.png";
+
+  // Listen for key presses
+  keyHandler = (e) => {
+    const key = e.key.toLowerCase();
+
+    if (!coinInserted && key === "c") {
+      // Coin inserted
+      coinInserted = true;
+    } else if (coinInserted && (key === "1" || key === "2")) {
+      // Player 1 or Player 2 pressed — both go to roulette
+      screenManager.next();
     }
-    
-    // Optional: Keep text overlay if needed
-    // ctx.fillStyle = "white";
-    // ctx.font = "48px monospace";
-    // ctx.textAlign = "center";
-    // ctx.fillText("START SCREEN", canvas.width / 2, canvas.height / 2);
-    // ctx.font = "24px monospace";
-    // ctx.fillText("Press button to continue", canvas.width / 2, canvas.height / 2 + 50);
+  };
+
+  window.addEventListener("keydown", keyHandler);
+}
+
+export function render(ctx, canvas) {
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+
+  // Draw background image
+  if (backgroundImage && backgroundImage.complete) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(backgroundImage, 0, 0, 180, 180, 0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.fillStyle = "#1a1a2e";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
-  
-  export function cleanup() {
-    // Cleanup if needed
+
+  ctx.textAlign = "center";
+
+  if (!coinInserted) {
+    ctx.fillStyle = "white";
+    ctx.font = "28px monospace";
+    ctx.fillText("Insert coin to play", centerX, centerY + 30);
+  } else {
+    ctx.fillStyle = "white";
+    ctx.font = "28px monospace";
+    ctx.fillText("1 Player", centerX, centerY);
+    ctx.fillText("2 Players", centerX, centerY + 50);
   }
+}
+
+export function cleanup() {
+  // Remove key listener to prevent leaks
+  if (keyHandler) {
+    window.removeEventListener("keydown", keyHandler);
+    keyHandler = null;
+  }
+  coinInserted = false;
+}
