@@ -1,4 +1,7 @@
 // src/inputManager.js
+// input from max to js
+
+// keyboard navigation as a default
 import { screenManager } from "./screenManager.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
@@ -53,3 +56,5 @@ export function player2Pressed()  { dispatchButton("player2Pressed"); }
 export function buttonAPressed()     { dispatchButton("buttonA"); }
 export function joystickInput(x, y)  { dispatchJoystick(x, y); }
 export function nextPOV(povId)       { dispatchData("nextPOV", povId); }
+export function textWrite(str)   { dispatchData("textWrite", str); }
+export function textClear()      { dispatchData("textClear", null); }
