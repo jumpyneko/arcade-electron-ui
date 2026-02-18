@@ -1,21 +1,20 @@
 // src/screens/slotmachineScreen.js
 import { screenManager } from "../screenManager.js";
 import { models } from "../modelData.js";
+import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 
-const STOP_KEY = "x";
 const SLOT_STOP_DELAY_MS = 400;
 const CYCLE_MS = 120;
+const TIMER_SECONDS = 40;
 
 let modelsLeft = [];
 let modelsOutput = [];
-let slotDisplayModels = [null, null, null]; // stores model objects instead of ids
-const imageCache = new Map(); // image path -> HTMLImageElement
+let slotDisplayModels = [null, null, null];
+const imageCache = new Map();
 let isSpinning = true;
 let isStopping = false;
-let stopKeyHandler = null;
+let slotsStopped = false; // true after all 3 slots have landed
 let cycleTimer = null;
-let continueBtn = null;
-let reshuffleBtn = null;
 
 function pick3Random(fromArray) {
   if (fromArray.length < 3) return fromArray.slice();
@@ -24,21 +23,21 @@ function pick3Random(fromArray) {
 }
 
 function preloadImages(modelArray) {
-    for (const m of modelArray) {
-      if (m.image && !imageCache.has(m.image)) {
-        const img = new Image();
-        img.src = m.image;
-        imageCache.set(m.image, img);
-      }
+  for (const m of modelArray) {
+    if (m.image && !imageCache.has(m.image)) {
+      const img = new Image();
+      img.src = m.image;
+      imageCache.set(m.image, img);
     }
   }
+}
 
 function startSpinning() {
   isSpinning = true;
   isStopping = false;
+  slotsStopped = false;
   modelsOutput = pick3Random(modelsLeft);
   slotDisplayModels = [...modelsOutput];
-  removeButtons();
   cycleTimer = setInterval(() => {
     if (!isSpinning || isStopping) return;
     if (modelsLeft.length === 0) return;
@@ -49,71 +48,74 @@ function startSpinning() {
 }
 
 function stopSlotMachine() {
-    if (!isSpinning || isStopping) return;
-    isStopping = true;
-    if (cycleTimer) {
-      clearInterval(cycleTimer);
-      cycleTimer = null;
-    }
-    slotDisplayModels[0] = modelsOutput[0];
+  if (!isSpinning || isStopping) return;
+  isStopping = true;
+  if (cycleTimer) {
+    clearInterval(cycleTimer);
+    cycleTimer = null;
+  }
+  slotDisplayModels[0] = modelsOutput[0];
+  setTimeout(() => {
+    slotDisplayModels[1] = modelsOutput[1];
     setTimeout(() => {
-      slotDisplayModels[1] = modelsOutput[1];
-      setTimeout(() => {
-        slotDisplayModels[2] = modelsOutput[2];
-        isSpinning = false;
-        showButtons();
-      }, SLOT_STOP_DELAY_MS);
+      slotDisplayModels[2] = modelsOutput[2];
+      isSpinning = false;
+      slotsStopped = true;
     }, SLOT_STOP_DELAY_MS);
-  }
-
-function showButtons() {
-  if (continueBtn) return;
-  continueBtn = document.createElement("button");
-  continueBtn.textContent = "Continue";
-  continueBtn.style.cssText =
-    "position:fixed;bottom:80px;left:50%;transform:translateX(-120px);padding:12px 24px;font-size:18px;z-index:1001;cursor:pointer;";
-  continueBtn.onclick = () => screenManager.next({ slotMachineModels: modelsOutput });
-  document.body.appendChild(continueBtn);
-
-  reshuffleBtn = document.createElement("button");
-  reshuffleBtn.textContent = "Reshuffle";
-  reshuffleBtn.style.cssText =
-    "position:fixed;bottom:80px;left:50%;transform:translateX(20px);padding:12px 24px;font-size:18px;z-index:1001;cursor:pointer;";
-  reshuffleBtn.onclick = () => {
-    if (modelsLeft.length < 3) return;
-    removeButtons();
-    startSpinning();
-  };
-  document.body.appendChild(reshuffleBtn);
+  }, SLOT_STOP_DELAY_MS);
 }
 
-function removeButtons() {
-  if (continueBtn) {
-    continueBtn.remove();
-    continueBtn = null;
-  }
-  if (reshuffleBtn) {
-    reshuffleBtn.remove();
-    reshuffleBtn = null;
-  }
+function reshuffle() {
+  if (isSpinning) return;
+  if (modelsLeft.length < 3) return;
+  startSpinning();
 }
+
+function confirmAndContinue() {
+  if (!slotsStopped) return;
+  screenManager.next({ slotMachineModels: modelsOutput });
+}
+
+// --- Lifecycle ---
 
 export function init() {
   console.log("Slotmachine screen initialized");
+  //document.body.classList.add("flipped");
+
   if (!screenManager.sharedData.modelsLeft || screenManager.sharedData.modelsLeft.length === 0) {
     screenManager.sharedData.modelsLeft = models.map((m) => ({ ...m }));
   }
   modelsLeft = screenManager.sharedData.modelsLeft;
   preloadImages(modelsLeft);
 
-  stopKeyHandler = (e) => {
-    if (e.key.toLowerCase() === STOP_KEY) stopSlotMachine();
-  };
-  window.addEventListener("keydown", stopKeyHandler);
+  startTimer(TIMER_SECONDS, () => {
+    if (isSpinning) stopSlotMachine();
+  });
+
   startSpinning();
 }
 
+// --- Input handlers ---
+
+export function onButton(action) {
+  if (action === "buttonC") {
+    stopSlotMachine();
+  } else if (action === "buttonD") {
+    confirmAndContinue();
+  }
+}
+
+export function onJoystick(x, y) {
+  if (y < -0.5) {
+    reshuffle();
+  }
+}
+
+// --- Rendering ---
+
 export function render(ctx, canvas) {
+  updateTimer();
+
   ctx.fillStyle = "#2d1b4e";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -130,7 +132,6 @@ export function render(ctx, canvas) {
     const slotW = slotWidth + 16;
     const slotH = 160;
 
-    // Slot background
     ctx.fillStyle = "#1a0a2e";
     ctx.strokeStyle = "#FFD700";
     ctx.lineWidth = 3;
@@ -143,13 +144,11 @@ export function render(ctx, canvas) {
     const img = model && model.image ? imageCache.get(model.image) : null;
 
     if (img && img.complete && img.naturalWidth > 0) {
-      // Draw image scaled to fit inside slot with some padding
       const pad = 10;
       const drawW = slotW - pad * 2;
       const drawH = slotH - pad * 2;
       ctx.drawImage(img, slotX + pad, slotY + pad, drawW, drawH);
     } else {
-      // Fallback: show model id as text
       ctx.fillStyle = "white";
       ctx.font = "bold 48px monospace";
       ctx.textAlign = "center";
@@ -158,20 +157,24 @@ export function render(ctx, canvas) {
     }
   }
 
+  // Hint text
   ctx.fillStyle = "rgba(255,255,255,0.8)";
   ctx.font = "24px monospace";
   ctx.textAlign = "center";
-  ctx.fillText(`Press ${STOP_KEY.toUpperCase()} to stop`, canvas.width / 2, centerY + 120);
+  if (isSpinning && !isStopping) {
+    ctx.fillText("Press C to stop", canvas.width / 2, centerY + 120);
+  } else if (slotsStopped) {
+    ctx.fillText("D = continue  |  Joystick ↓ = reshuffle", canvas.width / 2, centerY + 120);
+  }
+
+  drawTimer(ctx, canvas);
 }
 
 export function cleanup() {
-  if (stopKeyHandler) {
-    window.removeEventListener("keydown", stopKeyHandler);
-    stopKeyHandler = null;
-  }
+  stopTimer();
   if (cycleTimer) {
     clearInterval(cycleTimer);
     cycleTimer = null;
   }
-  removeButtons();
+  slotsStopped = false;
 }

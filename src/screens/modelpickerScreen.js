@@ -1,76 +1,151 @@
 // src/screens/modelpickerScreen.js
 import { screenManager } from "../screenManager.js";
+import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
+import { modelPicked } from "../maxOutput.js";
 
-let slotModels = []; // 3 models from slot machine
-let btn1 = null;
-let btn2 = null;
-let btn3 = null;
+let slotModels = [];
+let focusIndex = 0;
+const imageCache = new Map();
+const TIMER_SECONDS = 80;
 
-function removeButtons() {
-  [btn1, btn2, btn3].forEach((b) => {
-    if (b) b.remove();
-  });
-  btn1 = btn2 = btn3 = null;
+function preloadImages() {
+  for (const m of slotModels) {
+    if (m.image && !imageCache.has(m.image)) {
+      const img = new Image();
+      img.src = m.image;
+      imageCache.set(m.image, img);
+    }
+  }
 }
 
-function pickModel(model) {
+function pickModel() {
+  if (slotModels.length === 0) return;
+  const model = slotModels[focusIndex];
   const id = model.id;
+
   if (screenManager.sharedData.modelsLeft) {
     screenManager.sharedData.modelsLeft = screenManager.sharedData.modelsLeft.filter(
       (m) => m.id !== id
     );
   }
-  removeButtons();
-  const DELAY_MS = 3000; // Short delay before opening playmode
+
+  stopTimer();
+  console.log(`Model picked: ${model.name} (id ${id})`);
+  modelPicked(id);
+
+  const DELAY_MS = 3000;
   setTimeout(() => {
-          screenManager.next({ chosenModelId: id });
+    screenManager.next({ chosenModelId: id });
   }, DELAY_MS);
 }
+
+// --- Lifecycle ---
 
 export function init() {
   console.log("Modelpicker screen initialized");
   slotModels = screenManager.sharedData.slotMachineModels || [];
-  removeButtons();
+  focusIndex = 0;
+  preloadImages();
 
-  if (slotModels.length >= 1) {
-    btn1 = document.createElement("button");
-    btn1.textContent = `Model ${slotModels[0].id}`;
-    btn1.style.cssText =
-      "position:fixed;bottom:80px;left:50%;transform:translateX(-200px);padding:12px 24px;font-size:18px;z-index:1001;cursor:pointer;";
-    btn1.onclick = () => pickModel(slotModels[0]);
-    document.body.appendChild(btn1);
-  }
-  if (slotModels.length >= 2) {
-    btn2 = document.createElement("button");
-    btn2.textContent = `Model ${slotModels[1].id}`;
-    btn2.style.cssText =
-      "position:fixed;bottom:80px;left:50%;transform:translateX(-60px);padding:12px 24px;font-size:18px;z-index:1001;cursor:pointer;";
-    btn2.onclick = () => pickModel(slotModels[1]);
-    document.body.appendChild(btn2);
-  }
-  if (slotModels.length >= 3) {
-    btn3 = document.createElement("button");
-    btn3.textContent = `Model ${slotModels[2].id}`;
-    btn3.style.cssText =
-      "position:fixed;bottom:80px;left:50%;transform:translateX(80px);padding:12px 24px;font-size:18px;z-index:1001;cursor:pointer;";
-    btn3.onclick = () => pickModel(slotModels[2]);
-    document.body.appendChild(btn3);
+  startTimer(TIMER_SECONDS, () => {
+    pickModel();
+  });
+}
+
+// --- Input handlers ---
+
+export function onButton(action) {
+  if (action === "buttonE") {
+    pickModel();
   }
 }
 
+export function onJoystick(x, y) {
+  if (slotModels.length === 0) return;
+  if (x > 0.5) {
+    focusIndex = (focusIndex + 1) % slotModels.length;
+  } else if (x < -0.5) {
+    focusIndex = (focusIndex - 1 + slotModels.length) % slotModels.length;
+  }
+}
+
+// --- Rendering ---
+
 export function render(ctx, canvas) {
+  updateTimer();
+
   ctx.fillStyle = "#2d1b4e";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // Title
   ctx.fillStyle = "white";
-  ctx.font = "32px monospace";
+  ctx.font = "36px monospace";
   ctx.textAlign = "center";
-  const ids = slotModels.map((m) => m.id).join(", ");
-  ctx.fillText(`Choose one: ${ids}`, canvas.width / 2, canvas.height / 2 - 40);
-  ctx.font = "24px monospace";
-  ctx.fillText("(click a button below)", canvas.width / 2, canvas.height / 2);
+  ctx.fillText("Choose a model", canvas.width / 2, 80);
+
+  // Layout the 3 model cards
+  const cardWidth = 280;
+  const cardHeight = 340;
+  const gap = 40;
+  const totalWidth = slotModels.length * cardWidth + (slotModels.length - 1) * gap;
+  const startX = (canvas.width - totalWidth) / 2;
+  const cardY = (canvas.height - cardHeight) / 2;
+
+  for (let i = 0; i < slotModels.length; i++) {
+    const model = slotModels[i];
+    const x = startX + i * (cardWidth + gap);
+    const isFocused = i === focusIndex;
+
+    // Card background + highlight
+    if (isFocused) {
+      ctx.fillStyle = "#FFD700";
+      ctx.fillRect(x - 6, cardY - 6, cardWidth + 12, cardHeight + 12);
+    }
+    ctx.fillStyle = isFocused ? "#3a2060" : "#1a0a2e";
+    ctx.fillRect(x, cardY, cardWidth, cardHeight);
+
+    // Border
+    ctx.strokeStyle = isFocused ? "#FFD700" : "#555";
+    ctx.lineWidth = isFocused ? 3 : 1;
+    ctx.strokeRect(x, cardY, cardWidth, cardHeight);
+
+    // Model image
+    const img = model.image ? imageCache.get(model.image) : null;
+    const imgPad = 15;
+    const imgH = 200;
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.drawImage(img, x + imgPad, cardY + imgPad, cardWidth - imgPad * 2, imgH);
+    } else {
+      ctx.fillStyle = "#333";
+      ctx.fillRect(x + imgPad, cardY + imgPad, cardWidth - imgPad * 2, imgH);
+      ctx.fillStyle = "#888";
+      ctx.font = "20px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("No image", x + cardWidth / 2, cardY + imgPad + imgH / 2);
+    }
+
+    // Model name
+    ctx.fillStyle = isFocused ? "#FFD700" : "white";
+    ctx.font = isFocused ? "bold 22px monospace" : "20px monospace";
+    ctx.textAlign = "center";
+    ctx.fillText(model.name, x + cardWidth / 2, cardY + imgH + 50);
+
+    // Model id
+    ctx.fillStyle = "#aaa";
+    ctx.font = "16px monospace";
+    ctx.fillText(`#${model.id}`, x + cardWidth / 2, cardY + imgH + 80);
+  }
+
+  // Hint text
+  ctx.fillStyle = "rgba(255,255,255,0.7)";
+  ctx.font = "22px monospace";
+  ctx.textAlign = "center";
+  ctx.fillText("← → Joystick to browse  |  E to select", canvas.width / 2, canvas.height - 50);
+
+  drawTimer(ctx, canvas);
 }
 
 export function cleanup() {
-  removeButtons();
+  stopTimer();
+  focusIndex = 0;
 }

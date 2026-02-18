@@ -16,8 +16,28 @@ export function render(ctx, canvas) {
   ctx.fillStyle = "white";
   ctx.font = "24px monospace";
   ctx.textAlign = "center";
+
   const displayName = currentModel ? currentModel.name : "Unknown";
-  ctx.fillText(`Please pick up Model number ${displayName} from the library.`, canvas.width / 2, canvas.height / 2);
+  const text = `Pick your Miniature ${displayName} from the library, and place it in The Model Nation. You may visit it anytime.`;
+
+  wrapText(ctx, text, canvas.width / 2, canvas.height / 2 - 40, canvas.width - 120, 36);
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(" ");
+  let line = "";
+
+  for (const word of words) {
+    const testLine = line ? line + " " + word : word;
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      ctx.fillText(line, x, y);
+      line = word;
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, x, y);
 }
 
 export function cleanup() {

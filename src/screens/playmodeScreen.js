@@ -1,6 +1,9 @@
 import { screenManager } from "../screenManager.js";
 import { POVS, getPovById } from "../povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
+import { startInfomode } from "../maxOutput.js";
+import { startMiniatureSelectionMode } from "../maxOutput.js";
+
 
 let currentPov = null;
 let displayText = ""; // Text received from Max
@@ -14,6 +17,15 @@ export function init() {
 
   // Start the countdown — auto-stops when it expires
   startTimer(TIMER_SECONDS, () => {
+
+    // Check what's next in the sequence to tell Max the right thing
+    const nextScreen = screenManager.getNextScreen() // need to expose this, or use a helper
+
+    if (nextScreen === "slotmachine") {
+      startMiniatureSelectionMode();
+    } else {
+      startInfomode();
+    }
     screenManager.next();
   });
 

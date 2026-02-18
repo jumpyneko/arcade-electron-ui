@@ -34,6 +34,12 @@ const SCREEN_SEQUENCE = [
     getCurrentScreen() {
       return SCREEN_SEQUENCE[this.currentIndex];
     }
+
+    // Get next screen name
+    getNextScreen() {
+      if (this.currentIndex >= SCREEN_SEQUENCE.length - 1) return null;
+      return SCREEN_SEQUENCE[this.currentIndex + 1];
+    }
   
     // Move to next screen in sequence
     async next(data = {}) {

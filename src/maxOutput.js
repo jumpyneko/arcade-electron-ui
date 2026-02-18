@@ -7,3 +7,18 @@ export function startPlaymode(povId) {
     console.log(`[→ Max] startPlaymode(${povId})`);
     // TODO: send to Max via OSC / WebSocket / IPC
   }
+  
+export function startInfomode() {
+    console.log(`[→ Max] startInfomode()`);
+    // TODO: send to Max via OSC / WebSocket / IPC
+  }
+
+export function startMiniatureSelectionMode() {
+    console.log(`[→ Max] startMiniatureSelectionMode()`);
+    // TODO: send to Max via OSC / WebSocket / IPC
+      }
+
+export function modelPicked(modelId) {
+console.log(`[→ Max] modelPicked(${modelId})`);
+// TODO: send to Max via OSC / WebSocket / IPC
+}

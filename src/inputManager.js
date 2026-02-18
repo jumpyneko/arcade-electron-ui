@@ -6,18 +6,34 @@ import { screenManager } from "./screenManager.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
 const KEY_MAP = {
-  "c": "coinInserted",
+  "x": "coinInserted",
   "1": "player1Pressed",
   "2": "player2Pressed",
-  "x": "buttonX",
   "a": "buttonA",
+  "b": "buttonB",
+  "c": "buttonC",
+  "d": "buttonD",
+  "e": "buttonE",
+};
+
+// Joystick 1 fallback via arrow keys
+const JOYSTICK_MAP = {
+  "arrowup":    [0, 1],
+  "arrowdown":  [0, -1],
+  "arrowleft":  [-1, 0],
+  "arrowright": [1, 0],
 };
 
 // Single global keyboard listener
 window.addEventListener("keydown", (e) => {
-  const action = KEY_MAP[e.key.toLowerCase()];
+  const key = e.key.toLowerCase();
+  const action = KEY_MAP[key];
   if (action) {
     dispatchButton(action);
+  }
+  const joystick = JOYSTICK_MAP[key];
+  if (joystick) {
+    dispatchJoystick(joystick[0], joystick[1]);
   }
 });
 
@@ -54,7 +70,12 @@ export function coinInserted()    { dispatchButton("coinInserted"); }
 export function player1Pressed()  { dispatchButton("player1Pressed"); }
 export function player2Pressed()  { dispatchButton("player2Pressed"); }
 export function buttonAPressed()     { dispatchButton("buttonA"); }
-export function joystickInput(x, y)  { dispatchJoystick(x, y); }
+export function buttonBPressed()     { dispatchButton("buttonB"); }
+export function buttonCPressed()     { dispatchButton("buttonC"); }
+export function buttonDPressed()     { dispatchButton("buttonD"); }
+export function buttonEPressed()     { dispatchButton("buttonE"); }
+export function joystick1Input(x, y)  { dispatchJoystick(x, y); }
+export function joystick2Input(x, y)  { dispatchJoystick(x, y); }
 export function nextPOV(povId)       { dispatchData("nextPOV", povId); }
 export function textWrite(str)   { dispatchData("textWrite", str); }
 export function textClear()      { dispatchData("textClear", null); }
