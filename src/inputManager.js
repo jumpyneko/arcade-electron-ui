@@ -37,6 +37,41 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+// --- OSC messages from Max (via preload bridge) ---
+if (window.oscBridge) {
+  window.oscBridge.onMessage((address, args) => {
+    console.log(`[OSC ←] ${address}`, args);
+
+    // Buttons
+    if (address === "/coinInserted")    dispatchButton("coinInserted");
+    if (address === "/player1Pressed")  dispatchButton("player1Pressed");
+    if (address === "/player2Pressed")  dispatchButton("player2Pressed");
+    if (address === "/buttonAPressed")         dispatchButton("buttonA");
+    if (address === "/buttonBPressed")         dispatchButton("buttonB");
+    if (address === "/buttonCPressed")         dispatchButton("buttonC");
+    if (address === "/buttonDPressed")         dispatchButton("buttonD");
+    if (address === "/buttonEPressed")         dispatchButton("buttonE");
+
+    // Joysticks
+    if (address === "/joystick1Input") {
+      const raw_x = args[0]?.value ?? args[0] ?? 1;
+      const raw_y = args[1]?.value ?? args[1] ?? 1;
+      dispatchJoystick(raw_x - 1, raw_y - 1);
+    }
+    if (address === "/joystick2Input") {
+      const raw_x = args[0]?.value ?? args[0] ?? 1;
+      const raw_y = args[1]?.value ?? args[1] ?? 1;
+      dispatchJoystick(raw_x - 1, raw_y - 1);
+    }
+
+    // Data messages
+    if (address === "/nextPOV")    dispatchData("nextPOV", args[0]?.value ?? args[0]);
+    if (address === "/textWrite")  dispatchData("textWrite", args[0]?.value ?? args[0]);
+    if (address === "/textClear")  dispatchData("textClear", null);
+
+  });
+}
+
 // --- Dispatchers ---
 
 function dispatchButton(action) {

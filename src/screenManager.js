@@ -1,4 +1,5 @@
 // src/screenManager.js
+import { screenChanged } from "./maxOutput.js";
 
 // Define the screen flow sequence
 const SCREEN_SEQUENCE = [
@@ -71,6 +72,9 @@ const SCREEN_SEQUENCE = [
       if (nextScreenData?.init) {
         nextScreenData.init();
       }
+
+      // Notify Max that this screen has started
+      screenChanged(nextScreen);
   
       this.isTransitioning = false;
     }
@@ -90,6 +94,9 @@ const SCREEN_SEQUENCE = [
         if (nextScreenData?.init) {
           nextScreenData.init();
         }
+
+        // Notify Max that this screen has started
+        screenChanged(this.getCurrentScreen());
       }
     }
   

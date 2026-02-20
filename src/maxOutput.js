@@ -1,24 +1,41 @@
 // src/maxOutput.js
-// Outbound messages from JS → Max
-// For now these are stubs that log to console.
-// When Max transport is connected, replace the internals.
+// Outbound messages from JS → Max (via OSC)
 
-export function startPlaymode(povId) {
-    console.log(`[→ Max] startPlaymode(${povId})`);
-    // TODO: send to Max via OSC / WebSocket / IPC
+function send(address, ...args) {
+    console.log(`[→ Max] ${address}`, args);
+    if (window.oscBridge) {
+      const oscArgs = args.map(a => {
+        if (typeof a === "number") return { type: "i", value: a };
+        return { type: "s", value: String(a) };
+      });
+      window.oscBridge.send(address, oscArgs);
+    }
   }
   
-export function startInfomode() {
-    console.log(`[→ Max] startInfomode()`);
-    // TODO: send to Max via OSC / WebSocket / IPC
+    export function startPlaymode(povId) {
+        send("/startPlaymode", povId);
+    }
+
+  export function startRoulette() {
+    send("/startRoulette");
   }
-
-export function startMiniatureSelectionMode() {
-    console.log(`[→ Max] startMiniatureSelectionMode()`);
-    // TODO: send to Max via OSC / WebSocket / IPC
-      }
-
-export function modelPicked(modelId) {
-console.log(`[→ Max] modelPicked(${modelId})`);
-// TODO: send to Max via OSC / WebSocket / IPC
-}
+  
+  export function startSlotMachine() {
+    send("/startSlotMachine");
+  }
+  
+  export function startInfomode() {
+    send("/startInfomode");
+  }
+  
+  export function startMiniatureSelectionMode() {
+    send("/startMiniatureSelectionMode");
+  }
+  
+  export function modelPicked(modelId) {
+    send("/modelPicked", modelId);
+  }
+  
+  export function screenChanged(screenName) {
+    send("/screenChanged", screenName);
+  }

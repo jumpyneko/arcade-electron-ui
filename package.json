@@ -12,5 +12,9 @@
   "type": "commonjs",
   "devDependencies": {
     "electron": "^40.0.0"
+  },
+  "dependencies": {
+    "ocs": "^1.1.0",
+    "osc": "^2.4.5"
   }
 }
