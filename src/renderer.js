@@ -82,6 +82,11 @@ function createTestButton() {
 // Create test button
 createTestButton();
 
+//preload font
+document.fonts.load('24px "Early GameBoy"').then(() => {
+  console.log("Early GameBoy font loaded");
+});
+
 // Main render loop
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -90,7 +95,7 @@ function loop() {
   screenManager.render(ctx, canvas);
   
   // Optional: Show current screen name for debugging
-  ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+  /*ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
   ctx.fillRect(10, 10, 300, 30);
   ctx.fillStyle = "white";
   ctx.font = "14px monospace";
@@ -99,7 +104,7 @@ function loop() {
     `Screen: ${screenManager.getCurrentScreen()} (${screenManager.currentIndex + 1}/${screenManager.screens.size})`,
     15,
     30
-  );
+  );*/
 
   requestAnimationFrame(loop);
 }

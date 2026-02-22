@@ -41,6 +41,24 @@ const SCREEN_SEQUENCE = [
       if (this.currentIndex >= SCREEN_SEQUENCE.length - 1) return null;
       return SCREEN_SEQUENCE[this.currentIndex + 1];
     }
+
+    // Restart the game, sets a new round
+    restartGame() {
+      const currentScreen = this.getCurrentScreen();
+      const screenData = this.screens.get(currentScreen);
+      if (screenData?.cleanup) {
+        screenData.cleanup();
+      }
+    
+      this.currentIndex = 0;
+    
+      const nextScreenData = this.screens.get(this.getCurrentScreen());
+      if (nextScreenData?.init) {
+        nextScreenData.init();
+      }
+    
+      screenChanged(this.getCurrentScreen());
+    }
   
     // Move to next screen in sequence
     async next(data = {}) {

@@ -40,6 +40,12 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   ctx.fillText(line, x, y);
 }
 
+export function onData(type, data) {
+  if (type === "restartGame") {
+    screenManager.restartGame();
+  }
+}
+
 export function cleanup() {
   // todo
 }

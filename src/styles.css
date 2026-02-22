@@ -18,3 +18,8 @@ body.flipped {
   transform: rotate(180deg);
   transform-origin: center center;
 }
+
+@font-face {
+  font-family: "Early GameBoy";
+  src: url("assets/Early GameBoy.ttf") format("truetype");
+}

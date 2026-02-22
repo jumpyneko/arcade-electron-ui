@@ -111,3 +111,12 @@ export const models = [
     const pov = models.find((p) => p.id === numId);
     return pov ?? models[0];
   }
+
+  export function changeIsPlaced(id) {
+    const numId = Number(id);
+    const model = models.find((m) => m.id === numId);
+    if (model) {
+      model.isPlaced = !model.isPlaced;
+    }
+    return model ?? null;
+  }

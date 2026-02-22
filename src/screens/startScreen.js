@@ -1,7 +1,9 @@
 import { screenManager } from "../screenManager.js";
+import { Sprite } from "../sprite.js";
 
 let backgroundImage = null;
 let coinIsInserted = false;
+let coinSprite = null;
 
 export function init() {
   console.log("Start screen initialized");
@@ -9,7 +11,10 @@ export function init() {
 
   // Load background image
   backgroundImage = new Image();
-  backgroundImage.src = "assets/StartScreen.png";
+  backgroundImage.src = "assets/images/blue_bg.png";
+
+  // coinsprite
+  coinSprite = new Sprite("assets/sprites/coin_spinning.png", 32, 32, 4, 8);
 }
 
 export function onButton(action) {
@@ -36,14 +41,33 @@ export function render(ctx, canvas) {
   ctx.textAlign = "center";
 
   if (!coinIsInserted) {
+    ctx.fillStyle = "orange"
+    ctx.font = '48px "Early GameBoy"';
+    ctx.fillText("Insert coin to play", centerX, centerY + 50);
+
     ctx.fillStyle = "white";
-    ctx.font = "28px monospace";
-    ctx.fillText("Insert coin to play", centerX, centerY + 30);
+    ctx.font = '48px "Early GameBoy"';
+    ctx.fillText("Insert coin to play", centerX - 5, centerY + 50);
+
+    coinSprite.update();
+    coinSprite.draw(ctx, centerX, centerY - 150, 8);
+
   } else {
-    ctx.fillStyle = "white";
-    ctx.font = "28px monospace";
-    ctx.fillText("1 Player", centerX, centerY);
+
+    ctx.fillStyle = "orange";
+    ctx.font = '60px "Early GameBoy"';
+    ctx.fillText("PRESS TO CONTINUE", centerX, centerY - 200);
+
+    ctx.fillStyle = "black";
+    ctx.font = '42px "Early GameBoy"';
+    ctx.fillText("1 Player", centerX, centerY - 50);
+    ctx.fillStyle = "black";
     ctx.fillText("2 Players", centerX, centerY + 50);
+
+    ctx.fillStyle = "white";
+    ctx.font = '42px "Early GameBoy"';
+    ctx.fillText("1 Player", centerX - 5, centerY - 50);
+    ctx.fillText("2 Players", centerX - 5, centerY + 50);
   }
 }
 

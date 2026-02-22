@@ -5,7 +5,7 @@ import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 
 const SLOT_STOP_DELAY_MS = 400;
 const CYCLE_MS = 120;
-const TIMER_SECONDS = 40;
+const TIMER_SECONDS = 10;
 
 let modelsLeft = [];
 let modelsOutput = [];
@@ -83,13 +83,19 @@ export function init() {
   //document.body.classList.add("flipped");
 
   if (!screenManager.sharedData.modelsLeft || screenManager.sharedData.modelsLeft.length === 0) {
-    screenManager.sharedData.modelsLeft = models.map((m) => ({ ...m }));
-  }
+    screenManager.sharedData.modelsLeft = models.filter((m) => !m.isPlaced).map((m) => ({ ...m }));  }
   modelsLeft = screenManager.sharedData.modelsLeft;
   preloadImages(modelsLeft);
 
   startTimer(TIMER_SECONDS, () => {
-    if (isSpinning) stopSlotMachine();
+    if (isSpinning) {
+        stopSlotMachine();
+        setTimeout(() => {
+          confirmAndContinue();
+        }, SLOT_STOP_DELAY_MS * 2 + 200);
+      } else {
+        confirmAndContinue();
+      }
   });
 
   startSpinning();

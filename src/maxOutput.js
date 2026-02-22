@@ -1,6 +1,5 @@
 // src/maxOutput.js
 // Outbound messages from JS → Max (via OSC)
-
 function send(address, ...args) {
     console.log(`[→ Max] ${address}`, args);
     if (window.oscBridge) {
@@ -38,4 +37,8 @@ function send(address, ...args) {
   
   export function screenChanged(screenName) {
     send("/screenChanged", screenName);
+  }
+
+  export function modelPlacedChanged(modelId, isPlaced) {
+    send("/modelPlacedChanged", modelId, isPlaced ? 1 : 0);
   }

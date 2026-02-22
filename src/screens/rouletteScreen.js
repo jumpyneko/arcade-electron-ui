@@ -5,6 +5,7 @@ import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { startPlaymode } from "../maxOutput.js";
 
 // State variables
+let backgroundImage = null;
 let wheelAngle = 0;
 let targetAngle = 0;
 let isSpinning = false;
@@ -36,6 +37,10 @@ export function init() {
   isStopping = false;
   spinSpeed = 0;
   targetPovId = null;
+
+  // Load background image
+  backgroundImage = new Image();
+  backgroundImage.src = "assets/images/pink_bg.png";
 
   // Start the countdown — auto-stops when it expires
   startTimer(TIMER_SECONDS, () => {
@@ -146,8 +151,14 @@ function updateWheel() {
 
 export function render(ctx, canvas) {
   // Background
-  ctx.fillStyle = "#2d1b4e";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  if (backgroundImage && backgroundImage.complete) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(backgroundImage, 0, 0, 180, 180, 0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.fillStyle = "#1a1a2e";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
 
   // Update timer (checks expiry)
   updateTimer();
@@ -181,7 +192,7 @@ export function render(ctx, canvas) {
     ctx.save();
     ctx.rotate(startAngle + SECTOR_ANGLE / 2);
     ctx.fillStyle = "#000";
-    ctx.font = "bold 32px Arial";
+    ctx.font = "bold 32px Early GameBoy";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(POVS[i].id.toString(), radius * 0.7, 0);
@@ -212,7 +223,7 @@ export function render(ctx, canvas) {
 
   // Hint text
   ctx.fillStyle = "white";
-  ctx.font = "28px monospace";
+  ctx.font = "28px Early GameBoy";
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
   ctx.fillText("Press A to stop", centerX, centerY + radius + 30);

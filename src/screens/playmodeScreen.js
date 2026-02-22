@@ -3,13 +3,16 @@ import { POVS, getPovById } from "../povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 
 let currentPov = null;
-let displayText = ""; // Text received from Max
+let targetText = "";      // full text received from Max
+let visibleLength = 0;    // how many characters are currently visible
+let lastCharTime = 0;     // timestamp of last character reveal
+const CHAR_DELAY = 40;  
 const TIMER_SECONDS = 120;
 
 export function init() {
   const selectedId = screenManager.sharedData.lastRouletteSector ?? 1;
   currentPov = getPovById(Number(selectedId));
-  displayText = "";
+  targetText = "";
   console.log("Playmode screen initialized, POV:", currentPov?.name, "id:", selectedId);
 
   // Start the countdown — auto-stops when it expires
@@ -23,10 +26,13 @@ export function init() {
 
 export function onData(type, data) {
   if (type === "textWrite") {
-    displayText = data;
+    targetText = data;
+    visibleLength = 0;
+    lastCharTime = performance.now();
     console.log(`Playmode received text: "${data}"`);
   } else if (type === "textClear") {
-    displayText = "";
+    targetText = "";
+    visibleLength = 0;
     console.log("Playmode text cleared");
   }
 }
@@ -48,7 +54,17 @@ export function render(ctx, canvas) {
   const displayName = currentPov ? currentPov.name : "Unknown";
   ctx.fillText(`playmode ${displayName} was started`, canvas.width / 2, canvas.height / 2 - 60);
 
-  // Text from Max
+  // Typewriter effect: reveal one character at a time
+  if (targetText && visibleLength < targetText.length) {
+    const now = performance.now();
+    if (now - lastCharTime >= CHAR_DELAY) {
+      visibleLength++;
+      lastCharTime = now;
+    }
+  }
+
+  const displayText = targetText.slice(0, visibleLength);
+
   if (displayText) {
     ctx.fillStyle = "#F7DC6F";
     ctx.font = "36px monospace";
@@ -62,5 +78,6 @@ export function render(ctx, canvas) {
 
 export function cleanup() {
   stopTimer();
-  displayText = "";
+  targetText = "";
+  visibleLength = 0;
 }
