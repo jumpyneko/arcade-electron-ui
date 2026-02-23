@@ -44,15 +44,16 @@ export function render(ctx, canvas) {
   // Update timer (checks expiry)
   updateTimer();
 
-  ctx.fillStyle = "#2d1b4e";
+  ctx.fillStyle = "#000000";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // POV title
   ctx.fillStyle = "white";
-  ctx.font = "48px monospace";
-  ctx.textAlign = "center";
+  ctx.font = "32px Early GameBoy";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
   const displayName = currentPov ? currentPov.name : "Unknown";
-  ctx.fillText(`playmode ${displayName} was started`, canvas.width / 2, canvas.height / 2 - 60);
+  ctx.fillText(`${displayName}`, 30, 30);
 
   // Typewriter effect: reveal one character at a time
   if (targetText && visibleLength < targetText.length) {
@@ -67,7 +68,7 @@ export function render(ctx, canvas) {
 
   if (displayText) {
     ctx.fillStyle = "#F7DC6F";
-    ctx.font = "36px monospace";
+    ctx.font = "36px Early GameBoy";
     ctx.textAlign = "center";
     ctx.fillText(displayText, canvas.width / 2, canvas.height / 2 + 20);
   }
