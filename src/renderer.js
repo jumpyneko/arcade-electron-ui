@@ -8,7 +8,17 @@ import * as slotmachineScreen from "./screens/slotmachineScreen.js";
 import * as modelpickerScreen from "./screens/modelpickerScreen.js";
 import * as endScreen from "./screens/endScreen.js";
 import * as inputManager from "./inputManager.js";
+import { audioManager } from "./audioManager.js";
+window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
+
+audioManager.registerMany({
+  obertura: "assets/sounds/obertura.wav",
+  // buttonClick: "assets/sounds/button_click.wav",
+  // error: "assets/sounds/error.wav",
+});
+
+audioManager.preload();
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");

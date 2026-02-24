@@ -2,6 +2,8 @@
 import { screenManager } from "../screenManager.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { modelPicked } from "../maxOutput.js";
+import { COLORS } from "../colors.js";
+import { drawWrappedText } from "../textLayout.js";
 
 let slotModels = [];
 let focusIndex = 0;
@@ -60,7 +62,7 @@ export function onButton(action) {
   }
 }
 
-export function onJoystick(x, y) {
+export function onJoystick2(x, y) {
   if (slotModels.length === 0) return;
   if (x > 0.5) {
     focusIndex = (focusIndex + 1) % slotModels.length;
@@ -74,12 +76,12 @@ export function onJoystick(x, y) {
 export function render(ctx, canvas) {
   updateTimer();
 
-  ctx.fillStyle = "#2d1b4e";
+  ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Title
   ctx.fillStyle = "white";
-  ctx.font = "36px monospace";
+  ctx.font = "36px Early GameBoy";
   ctx.textAlign = "center";
   ctx.fillText("Choose a model", canvas.width / 2, 80);
 
@@ -98,14 +100,14 @@ export function render(ctx, canvas) {
 
     // Card background + highlight
     if (isFocused) {
-      ctx.fillStyle = "#FFD700";
+      ctx.fillStyle = COLORS.arcadeOrange;
       ctx.fillRect(x - 6, cardY - 6, cardWidth + 12, cardHeight + 12);
     }
-    ctx.fillStyle = isFocused ? "#3a2060" : "#1a0a2e";
+    ctx.fillStyle = isFocused ? COLORS.arcadeBlue : "black";
     ctx.fillRect(x, cardY, cardWidth, cardHeight);
 
     // Border
-    ctx.strokeStyle = isFocused ? "#FFD700" : "#555";
+    ctx.strokeStyle = isFocused ? COLORS.arcadeYellow : COLORS.arcadeYellow;
     ctx.lineWidth = isFocused ? 3 : 1;
     ctx.strokeRect(x, cardY, cardWidth, cardHeight);
 
@@ -125,22 +127,29 @@ export function render(ctx, canvas) {
     }
 
     // Model name
-    ctx.fillStyle = isFocused ? "#FFD700" : "white";
-    ctx.font = isFocused ? "bold 22px monospace" : "20px monospace";
-    ctx.textAlign = "center";
-    ctx.fillText(model.name, x + cardWidth / 2, cardY + imgH + 50);
+    ctx.fillStyle = isFocused ? COLORS.arcadeYellow : "white";
+    ctx.font = "22px Early Gameboy";
+    drawWrappedText(
+      ctx,
+      model.name,
+      x + 12,               // left edge inside card
+      cardY + imgH + 35,    // top of name block
+      cardWidth - 24,       // max width inside card
+      24,                   // line height
+      { align: "center", maxLines: 2, overflow: "ellipsis" }
+    );
 
     // Model id
     ctx.fillStyle = "#aaa";
-    ctx.font = "16px monospace";
-    ctx.fillText(`#${model.id}`, x + cardWidth / 2, cardY + imgH + 80);
+    ctx.font = "16px Early Gameboy";
+    ctx.fillText(`#${model.id}`, x + cardWidth / 2, cardY + imgH + 120);
   }
 
   // Hint text
   ctx.fillStyle = "rgba(255,255,255,0.7)";
-  ctx.font = "22px monospace";
+  ctx.font = "22px Early Gameboy";
   ctx.textAlign = "center";
-  ctx.fillText("← → Joystick to browse  |  E to select", canvas.width / 2, canvas.height - 50);
+  ctx.fillText("Press Joystick ← → to browse  Press E to select", canvas.width / 2, canvas.height - 50);
 
   drawTimer(ctx, canvas);
 }

@@ -1,6 +1,8 @@
 import { screenManager } from "../screenManager.js";
 import { POVS, getPovById } from "../povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
+import { COLORS } from "../colors.js";
+import { drawTextInBox } from "../textLayout.js";
 
 let currentPov = null;
 let targetText = "";      // full text received from Max
@@ -67,10 +69,23 @@ export function render(ctx, canvas) {
   const displayText = targetText.slice(0, visibleLength);
 
   if (displayText) {
-    ctx.fillStyle = "#F7DC6F";
-    ctx.font = "36px Early GameBoy";
-    ctx.textAlign = "center";
-    ctx.fillText(displayText, canvas.width / 2, canvas.height / 2 + 20);
+    ctx.fillStyle = COLORS.arcadeYellow;
+    ctx.font = "36px Early Gameboy";
+    drawTextInBox(
+      ctx,
+      displayText,
+      120,                 // box x
+      canvas.height / 2,   // box y
+      canvas.width - 240,  // box width
+      260,                 // box height
+      {
+        align: "center",
+        valign: "top",
+        lineHeight: 42,
+        overflow: "ellipsis",
+        padding: 0,
+      }
+    );
   }
   
   // Draw countdown timer (top-right)

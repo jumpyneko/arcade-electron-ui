@@ -27,8 +27,8 @@ const SCREEN_SEQUENCE = [
     }
   
     // Register a screen with its functions
-    register(screenName, { init, render, cleanup, onButton, onJoystick, onData }) {
-      this.screens.set(screenName, { init, render, cleanup, onButton, onJoystick, onData });
+    register(screenName, screenModule) {
+      this.screens.set(screenName, screenModule);
     }
   
     // Get current screen name

@@ -2,10 +2,11 @@
 import { screenManager } from "../screenManager.js";
 import { models } from "../modelData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
+import { COLORS } from "../colors.js";
 
 const SLOT_STOP_DELAY_MS = 400;
 const CYCLE_MS = 120;
-const TIMER_SECONDS = 10;
+const TIMER_SECONDS = 40;
 
 let modelsLeft = [];
 let modelsOutput = [];
@@ -104,17 +105,15 @@ export function init() {
 // --- Input handlers ---
 
 export function onButton(action) {
-  if (action === "buttonC") {
+  if (action === "buttonD") {
     stopSlotMachine();
-  } else if (action === "buttonD") {
+  } else if (action === "buttonE") {
     confirmAndContinue();
   }
 }
 
-export function onJoystick(x, y) {
-  if (y < -0.5) {
-    reshuffle();
-  }
+export function onJoystick2(x, y) {
+  if (y < -0.5) reshuffle();
 }
 
 // --- Rendering ---
@@ -122,7 +121,7 @@ export function onJoystick(x, y) {
 export function render(ctx, canvas) {
   updateTimer();
 
-  ctx.fillStyle = "#2d1b4e";
+  ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   const centerY = canvas.height / 2;
@@ -138,8 +137,8 @@ export function render(ctx, canvas) {
     const slotW = slotWidth + 16;
     const slotH = 160;
 
-    ctx.fillStyle = "#1a0a2e";
-    ctx.strokeStyle = "#FFD700";
+    ctx.fillStyle = COLORS.arcadeYellow;
+    ctx.strokeStyle = COLORS.arcadeYellow;
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.rect(slotX, slotY, slotW, slotH);
@@ -164,13 +163,15 @@ export function render(ctx, canvas) {
   }
 
   // Hint text
-  ctx.fillStyle = "rgba(255,255,255,0.8)";
-  ctx.font = "24px monospace";
+  ctx.fillStyle = "white";
+  ctx.font = "24px Early GameBoy";
   ctx.textAlign = "center";
   if (isSpinning && !isStopping) {
-    ctx.fillText("Press C to stop", canvas.width / 2, centerY + 120);
+    ctx.fillText("Press D to stop", canvas.width / 2, centerY + 140);
   } else if (slotsStopped) {
-    ctx.fillText("D = continue  |  Joystick ↓ = reshuffle", canvas.width / 2, centerY + 120);
+    ctx.fillText("E = continue", canvas.width / 2, centerY + 140);
+    ctx.fillText("Joystick ↓ = reshuffle", canvas.width / 2, centerY + 180);
+
   }
 
   drawTimer(ctx, canvas);

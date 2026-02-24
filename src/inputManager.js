@@ -35,7 +35,7 @@ window.addEventListener("keydown", (e) => {
   }
   const joystick = JOYSTICK_MAP[key];
   if (joystick) {
-    dispatchJoystick(joystick[0], joystick[1]);
+    dispatchJoystick(1, joystick[0], joystick[1]);
   }
 });
 
@@ -58,12 +58,12 @@ if (window.oscBridge) {
     if (address === "/joystick1Input") {
       const raw_x = args[0]?.value ?? args[0] ?? 1;
       const raw_y = args[1]?.value ?? args[1] ?? 1;
-      dispatchJoystick(raw_x - 1, raw_y - 1);
+      dispatchJoystick(1, raw_x - 1, raw_y - 1);
     }
     if (address === "/joystick2Input") {
       const raw_x = args[0]?.value ?? args[0] ?? 1;
       const raw_y = args[1]?.value ?? args[1] ?? 1;
-      dispatchJoystick(raw_x - 1, raw_y - 1);
+      dispatchJoystick(2, raw_x - 1, raw_y - 1);
     }
 
     // Data messages
@@ -106,9 +106,21 @@ function changeIsPlacedFromMax(id) {
   }
 }
 
-export function dispatchJoystick(x, y) {
+function dispatchJoystick(joystickId, x, y) {
   const screenName = screenManager.getCurrentScreen();
   const screenData = screenManager.screens.get(screenName);
+
+  // New specific handlers
+  if (joystickId === 1 && screenData?.onJoystick1) {
+    screenData.onJoystick1(x, y);
+    return;
+  }
+  if (joystickId === 2 && screenData?.onJoystick2) {
+    screenData.onJoystick2(x, y);
+    return;
+  }
+
+  // Backward compatibility (old single joystick handler)
   if (screenData?.onJoystick) {
     screenData.onJoystick(x, y);
   }
@@ -125,8 +137,8 @@ export function buttonBPressed()     { dispatchButton("buttonB"); }
 export function buttonCPressed()     { dispatchButton("buttonC"); }
 export function buttonDPressed()     { dispatchButton("buttonD"); }
 export function buttonEPressed()     { dispatchButton("buttonE"); }
-export function joystick1Input(x, y)  { dispatchJoystick(x, y); }
-export function joystick2Input(x, y)  { dispatchJoystick(x, y); }
+export function joystick1Input(x, y) { dispatchJoystick(1, x, y); }
+export function joystick2Input(x, y) { dispatchJoystick(2, x, y); }
 export function nextPOV(povId)       { dispatchData("nextPOV", povId); }
 export function textWrite(str)   { dispatchData("textWrite", str); }
 export function textClear()      { dispatchData("textClear", null); }

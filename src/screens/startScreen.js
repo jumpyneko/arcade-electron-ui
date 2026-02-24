@@ -1,10 +1,12 @@
 import { screenManager } from "../screenManager.js";
 import { Sprite } from "../sprite.js";
 import { COLORS } from "../colors.js";
+import { audioManager } from "../audioManager.js";
 
 let backgroundImage = null;
 let coinIsInserted = false;
 let coinSprite = null;
+let isStarting = false;
 
 export function init() {
   console.log("Start screen initialized");
@@ -18,11 +20,26 @@ export function init() {
   coinSprite = new Sprite("assets/sprites/coin_spinning.png", 32, 32, 4, 8);
 }
 
-export function onButton(action) {
-  if (!coinIsInserted && action === "coinInserted") {
+
+export async function onButton(action) {
+  if (!coinIsInserted && (action === "coinInserted" || action === "buttonC")) {
     coinIsInserted = true;
-  } else if (coinIsInserted && (action === "player1Pressed" || action === "player2Pressed")) {
-    screenManager.next();
+    return;
+  }
+
+  if (!coinIsInserted || isStarting) return;
+
+  if (action === "player1Pressed" || action === "player2Pressed") {
+    isStarting = true;
+
+    await audioManager.playAndWait("obertura", {
+      group: "startFlow",
+      stopGroupBeforePlay: true, // ensure only one intro voice/music
+      restart: true,
+      volume: 1,
+    });
+
+    await screenManager.next();
   }
 }
 
@@ -77,5 +94,7 @@ export function render(ctx, canvas) {
 }
 
 export function cleanup() {
+  isStarting = false;
   coinIsInserted = false;
+  audioManager.stopGroup("startFlow");
 }

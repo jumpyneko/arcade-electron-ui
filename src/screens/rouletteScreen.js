@@ -16,7 +16,7 @@ let targetPovId = null; // POV id received from Max (via nextPOV)
 
 const TIMER_SECONDS = 20;
 
-const PIXEL_SCALE = 4; // each drawn pixel becomes a 4×4 block on screen
+const PIXEL_SCALE = 6; // each drawn pixel becomes a 4×4 block on screen
 let wheelOffscreen = null;
 let wheelOffCtx = null;
 
@@ -136,7 +136,7 @@ function updateWheel() {
       // Move to next screen after a short delay
       const DELAY_MS = 3000;
       setTimeout(() => {
-        //screenManager.next({ lastRouletteSector: povId });
+        screenManager.next({ lastRouletteSector: povId });
       }, DELAY_MS);
     }
   } else {
@@ -152,14 +152,12 @@ export function render(ctx, canvas) {
   
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
 
+    // Update timer (checks expiry)
+    updateTimer();
 
-  // Update timer (checks expiry)
-  updateTimer();
-
-  // Update wheel animation
-  updateWheel();
+    // Update wheel animation
+    updateWheel();
 
   // Draw wheel
     const centerX = canvas.width / 2;
@@ -193,7 +191,7 @@ export function render(ctx, canvas) {
         const data = imageData.data;
     
         const [color1R, color1G, color1B] = hexToRgb(COLORS.arcadeBlue); // nonHuman
-        const [color2R, color2G, color2B] = hexToRgb(COLORS.arcadeYellow); // human
+        const [color2R, color2G, color2B] = hexToRgb(COLORS.arcadeOrange); // human
         const [centerR, centerG, centerB] = hexToRgb("#FFFFFF"); // white
     
         const centerCircleR = sR * 0.15;
@@ -275,6 +273,31 @@ export function render(ctx, canvas) {
     const destX = centerX - destW / 2;
     const destY = centerY - destH / 2;
     ctx.drawImage(wheelOffscreen, 0, 0, offW, offH, destX, destY, destW, destH);
+
+    // Draw sector numbers on top (upright text)
+    ctx.fillStyle = "white";
+    ctx.font = "22px Early GameBoy";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    const textRadius = radius * 0.72;
+
+    for (let i = 0; i < NUM_SECTORS; i++) {
+      const angle = i * SECTOR_ANGLE + SECTOR_ANGLE / 2 + wheelAngle;
+      const x = centerX + Math.cos(angle) * textRadius;
+      const y = centerY + Math.sin(angle) * textRadius;
+
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Rotate so text faces the wheel center
+      ctx.rotate(angle + Math.PI / 2);
+
+      ctx.fillText(POVS[i].id.toString(), 0, 0);
+      ctx.restore();
+    }
+
+  ctx.restore();
 
   // Hint text
   ctx.fillStyle = "white";
