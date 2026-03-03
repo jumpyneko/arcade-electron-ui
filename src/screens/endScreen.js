@@ -1,43 +1,75 @@
 import { screenManager } from "../screenManager.js";
 import { models, getModelById } from "../modelData.js";
+import { drawWrappedText } from "../textLayout.js";
+import { COLORS } from "../colors.js";
+import { Sprite } from "../sprite.js";
+
 
 let currentModel = null;
+let backgroundImage = null;
+let modelSprite = null;
 
 export function init() {
   const selectedId = screenManager.sharedData.chosenModelId ?? 1;
   currentModel = getModelById(Number(selectedId));
   console.log("Modelnumber:", currentModel?.name, "id:", selectedId);
+
+  // Load background image
+  backgroundImage = new Image();
+  backgroundImage.src = "assets/images/blue_bg.png";
+  modelSprite = new Sprite("assets/sprites/model_place_25.png", 32, 32, 2, 14);
 }
 
 export function render(ctx, canvas) {
-  ctx.fillStyle = "#2d1b4e";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
 
-  ctx.fillStyle = "white";
-  ctx.font = "24px monospace";
+  const displayName = currentModel.name;
+
+   // Draw background image
+  if (backgroundImage && backgroundImage.complete) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(backgroundImage, 0, 0, 180, 180, 0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  //Draw model sprite
+  if (modelSprite) {
+    modelSprite.update(); // animate like the coin
+    modelSprite.draw(ctx, centerX, centerY - 200, 8); // position above text
+  }
+
   ctx.textAlign = "center";
 
-  const displayName = currentModel ? currentModel.name : "Unknown";
-  const text = `Pick your Miniature ${displayName} from the library, and place it in The Model Nation. You may visit it anytime.`;
+  // shared text area
+  const maxWidth = canvas.width - 220;
+  const boxX = (canvas.width - maxWidth) / 2;
 
-  wrapText(ctx, text, canvas.width / 2, canvas.height / 2 - 40, canvas.width - 120, 36);
-}
+  // 1) Thanks for choosing
+  ctx.fillStyle = "white";
+  ctx.font = '44px "Early GameBoy"';
+  ctx.fillText("Thanks for choosing", centerX, centerY);
 
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(" ");
-  let line = "";
+  // 2) Model name in different color
+  ctx.fillStyle = COLORS.arcadeYellow; // or COLORS.arcadeOrange
+  ctx.font = '48px "Early GameBoy"';
+  ctx.fillText(`${displayName}`, centerX, centerY + 100);
 
-  for (const word of words) {
-    const testLine = line ? line + " " + word : word;
-    if (ctx.measureText(testLine).width > maxWidth && line) {
-      ctx.fillText(line, x, y);
-      line = word;
-      y += lineHeight;
-    } else {
-      line = testLine;
-    }
-  }
-  ctx.fillText(line, x, y);
+  // 3) Wrapped instruction paragraph
+  ctx.fillStyle = "white";
+  ctx.font = '34px "Early GameBoy"';
+  drawWrappedText(
+    ctx,
+    "Please pick the miniature up from the library and place it in the Model Nation.",
+    boxX,
+    centerY + 200,
+    maxWidth,
+    48,
+    { align: "center", maxLines: 3, overflow: "ellipsis" }
+  );
+
 }
 
 export function onData(type, data) {
@@ -47,5 +79,5 @@ export function onData(type, data) {
 }
 
 export function cleanup() {
-  // todo
+  if (modelSprite) modelSprite.reset();
 }

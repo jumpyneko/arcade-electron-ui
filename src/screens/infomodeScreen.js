@@ -2,22 +2,21 @@
 import { screenManager } from "../screenManager.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { COLORS } from "../colors.js";
+import { Sprite } from "../sprite.js";
 
-const TIMER_SECONDS = 100;
-let backgroundImage = null;
+const TIMER_SECONDS = 10;
+let eyeSprite = null;
 
 export function init() {
   console.log("Infomode screen initialized");
 
-  // Load background image
-  backgroundImage = new Image();
-  backgroundImage.src = "assets/images/yellow_bg.png";
+  eyeSprite = new Sprite("assets/sprites/eye.png", 32, 32, 30, 8);
 
   // Start the countdown — auto-stops when it expires
   startTimer(TIMER_SECONDS, () => {
-          screenManager.next();
+    screenManager.next();
   });
-  }
+}
   
   export function render(ctx, canvas) {
 
@@ -27,18 +26,15 @@ export function init() {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
-     // Draw background image
-    if (backgroundImage && backgroundImage.complete) {
-      ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(backgroundImage, 0, 0, 180, 180, 0, 0, canvas.width, canvas.height);
-    } else {
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    eyeSprite.update();
+    eyeSprite.draw(ctx, centerX, centerY - 300, 8);
 
     ctx.textAlign = "center";
     
-    ctx.fillStyle = COLORS.arcadeBlue;
+    ctx.fillStyle = COLORS.arcadeYellow;
     ctx.font = '48px "Early GameBoy"';
     ctx.fillText("Step away from the screen", centerX, centerY - 100);
 
@@ -46,7 +42,7 @@ export function init() {
     ctx.font = '48px "Early GameBoy"';
     ctx.fillText("Step away from the screen", centerX - 6, centerY - 100);
 
-    ctx.fillStyle = COLORS.arcadeBlue;
+    ctx.fillStyle = COLORS.arcadeOrange;
     ctx.font = '48px "Early GameBoy"';
     ctx.fillText("Take a look around", centerX, centerY);
 
@@ -54,7 +50,7 @@ export function init() {
     ctx.font = '48px "Early GameBoy"';
     ctx.fillText("Take a look around", centerX - 6, centerY);
 
-    ctx.fillStyle = COLORS.arcadeBlue;
+    ctx.fillStyle = COLORS.arcadePurple;
     ctx.font = '48px "Early GameBoy"';
     ctx.fillText("Come back when I call you", centerX, centerY + 100);
 

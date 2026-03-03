@@ -31,11 +31,10 @@ export function getRemaining() {
 export function updateTimer() {
   if (!running) return;
   if (Date.now() - startTime >= duration) {
+    const cb = onExpire;
     running = false;
-    if (onExpire) {
-      onExpire();
-      onExpire = null;
-    }
+    onExpire = null; // clear before callback
+    if (cb) cb();
   }
 }
 

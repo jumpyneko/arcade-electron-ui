@@ -6,4 +6,5 @@ export const COLORS = {
     arcadeRed: "#C00707",
     arcadeOrange: "#FF6C0C",
     arcadeYellow: "#FFB33F",
+    arcadeDarkBlue: "#0B0F5D"
   };

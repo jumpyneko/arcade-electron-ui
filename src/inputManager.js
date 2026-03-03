@@ -35,7 +35,7 @@ window.addEventListener("keydown", (e) => {
   }
   const joystick = JOYSTICK_MAP[key];
   if (joystick) {
-    dispatchJoystick(1, joystick[0], joystick[1]);
+    dispatchJoystick(2, joystick[0], joystick[1]);
   }
 });
 
@@ -56,14 +56,19 @@ if (window.oscBridge) {
 
     // Joysticks
     if (address === "/joystick1Input") {
-      const raw_x = args[0]?.value ?? args[0] ?? 1;
-      const raw_y = args[1]?.value ?? args[1] ?? 1;
-      dispatchJoystick(1, raw_x - 1, raw_y - 1);
+      const rawX = args[0]?.value ?? args[0] ?? 1;
+      const rawY = args[1]?.value ?? args[1] ?? 1;
+    
+      // optional: ignore neutral release message
+      if (rawX === 1 && rawY === 1) return;
+    
+      dispatchJoystick(1, rawX - 1, rawY - 1);
     }
+
     if (address === "/joystick2Input") {
-      const raw_x = args[0]?.value ?? args[0] ?? 1;
-      const raw_y = args[1]?.value ?? args[1] ?? 1;
-      dispatchJoystick(2, raw_x - 1, raw_y - 1);
+      const rawX = args[0]?.value ?? args[0] ?? 1;
+      const rawY = args[1]?.value ?? args[1] ?? 1;
+      dispatchJoystick(2, rawX - 1, rawY - 1);
     }
 
     // Data messages

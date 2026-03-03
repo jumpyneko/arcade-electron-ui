@@ -35,7 +35,7 @@ function pickModel() {
   console.log(`Model picked: ${model.name} (id ${id})`);
   modelPicked(id);
 
-  const DELAY_MS = 3000;
+  const DELAY_MS = 1000;
   setTimeout(() => {
     screenManager.next({ chosenModelId: id });
   }, DELAY_MS);
@@ -57,7 +57,7 @@ export function init() {
 // --- Input handlers ---
 
 export function onButton(action) {
-  if (action === "buttonE") {
+  if (action === "buttonD") {
     pickModel();
   }
 }
@@ -149,7 +149,7 @@ export function render(ctx, canvas) {
   ctx.fillStyle = "rgba(255,255,255,0.7)";
   ctx.font = "22px Early Gameboy";
   ctx.textAlign = "center";
-  ctx.fillText("Press Joystick ← → to browse  Press E to select", canvas.width / 2, canvas.height - 50);
+  ctx.fillText("Press Joystick ← → to browse  Press D to select", canvas.width / 2, canvas.height - 50);
 
   drawTimer(ctx, canvas);
 }

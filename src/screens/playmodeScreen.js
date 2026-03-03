@@ -1,6 +1,6 @@
 import { screenManager } from "../screenManager.js";
 import { POVS, getPovById } from "../povData.js";
-import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
+import { startTimer, stopTimer, updateTimer, drawTimer, getRemaining } from "../timer.js";
 import { COLORS } from "../colors.js";
 import { drawTextInBox } from "../textLayout.js";
 
@@ -9,7 +9,7 @@ let targetText = "";      // full text received from Max
 let visibleLength = 0;    // how many characters are currently visible
 let lastCharTime = 0;     // timestamp of last character reveal
 const CHAR_DELAY = 40;  
-const TIMER_SECONDS = 120;
+const TIMER_SECONDS = 15;
 
 export function init() {
   const selectedId = screenManager.sharedData.lastRouletteSector ?? 1;
@@ -88,8 +88,10 @@ export function render(ctx, canvas) {
     );
   }
   
-  // Draw countdown timer (top-right)
+  // Draw countdown timer when only 10 seconds remain
+  if (getRemaining() <= 10) {
   drawTimer(ctx, canvas);
+  }
 }
 
 export function cleanup() {
