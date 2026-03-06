@@ -55,14 +55,22 @@ export function render(ctx, canvas) {
   // 2) Model name in different color
   ctx.fillStyle = COLORS.arcadeYellow; // or COLORS.arcadeOrange
   ctx.font = '48px "Early GameBoy"';
-  ctx.fillText(`${displayName}`, centerX, centerY + 100);
+  drawWrappedText(
+    ctx,
+    currentModel.name,
+    boxX,
+    centerY + 100,
+    maxWidth,
+    48,
+    { align: "center", maxLines: 3, overflow: "ellipsis" }
+  );
 
   // 3) Wrapped instruction paragraph
   ctx.fillStyle = "white";
   ctx.font = '34px "Early GameBoy"';
   drawWrappedText(
     ctx,
-    "Please pick the miniature up from the library and place it in the Model Nation.",
+    currentModel.outro,
     boxX,
     centerY + 200,
     maxWidth,

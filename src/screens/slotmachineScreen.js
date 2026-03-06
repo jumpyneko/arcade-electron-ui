@@ -6,7 +6,7 @@ import { COLORS } from "../colors.js";
 
 const SLOT_STOP_DELAY_MS = 400;
 const CYCLE_MS = 120;
-const TIMER_SECONDS = 40;
+const TIMER_SECONDS = 400;
 
 let modelsLeft = [];
 let modelsOutput = [];
@@ -16,6 +16,36 @@ let isSpinning = true;
 let isStopping = false;
 let slotsStopped = false; // true after all 3 slots have landed
 let cycleTimer = null;
+const PX = 6; // pixel scale for chunky UI
+
+let slotMachineFrame = null;
+
+const FRAME_SRC = "assets/images/slotmachine2.png";
+const FRAME_SIZE = 180; // source image is 180x180
+
+// Window rects measured in source-image pixels (tune a little if needed)
+const REEL_WINDOWS_SRC = [
+  { x: 35, y: 68, w: 34, h: 32 }, // left
+  { x: 73, y: 68, w: 34, h: 32 }, // center
+  { x: 111, y: 68, w: 34, h: 32 }, // right
+];
+
+
+function px(v) {
+  return Math.round(v / PX) * PX;
+}
+
+function drawPixelRect(ctx, x, y, w, h, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(px(x), px(y), px(w), px(h));
+}
+
+function drawPixelBorder(ctx, x, y, w, h, thickness, color) {
+  drawPixelRect(ctx, x, y, w, thickness, color);
+  drawPixelRect(ctx, x, y + h - thickness, w, thickness, color);
+  drawPixelRect(ctx, x, y, thickness, h, color);
+  drawPixelRect(ctx, x + w - thickness, y, thickness, h, color);
+}
 
 function pick3Random(fromArray) {
   if (fromArray.length < 3) return fromArray.slice();
@@ -83,6 +113,11 @@ export function init() {
   console.log("Slotmachine screen initialized");
   //document.body.classList.add("flipped");
 
+  if (!slotMachineFrame) {
+    slotMachineFrame = new Image();
+    slotMachineFrame.src = FRAME_SRC;
+  }
+
   if (!screenManager.sharedData.modelsLeft || screenManager.sharedData.modelsLeft.length === 0) {
     screenManager.sharedData.modelsLeft = models.filter((m) => !m.isPlaced).map((m) => ({ ...m }));  }
   modelsLeft = screenManager.sharedData.modelsLeft;
@@ -117,61 +152,69 @@ export function onJoystick2(x, y) {
 }
 
 // --- Rendering ---
-
 export function render(ctx, canvas) {
   updateTimer();
 
-  ctx.fillStyle = "black";
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const centerY = canvas.height / 2;
-  const slotWidth = 180;
-  const gap = 40;
-  const totalWidth = 3 * slotWidth + 2 * gap;
-  const startX = (canvas.width - totalWidth) / 2 + slotWidth / 2 + gap / 2;
+  const cw = canvas.width;
+  const ch = canvas.height;
 
+  // Scale slotmachine2.png up to occupy most of the screen
+  const scale = Math.min(cw/ FRAME_SIZE, ch / FRAME_SIZE);
+  const drawW = Math.round(FRAME_SIZE * scale);
+  const drawH = Math.round(FRAME_SIZE * scale);
+  const drawX = Math.round((cw - drawW) / 2);
+  const drawY = Math.round(ch * 0.03);
+
+  // Draw frame/background
+  if (slotMachineFrame && slotMachineFrame.complete && slotMachineFrame.naturalWidth > 0) {
+    ctx.drawImage(slotMachineFrame, 0, 0, cw*0.9, ch*0.9);
+  }
+
+  // Draw the 3 model reels inside the frame windows
   for (let i = 0; i < 3; i++) {
-    const x = startX + i * (slotWidth + gap);
-    const slotX = x - slotWidth / 2 - 8;
-    const slotY = centerY - 80;
-    const slotW = slotWidth + 16;
-    const slotH = 160;
+    const srcRect = REEL_WINDOWS_SRC[i];
 
-    ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.strokeStyle = COLORS.arcadeYellow;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.rect(slotX, slotY, slotW, slotH);
-    ctx.fill();
-    ctx.stroke();
+    // Map source-image window rect to canvas
+    const rx = Math.round(drawX + srcRect.x * scale);
+    const ry = Math.round(drawY + srcRect.y * scale);
+    const rw = Math.round(srcRect.w * scale);
+    const rh = Math.round(srcRect.h * scale);
 
     const model = slotDisplayModels[i];
-    const img = model && model.image ? imageCache.get(model.image) : null;
+    const img = model?.image ? imageCache.get(model.image) : null;
+
+    // Small inset so frame border remains visible
+    const pad = Math.max(2, Math.round(2 * scale));
+    const ix = rx + pad;
+    const iy = ry + pad;
+    const iw = Math.max(1, rw - pad * 2);
+    const ih = Math.max(1, rh - pad * 2);
 
     if (img && img.complete && img.naturalWidth > 0) {
-      const pad = 10;
-      const drawW = slotW - pad * 2;
-      const drawH = slotH - pad * 2;
-      ctx.drawImage(img, slotX + pad, slotY + pad, drawW, drawH);
+      ctx.drawImage(img, ix, iy, iw, ih);
     } else {
       ctx.fillStyle = "white";
-      ctx.font = "bold 48px monospace";
+      ctx.font = `${Math.max(14, Math.round(14 * scale))}px monospace`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(model ? String(model.id) : "?", x, centerY);
+      ctx.fillText(model ? String(model.id) : "?", rx + rw / 2, ry + rh / 2);
     }
   }
 
-  // Hint text
-  ctx.fillStyle = "white";
-  ctx.font = "24px Early GameBoy";
-  ctx.textAlign = "center";
-  if (isSpinning && !isStopping) {
-    ctx.fillText("Press D to stop", canvas.width / 2, centerY + 140);
-  } else if (slotsStopped) {
-    ctx.fillText("E = continue", canvas.width / 2, centerY + 140);
-    ctx.fillText("Joystick ↓ = reshuffle", canvas.width / 2, centerY + 180);
 
+  ctx.fillStyle = "white";
+  ctx.font = "22px Early GameBoy";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  if (isSpinning && !isStopping) {
+    ctx.fillText("PRESS D TO STOP", cw / 2, ch / 2 + 400);
+  } else if (slotsStopped) {
+    ctx.fillText("E = CONTINUE    JOYSTICK DOWN = RESHUFFLE", cw / 2, ch / 2 + 400);
   }
 
   drawTimer(ctx, canvas);

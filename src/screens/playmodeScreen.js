@@ -57,6 +57,13 @@ export function render(ctx, canvas) {
   const displayName = currentPov ? currentPov.name : "Unknown";
   ctx.fillText(`${displayName}`, 30, 30);
 
+  //Hint text
+  ctx.fillStyle = "white";
+  ctx.font = "24px Early GameBoy";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "bottom";
+  ctx.fillText("use arcade buttons and joysticks to play", 30, canvas.height - 30);
+
   // Typewriter effect: reveal one character at a time
   if (targetText && visibleLength < targetText.length) {
     const now = performance.now();
