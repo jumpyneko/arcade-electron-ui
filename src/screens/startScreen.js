@@ -2,6 +2,8 @@ import { screenManager } from "../screenManager.js";
 import { Sprite } from "../sprite.js";
 import { COLORS } from "../colors.js";
 import { audioManager } from "../audioManager.js";
+import { s } from "../uiScale.js";
+import { FONTS } from "../typography.js";
 
 let backgroundImage = null;
 let coinIsInserted = false;
@@ -60,36 +62,30 @@ export function render(ctx, canvas) {
 
   if (!coinIsInserted) {
     ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.font = '48px "Early GameBoy"';
-    ctx.fillText("Insert coin to play", centerX, centerY + 50);
+    ctx.font = FONTS.h1;
+    ctx.fillText("Insert coin to play", centerX, centerY + s(30));
 
     ctx.fillStyle = "white";
-    ctx.font = '48px "Early GameBoy"';
-    ctx.fillText("Insert coin to play", centerX - 6, centerY + 50);
+    ctx.font = FONTS.h1;
+    ctx.fillText("Insert coin to play", centerX - s(2), centerY + s(30));
 
     coinSprite.update();
-    coinSprite.draw(ctx, centerX, centerY - 150, 8);
+    coinSprite.draw(ctx, centerX, centerY - s(80), s(4));
 
   } else {
 
     ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.font = '60px "Early GameBoy"';
-    ctx.fillText("PRESS TO CONTINUE", centerX, centerY - 200);
+    ctx.font = FONTS.h1;
+    ctx.fillText("PRESS TO CONTINUE", centerX, centerY - s(100));
     ctx.fillStyle = "white";
-    ctx.font = '60px "Early GameBoy"';
-    ctx.fillText("PRESS TO CONTINUE", centerX-5, centerY - 200);
+    ctx.font = FONTS.h1;
+    ctx.fillText("PRESS TO CONTINUE", centerX-s(2), centerY - s(100));
 
-    /*ctx.fillStyle = COLORS.arcadeYellow;;
-    ctx.font = '42px "Early GameBoy"';
-    ctx.fillText("1 Player", centerX, centerY - 50);
+    ctx.fillStyle = COLORS.arcadeYellow;;
+    ctx.font = FONTS.h2;
+    ctx.fillText("1 Spieler", centerX, centerY - s(30));
     ctx.fillStyle = COLORS.arcadeOrange;;
-    ctx.fillText("2 Players", centerX, centerY + 50);*/
-
-    ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.font = '42px "Early GameBoy"';
-    ctx.fillText("1 Player", centerX - 5, centerY - 50);
-    ctx.fillStyle = COLORS.arcadeOrange;
-    ctx.fillText("2 Players", centerX - 5, centerY + 50);
+    ctx.fillText("2 Spieler", centerX, centerY + s(30));
   }
 }
 

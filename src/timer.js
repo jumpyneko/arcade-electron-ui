@@ -1,6 +1,8 @@
 // src/timer.js
 // Reusable countdown timer for any screen
 import { COLORS } from "./colors.js";
+import { FONTS } from "./typography.js";
+import { s } from "./uiScale.js";
 
 let startTime = 0;
 let duration = 0;
@@ -45,9 +47,9 @@ export function drawTimer(ctx, canvas) {
 
   ctx.save();
   ctx.fillStyle = seconds <= 10 ? COLORS.arcadeRed : "white";
-  ctx.font = "48px Early GameBoy";
+  ctx.font = FONTS.h1;
   ctx.textAlign = "right";
   ctx.textBaseline = "top";
-  ctx.fillText(seconds.toString(), canvas.width - 30, 30);
+  ctx.fillText(seconds.toString(), canvas.width - s(24), s(24));
   ctx.restore();
 }

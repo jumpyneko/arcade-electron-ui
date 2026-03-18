@@ -1,7 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: black;
+  background: white;
   overflow: hidden;
   width: 100%;
   height: 100%;
@@ -22,4 +22,10 @@ body.flipped {
 @font-face {
   font-family: "Early GameBoy";
   src: url("assets/fonts/Early GameBoy.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Monaco9";
+  src: url("assets/fonts/monaco-9.otf") format("opentype");
+  font-display: swap;
 }

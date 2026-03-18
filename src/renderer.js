@@ -24,17 +24,26 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 // Set canvas to 4:3 aspect ratio (e.g., 1024x768 or 1280x960)
-canvas.width = 1280;  // 4:3 ratio
-canvas.height = 960;  // 1280 * 3/4 = 960
+const INTERNAL_WIDTH = 320;
+const INTERNAL_HEIGHT = 240;
+canvas.width = INTERNAL_WIDTH;
+canvas.height = INTERNAL_HEIGHT;
 
 // Function to resize canvas to fit window while maintaining 4:3 aspect ratio
 function resizeCanvas() {
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
   
-  const aspectRatio = 4 / 3;
+  /*const aspectRatio = 4 / 3;
   let displayWidth = windowWidth;
-  let displayHeight = windowWidth / aspectRatio;
+  let displayHeight = windowWidth / aspectRatio;*/
+
+  const scale = Math.max(1, Math.floor(Math.min(
+    window.innerWidth / INTERNAL_WIDTH,
+    window.innerHeight / INTERNAL_HEIGHT
+  )));
+  const displayWidth = INTERNAL_WIDTH * scale;
+  const displayHeight = INTERNAL_HEIGHT * scale;
   
   // If height is too tall, fit to height instead
   if (displayHeight > windowHeight) {
@@ -47,6 +56,35 @@ function resizeCanvas() {
   canvas.style.position = "absolute";
   canvas.style.left = `${(windowWidth - displayWidth) / 2}px`;
   canvas.style.top = `${(windowHeight - displayHeight) / 2}px`;
+}
+
+function drawCrtOverlay(ctx, canvas, t) {
+  ctx.save();
+
+  // 1) scanlines
+  ctx.globalAlpha = 0.12;
+  ctx.fillStyle = "#000";
+  for (let y = 0; y < canvas.height; y += 3) {
+    ctx.fillRect(0, y, canvas.width, 1);
+  }
+
+  // 2) vignette
+  const g = ctx.createRadialGradient(
+    canvas.width / 2, canvas.height / 2, canvas.width * 0.2,
+    canvas.width / 2, canvas.height / 2, canvas.width * 0.75
+  );
+  g.addColorStop(0, "rgba(0,0,0,0)");
+  g.addColorStop(1, "rgba(0,0,0,0.45)");
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // 3) subtle flicker
+  ctx.globalAlpha = 0.03 + Math.random() * 0.02;
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.restore();
 }
 
 // Initial resize
@@ -103,7 +141,8 @@ function loop() {
   
   // Render current screen
   screenManager.render(ctx, canvas);
-  
+  //drawCrtOverlay(ctx, canvas, performance.now());
+
   // Optional: Show current screen name for debugging
   /*ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
   ctx.fillRect(10, 10, 300, 30);

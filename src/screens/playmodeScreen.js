@@ -3,13 +3,15 @@ import { POVS, getPovById } from "../povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer, getRemaining } from "../timer.js";
 import { COLORS } from "../colors.js";
 import { drawTextInBox } from "../textLayout.js";
+import { FONTS } from "../typography.js";
+import { s } from "../uiScale.js";
 
 let currentPov = null;
 let targetText = "";      // full text received from Max
 let visibleLength = 0;    // how many characters are currently visible
 let lastCharTime = 0;     // timestamp of last character reveal
 const CHAR_DELAY = 40;  
-const TIMER_SECONDS = 15;
+const TIMER_SECONDS = 120;
 
 export function init() {
   const selectedId = screenManager.sharedData.lastRouletteSector ?? 1;
@@ -51,18 +53,18 @@ export function render(ctx, canvas) {
 
   // POV title
   ctx.fillStyle = "white";
-  ctx.font = "32px Early GameBoy";
+  ctx.font = FONTS.h3_names;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
   const displayName = currentPov ? currentPov.name : "Unknown";
-  ctx.fillText(`${displayName}`, 30, 30);
+  ctx.fillText("EL TREN MÁGICO", s(30), s(30));
 
   //Hint text
-  ctx.fillStyle = "white";
-  ctx.font = "24px Early GameBoy";
+  ctx.fillStyle = "grey";
+  ctx.font = FONTS.hint;
   ctx.textAlign = "left";
   ctx.textBaseline = "bottom";
-  ctx.fillText("use arcade buttons and joysticks to play", 30, canvas.height - 30);
+  ctx.fillText("use arcade buttons and joysticks to play", s(25), canvas.height - s(25));
 
   // Typewriter effect: reveal one character at a time
   if (targetText && visibleLength < targetText.length) {
@@ -77,18 +79,18 @@ export function render(ctx, canvas) {
 
   if (displayText) {
     ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.font = "36px Early Gameboy";
+    ctx.font = FONTS.h2;
     drawTextInBox(
       ctx,
       displayText,
-      120,                 // box x
+      s(120),                 // box x
       canvas.height / 2,   // box y
-      canvas.width - 240,  // box width
-      260,                 // box height
+      canvas.width - s(240),  // box width
+      s(260),                 // box height
       {
         align: "center",
         valign: "top",
-        lineHeight: 42,
+        lineHeight: s(42),
         overflow: "ellipsis",
         padding: 0,
       }

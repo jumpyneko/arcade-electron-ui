@@ -3,8 +3,10 @@ import { screenManager } from "../screenManager.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { COLORS } from "../colors.js";
 import { Sprite } from "../sprite.js";
+import { FONTS } from "../typography.js";
+import { s } from "../uiScale.js";
 
-const TIMER_SECONDS = 10;
+const TIMER_SECONDS = 100;
 let eyeSprite = null;
 
 export function init() {
@@ -30,33 +32,33 @@ export function init() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     eyeSprite.update();
-    eyeSprite.draw(ctx, centerX, centerY - 300, 8);
+    eyeSprite.draw(ctx, centerX, centerY - s(120), s(4));
 
     ctx.textAlign = "center";
     
     ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.font = '48px "Early GameBoy"';
-    ctx.fillText("Step away from the screen", centerX, centerY - 100);
+    ctx.font = FONTS.h1;
+    ctx.fillText("Step away from the screen", centerX, centerY - s(20));
 
     ctx.fillStyle = "white";
-    ctx.font = '48px "Early GameBoy"';
-    ctx.fillText("Step away from the screen", centerX - 6, centerY - 100);
+    ctx.font = FONTS.h1;
+    ctx.fillText("Step away from the screen", centerX - s(2), centerY - s(20));
 
     ctx.fillStyle = COLORS.arcadeOrange;
-    ctx.font = '48px "Early GameBoy"';
-    ctx.fillText("Take a look around", centerX, centerY);
+    ctx.font = FONTS.h1;
+    ctx.fillText("Take a look around", centerX, centerY + s(40));
 
     ctx.fillStyle = "white";
-    ctx.font = '48px "Early GameBoy"';
-    ctx.fillText("Take a look around", centerX - 6, centerY);
+    ctx.font = FONTS.h1;
+    ctx.fillText("Take a look around", centerX - s(2), centerY+ s(40));
 
     ctx.fillStyle = COLORS.arcadePurple;
-    ctx.font = '48px "Early GameBoy"';
-    ctx.fillText("Come back when I call you", centerX, centerY + 100);
+    ctx.font = FONTS.h1;
+    ctx.fillText("Come back when I call you", centerX, centerY + s(100));
 
     ctx.fillStyle = "white";
-    ctx.font = '48px "Early GameBoy"';
-    ctx.fillText("Come back when I call you", centerX - 6, centerY + 100);
+    ctx.font = FONTS.h1;
+    ctx.fillText("Come back when I call you", centerX - s(2), centerY + s(100));
 
     // Draw countdown timer (top-right)
     drawTimer(ctx, canvas);

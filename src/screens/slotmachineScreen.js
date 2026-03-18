@@ -3,6 +3,7 @@ import { screenManager } from "../screenManager.js";
 import { models } from "../modelData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { COLORS } from "../colors.js";
+import { drawWrappedText } from "../textLayout.js";
 
 const SLOT_STOP_DELAY_MS = 400;
 const CYCLE_MS = 120;
@@ -21,15 +22,14 @@ const PX = 6; // pixel scale for chunky UI
 let slotMachineFrame = null;
 
 const FRAME_SRC = "assets/images/slotmachine2.png";
-const FRAME_SIZE = 180; // source image is 180x180
+const FRAME_SIZE = 130; // source image is 180x180
 
 // Window rects measured in source-image pixels (tune a little if needed)
 const REEL_WINDOWS_SRC = [
-  { x: 35, y: 68, w: 34, h: 32 }, // left
-  { x: 73, y: 68, w: 34, h: 32 }, // center
-  { x: 111, y: 68, w: 34, h: 32 }, // right
+  { x: 11, y: 51, w: 25, h: 23 }, // left
+  { x: 53, y: 51, w: 25, h: 23 }, // center
+  { x: 92, y: 51, w: 25, h: 23 }, // right
 ];
-
 
 function px(v) {
   return Math.round(v / PX) * PX;
@@ -156,22 +156,25 @@ export function render(ctx, canvas) {
   updateTimer();
 
   ctx.imageSmoothingEnabled = false;
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   const cw = canvas.width;
   const ch = canvas.height;
 
   // Scale slotmachine2.png up to occupy most of the screen
-  const scale = Math.min(cw/ FRAME_SIZE, ch / FRAME_SIZE);
-  const drawW = Math.round(FRAME_SIZE * scale);
-  const drawH = Math.round(FRAME_SIZE * scale);
+  // Keep slot machine square, large, and centered
+  const drawW = Math.round(Math.min(cw, ch));
+  const drawH = drawW;
   const drawX = Math.round((cw - drawW) / 2);
-  const drawY = Math.round(ch * 0.03);
+  const drawY = Math.round((ch - drawH) / 2);
+
+  // Source->screen scale for reel windows
+  const scale = drawW / FRAME_SIZE;
 
   // Draw frame/background
   if (slotMachineFrame && slotMachineFrame.complete && slotMachineFrame.naturalWidth > 0) {
-    ctx.drawImage(slotMachineFrame, 0, 0, cw*0.9, ch*0.9);
+    ctx.drawImage(slotMachineFrame, drawX, drawY, drawW, drawH);
   }
 
   // Draw the 3 model reels inside the frame windows
@@ -188,7 +191,7 @@ export function render(ctx, canvas) {
     const img = model?.image ? imageCache.get(model.image) : null;
 
     // Small inset so frame border remains visible
-    const pad = Math.max(2, Math.round(2 * scale));
+    const pad = Math.max(1, scale);
     const ix = rx + pad;
     const iy = ry + pad;
     const iw = Math.max(1, rw - pad * 2);
@@ -203,9 +206,29 @@ export function render(ctx, canvas) {
       ctx.textBaseline = "middle";
       ctx.fillText(model ? String(model.id) : "?", rx + rw / 2, ry + rh / 2);
     }
+
+    // Show model names only after all slots have fully stopped
+    if (slotsStopped && model?.name) {
+      const labelPadX = Math.round(1 * scale);
+      const labelX = rx - labelPadX;
+      const labelY = ry + rh + Math.round(5 * scale);
+      const labelW = rw + labelPadX * 2;
+
+      ctx.fillStyle = "black";
+      ctx.font = `${Math.max(8, Math.round(2.4 * scale))}px Early GameBoy`;
+      drawWrappedText(
+        ctx,
+        model.name,
+        labelX,
+        ch/2+170,
+        labelW,
+        Math.max(8, Math.round(3.8 * scale)),
+        { align: "center", maxLines: 1, overflow: "ellipsis" }
+      );
+    }
   }
-
-
+  
+  // Draw the instructions text 
   ctx.fillStyle = "white";
   ctx.font = "22px Early GameBoy";
   ctx.textAlign = "center";

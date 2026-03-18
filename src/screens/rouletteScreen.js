@@ -4,6 +4,8 @@ import { POVS } from "../povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { startPlaymode } from "../maxOutput.js";
 import { COLORS } from "../colors.js";
+import { s } from "../uiScale.js";
+import { FONTS } from "../typography.js";
 
 // State variables
 let wheelAngle = 0;
@@ -18,7 +20,7 @@ const INNER_CIRCLE_SRC = "assets/images/innerCircle.png";
 
 const TIMER_SECONDS = 10;
 
-const PIXEL_SCALE = 6; // each drawn pixel becomes a 4×4 block on screen
+const PIXEL_SCALE = s(4); // each drawn pixel becomes a 4×4 block on screen
 let wheelOffscreen = null;
 let wheelOffCtx = null;
 
@@ -175,7 +177,7 @@ function updateWheel() {
       // Move to next screen after a short delay
       const DELAY_MS = 3000;
       setTimeout(() => {
-        screenManager.next({ lastRouletteSector: povId });
+        //screenManager.next({ lastRouletteSector: povId });
       }, DELAY_MS);
     }
   } else {
@@ -284,18 +286,14 @@ function drawCenterImage(ctx, innerImage, mainWheelCX, mainWheelCY, mainCenterR)
   ctx.arc(mainWheelCX, mainWheelCY, imageR, 0, TWO_PI);
   ctx.clip();
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(innerImage, dx, dy, d, d);
+  ctx.drawImage(innerImage, dx-s(2), dy-s(2), d, d);
   ctx.restore();
 }
 
 function drawSectorIcons(ctx, centerX, centerY, radius, wheelAngle) {
-  ctx.fillStyle = "white";
-  ctx.font = "22px Early GameBoy";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
 
   const iconRadius = radius * 0.72;
-  const ICON_SIZE = 60;
+  const ICON_SIZE = s(40);
 
   for (let i = 0; i < NUM_SECTORS; i++) {
     const angle = i * SECTOR_ANGLE + SECTOR_ANGLE / 2 + wheelAngle;
@@ -381,10 +379,10 @@ export function render(ctx, canvas) {
 
     // Hint text
     ctx.fillStyle = "white";
-    ctx.font = "28px Early GameBoy";
+    ctx.font = FONTS.h3
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.fillText("Press A to stop", centerX, centerY + radius + 30);
+    ctx.fillText("Press A to stop", centerX, centerY + radius + s(20));
 
     // Draw countdown timer (top-right)
     drawTimer(ctx, canvas);
