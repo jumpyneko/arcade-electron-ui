@@ -2,8 +2,7 @@ import { screenManager } from "../screenManager.js";
 import { Sprite } from "../sprite.js";
 import { COLORS } from "../colors.js";
 import { audioManager } from "../audioManager.js";
-import { s } from "../uiScale.js";
-import { FONTS } from "../typography.js";
+import { drawText } from "../typography.js";
 
 let backgroundImage = null;
 let coinIsInserted = false;
@@ -46,8 +45,8 @@ export async function onButton(action) {
 }
 
 export function render(ctx, canvas) {
-  const centerX = canvas.width / 2;
-  const centerY = canvas.height / 2;
+  const centerX = Math.round(canvas.width / 2);
+  const centerY = Math.round(canvas.height / 2);
 
   // Draw background image
   if (backgroundImage && backgroundImage.complete) {
@@ -61,31 +60,27 @@ export function render(ctx, canvas) {
   ctx.textAlign = "center";
 
   if (!coinIsInserted) {
-    ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.font = FONTS.h1;
-    ctx.fillText("Insert coin to play", centerX, centerY + s(30));
 
-    ctx.fillStyle = "white";
-    ctx.font = FONTS.h1;
-    ctx.fillText("Insert coin to play", centerX - s(2), centerY + s(30));
-
+    //colourshadow
+    drawText(ctx, "INSERT COIN TO PLAY", centerX + 1, centerY + 15, "h1", { color: COLORS.arcadeYellow});
+    //normal text
+    drawText(ctx, "INSERT COIN TO PLAY", centerX, centerY + 15, "h1");
+    
     coinSprite.update();
-    coinSprite.draw(ctx, centerX, centerY - s(80), s(4));
+    coinSprite.draw(ctx, centerX, centerY - 40, 2);
 
   } else {
 
-    ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.font = FONTS.h1;
-    ctx.fillText("PRESS TO CONTINUE", centerX, centerY - s(100));
-    ctx.fillStyle = "white";
-    ctx.font = FONTS.h1;
-    ctx.fillText("PRESS TO CONTINUE", centerX-s(2), centerY - s(100));
+    //colourshadow
+    drawText(ctx, "PRESS TO CONTINUE", centerX + 1, centerY - 50, "h1", { color: COLORS.arcadeYellow});
+    //normal text
+    drawText(ctx, "PRESS TO CONTINUE", centerX, centerY - 50, "h1");
 
-    ctx.fillStyle = COLORS.arcadeYellow;;
-    ctx.font = FONTS.h2;
-    ctx.fillText("1 Spieler", centerX, centerY - s(30));
-    ctx.fillStyle = COLORS.arcadeOrange;;
-    ctx.fillText("2 Spieler", centerX, centerY + s(30));
+
+    //normal text
+    drawText(ctx, "1 Spieler", centerX, centerY - 15, "h1", { color: COLORS.arcadeYellow});
+    //normal text
+    drawText(ctx, "2 Spieler", centerX, centerY + 15, "h1", { color: COLORS.arcadeOrange});
   }
 }
 

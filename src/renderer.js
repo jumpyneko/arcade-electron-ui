@@ -9,6 +9,7 @@ import * as modelpickerScreen from "./screens/modelpickerScreen.js";
 import * as endScreen from "./screens/endScreen.js";
 import * as inputManager from "./inputManager.js";
 import { audioManager } from "./audioManager.js";
+import { initTypography } from "./typography.js";
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
 
@@ -19,6 +20,8 @@ audioManager.registerMany({
 });
 
 audioManager.preload();
+
+initTypography().catch(console.error);
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -54,8 +57,8 @@ function resizeCanvas() {
   canvas.style.width = `${displayWidth}px`;
   canvas.style.height = `${displayHeight}px`;
   canvas.style.position = "absolute";
-  canvas.style.left = `${(windowWidth - displayWidth) / 2}px`;
-  canvas.style.top = `${(windowHeight - displayHeight) / 2}px`;
+  canvas.style.left = `${Math.round((windowWidth - displayWidth) / 2)}px`;
+  canvas.style.top  = `${Math.round((windowHeight - displayHeight) / 2)}px`;
 }
 
 function drawCrtOverlay(ctx, canvas, t) {

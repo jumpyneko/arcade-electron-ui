@@ -140,3 +140,44 @@ function clipLineWithEllipsis(ctx, text, maxWidth) {
       breakWords,
     });
   }
+
+  export function drawPixelText(ctx, text, x, y, font, color, alphaThreshold = 80) {
+    const off = document.createElement("canvas");
+    const offCtx = off.getContext("2d");
+  
+    offCtx.font = font;
+    offCtx.textBaseline = "top";
+  
+    const metrics = offCtx.measureText(text);
+    const w = Math.ceil(metrics.width) + 8;
+    const h = Math.ceil(parseInt(font, 10) || 24) + 8;
+  
+    off.width = w;
+    off.height = h;
+  
+    offCtx.clearRect(0, 0, w, h);
+    offCtx.imageSmoothingEnabled = false;
+    offCtx.font = font;
+    offCtx.fillStyle = color;
+    offCtx.textBaseline = "top";
+    offCtx.fillText(text, 4, 4);
+  
+    const img = offCtx.getImageData(0, 0, w, h);
+    const data = img.data;
+  
+    // Härten: Alpha auf 0/255 schalten
+    for (let i = 0; i < data.length; i += 4) {
+      const a = data[i + 3];
+      if (a > alphaThreshold) {
+        data[i + 3] = 255;
+      } else {
+        data[i + 3] = 0;
+      }
+    }
+  
+    offCtx.putImageData(img, 0, 0);
+  
+    ctx.imageSmoothingEnabled = false;
+    // x/y als Zentrum wie bei textAlign:center
+    ctx.drawImage(off, Math.round(x - w / 2), Math.round(y - h / 2));
+  }

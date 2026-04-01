@@ -4,6 +4,8 @@ import { models } from "../modelData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { COLORS } from "../colors.js";
 import { drawWrappedText } from "../textLayout.js";
+import { FONTS } from "../typography.js";
+import { s } from "../uiScale.js";
 
 const SLOT_STOP_DELAY_MS = 400;
 const CYCLE_MS = 120;
@@ -200,8 +202,8 @@ export function render(ctx, canvas) {
     if (img && img.complete && img.naturalWidth > 0) {
       ctx.drawImage(img, ix, iy, iw, ih);
     } else {
-      ctx.fillStyle = "white";
-      ctx.font = `${Math.max(14, Math.round(14 * scale))}px monospace`;
+      ctx.fillStyle = "green";
+      ctx.font = FONTS.h3_names;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(model ? String(model.id) : "?", rx + rw / 2, ry + rh / 2);
@@ -214,13 +216,13 @@ export function render(ctx, canvas) {
       const labelY = ry + rh + Math.round(5 * scale);
       const labelW = rw + labelPadX * 2;
 
-      ctx.fillStyle = "black";
-      ctx.font = `${Math.max(8, Math.round(2.4 * scale))}px Early GameBoy`;
+      ctx.fillStyle = "green";
+      ctx.font = FONTS.h3_names;
       drawWrappedText(
         ctx,
         model.name,
         labelX,
-        ch/2+170,
+        ch/2+s(90),
         labelW,
         Math.max(8, Math.round(3.8 * scale)),
         { align: "center", maxLines: 1, overflow: "ellipsis" }
@@ -230,14 +232,14 @@ export function render(ctx, canvas) {
   
   // Draw the instructions text 
   ctx.fillStyle = "white";
-  ctx.font = "22px Early GameBoy";
+  ctx.font = FONTS.hint;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
   if (isSpinning && !isStopping) {
-    ctx.fillText("PRESS D TO STOP", cw / 2, ch / 2 + 400);
+    ctx.fillText("PRESS D TO STOP", cw / 2, ch / 2 + s(200));
   } else if (slotsStopped) {
-    ctx.fillText("E = CONTINUE    JOYSTICK DOWN = RESHUFFLE", cw / 2, ch / 2 + 400);
+    ctx.fillText("E = CONTINUE    JOYSTICK DOWN = RESHUFFLE", cw / 2, ch / 2 + s(200));
   }
 
   drawTimer(ctx, canvas);

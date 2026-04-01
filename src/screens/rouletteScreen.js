@@ -4,8 +4,7 @@ import { POVS } from "../povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { startPlaymode } from "../maxOutput.js";
 import { COLORS } from "../colors.js";
-import { s } from "../uiScale.js";
-import { FONTS } from "../typography.js";
+import { drawText } from "../typography.js";
 
 // State variables
 let wheelAngle = 0;
@@ -16,11 +15,11 @@ let spinSpeed = 0;
 let deceleration = 0.02;
 let targetPovId = null; // POV id received from Max (via nextPOV)
 let innerCircleImage = null;
-const INNER_CIRCLE_SRC = "assets/images/innerCircle.png";
+const INNER_CIRCLE_SRC = "assets/images/innercircle.png";
 
-const TIMER_SECONDS = 10;
+const TIMER_SECONDS = 20;
 
-const PIXEL_SCALE = s(4); // each drawn pixel becomes a 4×4 block on screen
+const PIXEL_SCALE = 2; // each drawn pixel becomes a 4×4 block on screen
 let wheelOffscreen = null;
 let wheelOffCtx = null;
 
@@ -177,7 +176,7 @@ function updateWheel() {
       // Move to next screen after a short delay
       const DELAY_MS = 3000;
       setTimeout(() => {
-        //screenManager.next({ lastRouletteSector: povId });
+        screenManager.next({ lastRouletteSector: povId });
       }, DELAY_MS);
     }
   } else {
@@ -286,14 +285,14 @@ function drawCenterImage(ctx, innerImage, mainWheelCX, mainWheelCY, mainCenterR)
   ctx.arc(mainWheelCX, mainWheelCY, imageR, 0, TWO_PI);
   ctx.clip();
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(innerImage, dx-s(2), dy-s(2), d, d);
+  ctx.drawImage(innerImage, dx-1, dy-1, d, d);
   ctx.restore();
 }
 
 function drawSectorIcons(ctx, centerX, centerY, radius, wheelAngle) {
 
   const iconRadius = radius * 0.72;
-  const ICON_SIZE = s(40);
+  const ICON_SIZE = 20;
 
   for (let i = 0; i < NUM_SECTORS; i++) {
     const angle = i * SECTOR_ANGLE + SECTOR_ANGLE / 2 + wheelAngle;
@@ -377,12 +376,8 @@ export function render(ctx, canvas) {
     drawCenterImage(ctx, innerCircleImage, mainWheelCX + 1.5, mainWheelCY + 1.5, mainCenterR);
     drawSectorIcons(ctx, centerX, centerY, radius, wheelAngle);
 
-    // Hint text
-    ctx.fillStyle = "white";
-    ctx.font = FONTS.h3
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    ctx.fillText("Press A to stop", centerX, centerY + radius + s(20));
+    //Hint text
+    drawText(ctx, "PRESS A TO STOP", centerX, centerY + radius + 10, "h2");
 
     // Draw countdown timer (top-right)
     drawTimer(ctx, canvas);

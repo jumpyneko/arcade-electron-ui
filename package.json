@@ -1,10 +1,11 @@
 {
   "name": "arcade-electron",
   "version": "1.0.0",
-  "description": "",
+  "description": "Arcade Electron App",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist:win": "electron-builder --win --x64"
   },
   "keywords": [],
   "author": "Chiara Kanya",
@@ -17,5 +18,21 @@
   "dependencies": {
     "ocs": "^1.1.0",
     "osc": "^2.4.5"
+  },
+  "build": {
+    "appId": "com.modelnation.console",
+    "productName": "Model Nation",
+    "files": [
+      "**/*",
+      "!dist/**",
+      "!out/**"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }
