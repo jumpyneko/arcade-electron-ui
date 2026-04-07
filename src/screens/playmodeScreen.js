@@ -69,8 +69,7 @@ export function render(ctx, canvas) {
   const displayName = currentPov ? currentPov.name : "Unknown";
   drawText(ctx, displayName, 12, 12, "h2", { align: "left", color: "white" });
 
-  drawText(ctx, "USE ARCADE BUTTONS AND JOYSTICKS TO PLAY", 12, canvas.height - 12, "h2", { align: "left", color: "grey" }
-  );
+  drawText(ctx, "use arcade buttons and joystick to play", 12, canvas.height - 12, "h2", { align: "left", color: "grey" });
 
   if (targetText && visibleLength < targetText.length) {
     const now = performance.now();
@@ -82,8 +81,8 @@ export function render(ctx, canvas) {
 
   const displayText = targetText.slice(0, visibleLength);
   if (displayText) {
-    const wrapped = wrapBitmapText(displayText, 34);
-    drawText(ctx, wrapped, centerX, centerY, "h1", { align: "center", color: COLORS.arcadeYellow});
+    const wrapped = wrapBitmapText(displayText, 24);
+    drawText(ctx, wrapped, centerX, centerY - 20, "h2", { align: "center", color: COLORS.arcadeYellow});
   }
 
   if (getRemaining() <= 10) {

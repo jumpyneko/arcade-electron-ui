@@ -3,8 +3,7 @@ import { screenManager } from "../screenManager.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
 import { COLORS } from "../colors.js";
 import { Sprite } from "../sprite.js";
-import { FONTS } from "../typography.js";
-import { s } from "../uiScale.js";
+import { drawText } from "../typography.js";
 
 const TIMER_SECONDS = 100;
 let eyeSprite = null;
@@ -32,33 +31,24 @@ export function init() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     eyeSprite.update();
-    eyeSprite.draw(ctx, centerX, centerY - s(120), s(4));
+    eyeSprite.draw(ctx, centerX, centerY -60, 2);
 
     ctx.textAlign = "center";
-    
-    ctx.fillStyle = COLORS.arcadeYellow;
-    ctx.font = FONTS.h1;
-    ctx.fillText("Step away from the screen", centerX, centerY - s(20));
 
-    ctx.fillStyle = "white";
-    ctx.font = FONTS.h1;
-    ctx.fillText("Step away from the screen", centerX - s(2), centerY - s(20));
+    //colourshadow
+    drawText(ctx, "Step away from the screen", centerX + 1, centerY - 10, "h1", { color: COLORS.arcadeYellow});
+    //normal text
+    drawText(ctx, "Step away from the screen", centerX, centerY - 10, "h1");
 
-    ctx.fillStyle = COLORS.arcadeOrange;
-    ctx.font = FONTS.h1;
-    ctx.fillText("Take a look around", centerX, centerY + s(40));
+    //colourshadow
+    drawText(ctx, "Take a look around", centerX + 1, centerY + 20, "h1", { color: COLORS.arcadeOrange});
+    //normal text
+    drawText(ctx, "Take a look around", centerX, centerY + 20, "h1");
 
-    ctx.fillStyle = "white";
-    ctx.font = FONTS.h1;
-    ctx.fillText("Take a look around", centerX - s(2), centerY+ s(40));
-
-    ctx.fillStyle = COLORS.arcadePurple;
-    ctx.font = FONTS.h1;
-    ctx.fillText("Come back when I call you", centerX, centerY + s(100));
-
-    ctx.fillStyle = "white";
-    ctx.font = FONTS.h1;
-    ctx.fillText("Come back when I call you", centerX - s(2), centerY + s(100));
+    //colourshadow
+    drawText(ctx, "Come back when I call you", centerX + 1, centerY + 50, "h1", { color: COLORS.arcadePurple});
+    //normal text
+    drawText(ctx, "Come back when I call you", centerX, centerY + 50, "h1");
 
     // Draw countdown timer (top-right)
     drawTimer(ctx, canvas);
