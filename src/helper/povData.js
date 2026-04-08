@@ -1,5 +1,5 @@
 // src/povData.js
-import rawPovs from "./data/povData.json" with { type: "json" };
+import rawPovs from "../data/povData.json" with { type: "json" };
 
 export const POVS = rawPovs.map((p) => ({
   ...p,

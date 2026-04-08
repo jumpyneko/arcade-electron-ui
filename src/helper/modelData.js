@@ -1,5 +1,5 @@
 // src/modelData.js
-import rawModels from "./data/modelData.json" with { type: "json" };
+import rawModels from "../data/modelData.json" with { type: "json" };
 
   export const models = rawModels.map(m => ({
     ...m,

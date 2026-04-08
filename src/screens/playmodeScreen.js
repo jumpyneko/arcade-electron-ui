@@ -1,8 +1,8 @@
-import { screenManager } from "../screenManager.js";
-import { getPovById } from "../povData.js";
-import { startTimer, stopTimer, updateTimer, drawTimer, getRemaining } from "../timer.js";
-import { drawText } from "../typography.js";
-import { COLORS } from "../colors.js";
+import { screenManager } from "../helper/screenManager.js";
+import { getPovById } from "../helper/povData.js";
+import { startTimer, stopTimer, updateTimer, drawTimer, getRemaining } from "../helper/timer.js";
+import { drawText } from "../helper/typography.js";
+import { COLORS } from "../helper/colors.js";
 
 let currentPov = null;
 let targetText = "";
@@ -82,7 +82,7 @@ export function render(ctx, canvas) {
   const displayText = targetText.slice(0, visibleLength);
   if (displayText) {
     const wrapped = wrapBitmapText(displayText, 24);
-    drawText(ctx, wrapped, centerX, centerY - 20, "h2", { align: "center", color: COLORS.arcadeYellow});
+    drawText(ctx, wrapped, centerX, centerY - 20, "h1", { align: "center", color: COLORS.arcadeYellow});
   }
 
   if (getRemaining() <= 10) {

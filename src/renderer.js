@@ -1,5 +1,5 @@
 // src/renderer.js
-import { screenManager } from "./screenManager.js";
+import { screenManager } from "./helper/screenManager.js";
 import * as startScreen from "./screens/startScreen.js";
 import * as rouletteScreen from "./screens/rouletteScreen.js";
 import * as playmodeScreen from "./screens/playmodeScreen.js";
@@ -7,9 +7,9 @@ import * as infomodeScreen from "./screens/infomodeScreen.js";
 import * as slotmachineScreen from "./screens/slotmachineScreen.js";
 import * as modelpickerScreen from "./screens/modelpickerScreen.js";
 import * as endScreen from "./screens/endScreen.js";
-import * as inputManager from "./inputManager.js";
-import { audioManager } from "./audioManager.js";
-import { initTypography } from "./typography.js";
+import * as inputManager from "./communication/inputManager.js";
+import { audioManager } from "./helper/audioManager.js";
+import { initTypography } from "./helper/typography.js";
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
 

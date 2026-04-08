@@ -1,5 +1,5 @@
 // src/screenManager.js
-import { screenChanged } from "./maxOutput.js";
+import { screenChanged } from "../communication/maxOutput.js";
 
 // Define the screen flow sequence
 const SCREEN_SEQUENCE = [

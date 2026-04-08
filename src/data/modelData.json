@@ -1,11 +1,10 @@
 [
   {
     "id": 1,
-    "name": "Achao Church",
-    "image": "assets/placeHolderModels/achaoChurch.png",
-    "description": "Wooden religious structure, assembled without nails using local carpentry techniques. Part of a network of churches embedded in rural landscapes and community life.",
+    "name": "Wooden Church",
+    "image": "assets/models/model1.png",
+    "description": "Small religious building for rural areas. A humble house for faith, soft prayers and community life.",
     "outro": "Wooden religious structure, assembled without nails using local carpentry techniques. Part of a network of churches embedded in rural landscapes and community life.",
-    "category": "Fate",
     "attributes": {
       "patrioticHeritage": 0.8,
       "nationalImage": 0.6,
@@ -18,11 +17,10 @@
   },
   {
     "id": 2,
-    "name": "Amazon Spheres",
-    "image": "assets/placeHolderModels/amazoneSpheres.png",
-    "description": "Glass-domed interiors house thousands of plants, forming a controlled microclimate where corporate workspaces merge with curated nature, staging productivity within an artificial, carefully maintained ecosystem.",
+    "name": "Eco-Office Complex",
+    "image": "assets/models/model2.png",
+    "description": "Glass coworking complex blending workspaces with greenery. A place to focus, produce, and be connected with nature.",
     "outro": "Glass-domed interiors house thousands of plants, forming a controlled microclimate where corporate workspaces merge with curated nature, staging productivity within an artificial, carefully maintained ecosystem.",
-    "category": "Progress",
     "attributes": {
       "patrioticHeritage": -0.7,
       "nationalImage": 0.9,
@@ -35,11 +33,10 @@
   },
   {
     "id": 3,
-    "name": "Antonia's Rocket Factory",
-    "image": "assets/placeHolderModels/todo.png",
-    "description": "Small-scale workshop organized for the fabrication, repair, and storage of miniatures and plastiglomerates, equipped with worktables, tools, and material shelves for manual production.",
+    "name": "Art Workshop",
+    "image": "assets/models/model25.png",
+    "description": "Former rocket factory re-purposed into artists workshops. For people who like building, repairing and gardening in a rural setting.",
     "outro": "Small-scale workshop organized for the fabrication, repair, and storage of miniatures and plastiglomerates, equipped with worktables, tools, and material shelves for manual production.",
-    "category": "Imaginary",
     "attributes": {
       "patrioticHeritage": -0.5,
       "nationalImage": 0.2,
@@ -52,11 +49,10 @@
   },
   {
     "id": 4,
-    "name": "Mundomagico's Araucanian Reserve",
-    "image": "assets/placeHolderModels/araucanianReserve.png",
-    "description": "Protected territory associated with Indigenous land use, combining forest, agriculture, and spiritual significance within a managed natural environment.",
+    "name": "Indigenous Settlement",
+    "image": "assets/models/model1.png",
+    "description": "Indigenous settelment on the perpheries of The Model Nation. Placed in a protected natural area far from industrial activities.",
     "outro": "Protected territory associated with Indigenous land use, combining forest, agriculture, and spiritual significance within a managed natural environment.",
-    "category": "Power",
     "attributes": {
       "patrioticHeritage": 0.1,
       "nationalImage": -0.3,
@@ -69,11 +65,10 @@
   },
   {
     "id": 5,
-    "name": "Arauco Cellulose Factory",
-    "image": "assets/placeHolderModels/araucoCelluloseFactory.png",
-    "description": "Large-scale industrial complex dedicated to wood processing and cellulose production, linked to forestry extraction, logistics networks, and environmental transformation.",
+    "name": "Cellulose Factory",
+    "image": "assets/models/model2.png",
+    "description": "Industrial facility designed to extract cellulose from plant sources to produce materials such as paper, textiles or construction insulation.",
     "outro": "Large-scale industrial complex dedicated to wood processing and cellulose production, linked to forestry extraction, logistics networks, and environmental transformation.",
-    "category": "Progress",
     "attributes": {
       "patrioticHeritage": -0.7,
       "nationalImage": -0.3,
@@ -86,11 +81,10 @@
   },
   {
     "id": 6,
-    "name": "Atacama Large Millimeter Array Observatory",
-    "image": "assets/placeHolderModels/alma.png",
-    "description": "High-altitude scientific facility composed of distributed radio antennas, designed for astronomical observation and data collection in extreme desert conditions.",
+    "name": "Radio Telescope Array",
+    "image": "assets/models/model25.png",
+    "description": "Astronomical interferometer of 66 radio telescopes that provides insights on star birth and detailed imaging of local star and planet formation.",
     "outro": "High-altitude scientific facility composed of distributed radio antennas, designed for astronomical observation and data collection in extreme desert conditions.",
-    "category": "Progress",
     "attributes": {
       "patrioticHeritage": 0.0,
       "nationalImage": 0.85,
@@ -103,11 +97,10 @@
   },
   {
     "id": 7,
-    "name": "Dismaland",
-    "image": "assets/placeHolderModels/dismaland.png",
-    "description": "Temporary amusement park installation mimicking familiar attractions while exposing their mechanisms, using decay, irony, and controlled dysfunction as its core structure.",
+    "name": "Temporary Theme Park",
+    "image": "assets/models/model1.png",
+    "description": "Temporary family theme park filled with attractions, cotton candy, ice cream, and lively characters.",
     "outro": "Temporary amusement park installation mimicking familiar attractions while exposing their mechanisms, using decay, irony, and controlled dysfunction as its core structure.",
-    "category": "Imaginary",
     "attributes": {
       "patrioticHeritage": -0.6,
       "nationalImage": 0.75,
@@ -120,9 +113,9 @@
   },
   {
     "id": 8,
-    "name": "Gruene Bunker",
-    "image": "assets/placeHolderModels/grüneBunker.png",
-    "description": "Massive concrete wartime structure later converted to civilian use, combining defensive architecture with layered adaptations across decades.",
+    "name": "Green Bunker",
+    "image": "assets/models/model2.png",
+    "description": "Re-purposed war shelter turned into a green complex, including a climbing gym, concert venue, techno club and public rooftop park.",
     "outro": "Massive concrete wartime structure later converted to civilian use, combining defensive architecture with layered adaptations across decades.",
     "category": "Imaginary",
     "attributes": {
@@ -137,11 +130,10 @@
   },
   {
     "id": 9,
-    "name": "Alicia's Roturas Country House",
-    "image": "assets/placeHolderModels/countryHouse.png",
-    "description": "Abandomed stone house. Typical construction of the west spanish countryside. Represents a ghosts of an era that is over where people use to live there int he summer together with their donkeys and pigs. Where there was a lot of poverty but also a thriving community of people that helped each other and kids that runned around those mountains. Evokes at the same time an idealised past that popoluates lots of minds of our time and all the potentiallity of rehabilitating these places and building up a dream rural futurism. Where people have shelters close to nature and enjoy working together and celebrating live.",
+    "name": "Country House",
+    "image": "assets/models/model25.png",
+    "description": "Little ruined stone country house in the middle of the mountains. A place to be rebuilt and become a peaceful retreat.",
     "outro": "Abandomed stone house. Typical construction of the west spanish countryside. Represents a ghosts of an era that is over where people use to live there int he summer together with their donkeys and pigs. Where there was a lot of poverty but also a thriving community of people that helped each other and kids that runned around those mountains. Evokes at the same time an idealised past that popoluates lots of minds of our time and all the potentiallity of rehabilitating these places and building up a dream rural futurism. Where people have shelters close to nature and enjoy working together and celebrating live.",
-    "category": "Progress, Identity",
     "attributes": {
       "patrioticHeritage": 0.3,
       "nationalImage": -0.2,
@@ -154,11 +146,10 @@
   },
   {
     "id": 10,
-    "name": "Bukele's CECOT Anti-terrorism Prison",
-    "image": "assets/placeHolderModels/bukele.png",
-    "description": "High-security detention complex designed for large-scale incarceration, organized around surveillance, isolation, and strict spatial control.",
+    "name": "Anti-Terrorism Prison",
+    "image": "assets/models/model1.png",
+    "description": "High-security detention complex to permanently contain individuals who deemed a threat to peace in the Model Nation.",
     "outro": "High-security detention complex designed for large-scale incarceration, organized around surveillance, isolation, and strict spatial control.",
-    "category": "Fate",
     "attributes": {
       "patrioticHeritage": -0.4,
       "nationalImage": 0.5,

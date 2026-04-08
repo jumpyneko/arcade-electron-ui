@@ -2,8 +2,8 @@
 // input from max to js
 
 // keyboard navigation as a default
-import { screenManager } from "./screenManager.js";
-import { changeIsPlaced } from "./modelData.js";
+import { screenManager } from "../helper/screenManager.js";
+import { changeIsPlaced } from "../helper/modelData.js";
 import { modelPlacedChanged } from "./maxOutput.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---

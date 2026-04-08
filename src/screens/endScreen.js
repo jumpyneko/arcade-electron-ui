@@ -1,8 +1,8 @@
-import { screenManager } from "../screenManager.js";
-import { models, getModelById } from "../modelData.js";
-import { drawWrappedText } from "../textLayout.js";
-import { COLORS } from "../colors.js";
-import { Sprite } from "../sprite.js";
+import { screenManager } from "../helper/screenManager.js";
+import { models, getModelById } from "../helper/modelData.js";
+import { drawWrappedText } from "../helper/textLayout.js";
+import { COLORS } from "../helper/colors.js";
+import { Sprite } from "../helper/sprite.js";
 
 
 let currentModel = null;

@@ -1,9 +1,9 @@
 // src/screens/infomodeScreen.js
-import { screenManager } from "../screenManager.js";
-import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
-import { COLORS } from "../colors.js";
-import { Sprite } from "../sprite.js";
-import { drawText } from "../typography.js";
+import { screenManager } from "../helper/screenManager.js";
+import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
+import { COLORS } from "../helper/colors.js";
+import { Sprite } from "../helper/sprite.js";
+import { drawText } from "../helper/typography.js";
 
 const TIMER_SECONDS = 100;
 let eyeSprite = null;

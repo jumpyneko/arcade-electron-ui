@@ -1,10 +1,9 @@
 // src/screens/slotmachineScreen.js
-import { screenManager } from "../screenManager.js";
-import { models } from "../modelData.js";
-import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
-import { Sprite } from "../sprite.js";
-import { drawWrappedText } from "../textLayout.js";
-import { drawText } from "../typography.js";
+import { screenManager } from "../helper/screenManager.js";
+import { models } from "../helper/modelData.js";
+import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
+import { Sprite } from "../helper/sprite.js";
+import { drawText } from "../helper/typography.js";
 
 const SLOT_STOP_DELAY_MS = 400;
 const CYCLE_MS = 120;
@@ -18,17 +17,12 @@ let isSpinning = true;
 let isStopping = false;
 let slotsStopped = false; // true after all 3 slots have landed
 let cycleTimer = null;
-const PX = 6; // pixel scale for chunky UI
 let slotSprite = null;
 
-//const FRAME_SRC = "assets/images/slotmachine5.png";
-//const FRAME_SIZE = 180; // source image is 180x180
 
-const LOGICAL_W = 320;
-const LOGICAL_H = 240;
-const THUMB = 48; // jedes Modell genau 60×60
-// Obere linke Ecke jedes 60×60-Feldes (Canvas-Koordinaten 0..320, 0..240)
-// Werte an deine Grafik anpassen, bis es passt:
+const modelSize = 48; // every model is 48x48
+
+// upper left corner of every 48x48 model
 const REEL_TOP_LEFT = [
   { x: 67, y: 120 },   // links
   { x: 136, y: 120 }, // mitte
@@ -138,7 +132,6 @@ export function onJoystick2(x, y) {
 
 // --- Rendering ---
 export function render(ctx, canvas) {
-  updateTimer();
 
   ctx.imageSmoothingEnabled = false;
   updateTimer();
@@ -161,30 +154,16 @@ export function render(ctx, canvas) {
     const { x, y } = REEL_TOP_LEFT[i];
     const ix = Math.round(x);
     const iy = Math.round(y);
-    const iw = THUMB;
-    const ih = THUMB;
+    const iw = modelSize;
+    const ih = modelSize;
     const model = slotDisplayModels[i];
-    const img = model?.image ? imageCache.get(model.image) : null;
+    const modelSprite = new Sprite(model.image, 48, 48, 2, 8);
 
-    if (img && img.complete && img.naturalWidth > 0) {
-      ctx.drawImage(img, ix, iy, iw, ih);
-    }
-    if (slotsStopped && model?.name) {
-     // drawText(ctx, model.name, ix, iy + ih + 4, "h2", { align: "center"});
-     
-    /*  drawWrappedText(
-        ctx,
-        model.name,
-        ix,
-        iy + ih + 4,
-        iw,
-        10, // Zeilenhöhe – ggf. anpassen
-        { align: "center", maxLines: 2, overflow: "ellipsis" }
-      );*/
-    }
+    modelSprite.currentFrame = 0;
+    modelSprite.draw(ctx, ix + 24, iy + 24, 1);
   }
 
-  // Hinweise – cw/ch statt undefined:
+  // draw hint text
   if (isSpinning && !isStopping) {
     drawText(ctx, "PRESS D TO STOP", centerX, centerY + 100, "h2", { align: "center"});
   } else if (slotsStopped) {
@@ -201,4 +180,8 @@ export function cleanup() {
     cycleTimer = null;
   }
   slotsStopped = false;
+  isSpinning = false;
+  isStopping = false;
+  modelsOutput = [];
+  slotDisplayModels = [null, null, null];
 }

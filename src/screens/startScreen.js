@@ -1,8 +1,8 @@
-import { screenManager } from "../screenManager.js";
-import { Sprite } from "../sprite.js";
-import { COLORS } from "../colors.js";
-import { audioManager } from "../audioManager.js";
-import { drawText } from "../typography.js";
+import { screenManager } from "../helper/screenManager.js";
+import { Sprite } from "../helper/sprite.js";
+import { COLORS } from "../helper/colors.js";
+import { audioManager } from "../helper/audioManager.js";
+import { drawText } from "../helper/typography.js";
 
 let backgroundImage = null;
 let coinIsInserted = false;

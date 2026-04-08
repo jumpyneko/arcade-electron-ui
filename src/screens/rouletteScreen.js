@@ -1,10 +1,10 @@
 // src/screens/rouletteScreen.js
-import { screenManager } from "../screenManager.js";
-import { POVS } from "../povData.js";
-import { startTimer, stopTimer, updateTimer, drawTimer } from "../timer.js";
-import { startPlaymode } from "../maxOutput.js";
-import { COLORS } from "../colors.js";
-import { drawText } from "../typography.js";
+import { screenManager } from "../helper/screenManager.js";
+import { POVS } from "../helper/povData.js";
+import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
+import { startPlaymode } from "../communication/maxOutput.js";
+import { COLORS } from "../helper/colors.js";
+import { drawText } from "../helper/typography.js";
 
 // State variables
 let wheelAngle = 0;
