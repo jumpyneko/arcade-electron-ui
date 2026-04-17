@@ -1,7 +1,7 @@
 import { screenManager } from "../helper/screenManager.js";
 import { getPovById } from "../helper/povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer, getRemaining } from "../helper/timer.js";
-import { drawText } from "../helper/typography.js";
+import { drawText, wrapBitmapText } from "../helper/typography.js";
 import { COLORS } from "../helper/colors.js";
 
 let currentPov = null;
@@ -10,25 +10,6 @@ let visibleLength = 0;
 let lastCharTime = 0;
 const CHAR_DELAY = 40;
 const TIMER_SECONDS = 120;
-
-function wrapBitmapText(text, maxCharsPerLine = 34) {
-  const words = text.split(" ");
-  const lines = [];
-  let line = "";
-
-  for (const w of words) {
-    const test = line ? `${line} ${w}` : w;
-    if (test.length > maxCharsPerLine) {
-      if (line) lines.push(line);
-      line = w;
-    } else {
-      line = test;
-    }
-  }
-  if (line) lines.push(line);
-
-  return lines.join("\n");
-}
 
 export function init() {
   const selectedId = screenManager.sharedData.lastRouletteSector ?? 1;

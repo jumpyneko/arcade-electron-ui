@@ -21,6 +21,42 @@ export function drawText(ctx, text, x, y, styleKey = "body", overrides = {}) {
   drawBitmapText(ctx, bitmapFont, text, Math.round(x), Math.round(y), style);
 }
 
+/**
+ * Word-wrap for bitmap text used with drawText(): joins lines with \n.
+ * Long words without spaces are hard-split at maxCharsPerLine.
+ */
+export function wrapBitmapText(text, maxCharsPerLine = 34) {
+  const maxChars = Math.max(1, Math.floor(maxCharsPerLine));
+  const words = String(text ?? "")
+    .split(/\s+/)
+    .filter(Boolean);
+  const lines = [];
+  let line = "";
+
+  const pushLong = (w) => {
+    let rest = w;
+    while (rest.length > maxChars) {
+      lines.push(rest.slice(0, maxChars));
+      rest = rest.slice(maxChars);
+    }
+    return rest;
+  };
+
+  for (const w of words) {
+    const piece = w.length > maxChars ? pushLong(w) : w;
+    if (!piece) continue;
+    const test = line ? `${line} ${piece}` : piece;
+    if (test.length > maxChars) {
+      if (line) lines.push(line);
+      line = piece;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines.join("\n");
+}
+
 export const FONTS = {
   h1: `16px "04B03"`,
   h2: `${s(22)}px "Early GameBoy"`,

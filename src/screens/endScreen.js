@@ -1,8 +1,9 @@
 import { screenManager } from "../helper/screenManager.js";
-import { models, getModelById } from "../helper/modelData.js";
+import { getModelById } from "../helper/modelData.js";
 import { drawWrappedText } from "../helper/textLayout.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
+import { drawText, wrapBitmapText } from "../helper/typography.js";
 
 
 let currentModel = null;
@@ -17,17 +18,15 @@ export function init() {
   // Load background image
   backgroundImage = new Image();
   backgroundImage.src = "assets/images/blue_bg.png";
-  modelSprite = new Sprite("assets/sprites/model_place_25.png", 32, 32, 2, 14);
+  modelSprite = new Sprite(currentModel.image, 48, 48, 2, 8);
 }
 
 export function render(ctx, canvas) {
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
 
-  const displayName = currentModel.name;
-
    // Draw background image
-  if (backgroundImage && backgroundImage.complete) {
+  if (!backgroundImage && backgroundImage.complete) {
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(backgroundImage, 0, 0, 180, 180, 0, 0, canvas.width, canvas.height);
   } else {
@@ -38,45 +37,28 @@ export function render(ctx, canvas) {
   //Draw model sprite
   if (modelSprite) {
     modelSprite.update(); // animate like the coin
-    modelSprite.draw(ctx, centerX, centerY - 200, 8); // position above text
+    modelSprite.draw(ctx, centerX, centerY -20, 2, 8); // position above text
   }
 
-  ctx.textAlign = "center";
-
-  // shared text area
-  const maxWidth = canvas.width - 220;
-  const boxX = (canvas.width - maxWidth) / 2;
-
   // 1) Thanks for choosing
-  ctx.fillStyle = "white";
-  ctx.font = '44px "Early GameBoy"';
-  ctx.fillText("Thanks for choosing", centerX, centerY);
+  drawText(ctx, "Thanks for choosing", centerX, 30, "h1", {
+    align: "center",
+    color: "white",
+  });
 
-  // 2) Model name in different color
-  ctx.fillStyle = COLORS.arcadeYellow; // or COLORS.arcadeOrange
-  ctx.font = '48px "Early GameBoy"';
-  drawWrappedText(
-    ctx,
-    currentModel.name,
-    boxX,
-    centerY + 100,
-    maxWidth,
-    48,
-    { align: "center", maxLines: 3, overflow: "ellipsis" }
-  );
+  // 2) Model name (wrapped + yellow)
+  const nameWrapped = wrapBitmapText(currentModel.name, 24);
+  drawText(ctx, nameWrapped, centerX, centerY + 40, "h1", {
+    align: "center",
+    color: COLORS.arcadeYellow,
+  });
 
-  // 3) Wrapped instruction paragraph
-  ctx.fillStyle = "white";
-  ctx.font = '34px "Early GameBoy"';
-  drawWrappedText(
-    ctx,
-    currentModel.outro,
-    boxX,
-    centerY + 200,
-    maxWidth,
-    48,
-    { align: "center", maxLines: 3, overflow: "ellipsis" }
-  );
+  // 3) Outro (wrapped + white) — adjust Y so it sits below the name
+  const outroWrapped = wrapBitmapText(currentModel.outro, 48);
+  drawText(ctx, outroWrapped, centerX, centerY + 60, "h2", {
+    align: "center",
+    color: "white",
+  });
 
 }
 

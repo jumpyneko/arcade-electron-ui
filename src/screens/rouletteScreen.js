@@ -5,6 +5,7 @@ import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.j
 import { startPlaymode } from "../communication/maxOutput.js";
 import { COLORS } from "../helper/colors.js";
 import { drawText } from "../helper/typography.js";
+import { Sprite } from "../helper/sprite.js";
 
 // State variables
 let wheelAngle = 0;
@@ -17,7 +18,7 @@ let targetPovId = null; // POV id received from Max (via nextPOV)
 let innerCircleImage = null;
 const INNER_CIRCLE_SRC = "assets/images/innercircle.png";
 
-const TIMER_SECONDS = 20;
+const TIMER_SECONDS = 200;
 
 const PIXEL_SCALE = 2; // each drawn pixel becomes a 4×4 block on screen
 let wheelOffscreen = null;
@@ -176,7 +177,7 @@ function updateWheel() {
       // Move to next screen after a short delay
       const DELAY_MS = 3000;
       setTimeout(() => {
-        screenManager.next({ lastRouletteSector: povId });
+        //screenManager.next({ lastRouletteSector: povId });
       }, DELAY_MS);
     }
   } else {
@@ -185,7 +186,10 @@ function updateWheel() {
   }
 }
 
-function drawWheelPixels(data, offW, offH, sCX, sCY, sR, centerCircleR, wheelAngle) {
+function drawWheelPixels(data, offW, offH, sCX, sCY, sR, centerCircleR, wheelAngle, opts = {}) {
+  const fillSectors = opts.fillSectors !== false; // default: true
+  const fillHub = opts.fillHub !== false;       // default: true
+
   const [color1R, color1G, color1B] = hexToRgb(COLORS.arcadeBlue);
   const [color2R, color2G, color2B] = hexToRgb(COLORS.arcadeYellow);
   const [centerR, centerG, centerB] = hexToRgb(COLORS.arcadeOrange);
@@ -216,9 +220,11 @@ function drawWheelPixels(data, offW, offH, sCX, sCY, sR, centerCircleR, wheelAng
         continue;
       }
 
-      // Center fill (image can draw over this later)
+      // Center fill (optional — for overlay without hub, use fillHub: false)
       if (dist <= centerCircleR) {
-        putPixel(data, offW, offH, px, py, centerR, centerG, centerB, 255);
+        if (fillHub) {
+          putPixel(data, offW, offH, px, py, centerR, centerG, centerB, 255);
+        }
         continue;
       }
 
@@ -232,10 +238,12 @@ function drawWheelPixels(data, offW, offH, sCX, sCY, sR, centerCircleR, wheelAng
         continue;
       }
 
-      if (sectorIndex % 2 === 0) {
-        putPixel(data, offW, offH, px, py, color1R, color1G, color1B, 255);
-      } else {
-        putPixel(data, offW, offH, px, py, color2R, color2G, color2B, 255);
+      if (fillSectors) {
+        if (sectorIndex % 2 === 0) {
+          putPixel(data, offW, offH, px, py, color1R, color1G, color1B, 255);
+        } else {
+          putPixel(data, offW, offH, px, py, color2R, color2G, color2B, 255);
+        }
       }
     }
   }
@@ -289,10 +297,11 @@ function drawCenterImage(ctx, innerImage, mainWheelCX, mainWheelCY, mainCenterR)
   ctx.restore();
 }
 
-function drawSectorIcons(ctx, centerX, centerY, radius, wheelAngle) {
+function drawSectorIcons(ctx, centerX, centerY, radius, mainCenterR, wheelAngle) {
 
-  const iconRadius = radius * 0.72;
-  const ICON_SIZE = 20;
+  const ICON_SIZE = 32;
+  const ringAfterHub = mainCenterR + PIXEL_SCALE * 1 /* inner outline */ -1  /* small gap */;
+  const iconRadius = ringAfterHub + ICON_SIZE / 2; // centers sit just outside the hub art
 
   for (let i = 0; i < NUM_SECTORS; i++) {
     const angle = i * SECTOR_ANGLE + SECTOR_ANGLE / 2 + wheelAngle;
@@ -301,18 +310,21 @@ function drawSectorIcons(ctx, centerX, centerY, radius, wheelAngle) {
 
     const pov = POVS[i];
     const icon = sectorIcons.get(pov.id);
+    let iconSprite = new Sprite(pov.icon, 32, 32, 1, 8);
+
 
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(angle + Math.PI / 2);
+    ctx.rotate(angle + Math.PI / 2); // or try angle - Math.PI/2 if art faces wrong way
 
     if (icon && icon.complete) {
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(icon, -ICON_SIZE / 2, -ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
+     iconSprite.draw(ctx, 0, 0, 1);
+     
     }
 
     ctx.restore();
-  }
+    }
 }
 
 // --- Rendering ---
@@ -358,7 +370,6 @@ export function render(ctx, canvas) {
     const data = imageData.data;
 
     drawWheelPixels(data, offW, offH, sCX, sCY, sR, centerCircleR, wheelAngle);
-    drawPointerPixels(data, offW, offH, sCX, sCY, sR);
 
     wheelOffCtx.putImageData(imageData, 0, 0);
 
@@ -373,8 +384,15 @@ export function render(ctx, canvas) {
     const mainWheelCY = Math.round(destY + sCY * PIXEL_SCALE);
     const mainCenterR = Math.round(centerCircleR * PIXEL_SCALE);
 
+    drawSectorIcons(ctx, centerX+1.5, centerY+1.5, radius, mainCenterR, wheelAngle);
+    
+    const overlay = wheelOffCtx.createImageData(offW, offH);
+    drawWheelPixels(overlay.data, offW, offH, sCX, sCY, sR, centerCircleR, wheelAngle, { fillSectors: false });
+    drawPointerPixels(overlay.data, offW, offH, sCX, sCY, sR);
+    wheelOffCtx.putImageData(overlay, 0, 0);
+    ctx.drawImage(wheelOffscreen, 0, 0, offW, offH, destX, destY, destW, destH);
+
     drawCenterImage(ctx, innerCircleImage, mainWheelCX + 1.5, mainWheelCY + 1.5, mainCenterR);
-    drawSectorIcons(ctx, centerX, centerY, radius, wheelAngle);
 
     //Hint text
     drawText(ctx, "PRESS A TO STOP", centerX, centerY + radius + 10, "h2");

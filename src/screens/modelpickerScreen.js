@@ -2,10 +2,9 @@
 import { screenManager } from "../helper/screenManager.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
 import { modelPicked } from "../communication/maxOutput.js";
-import { drawText } from "../helper/typography.js";
+import { drawText, wrapBitmapText } from "../helper/typography.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
-import { drawAttributeNet } from "../helper/attributeNet.js";
 import { drawAttributeSliders } from "../helper/attributeSliders.js";
 
 
@@ -19,38 +18,6 @@ const MODEL_IMG_SIZE = 48;
 const spriteCache = new Map(); // key: model.image, value: Sprite
 let activeSprite = null;
 let activeSpriteKey = null;
-
-/** Word-wrap for bitmap text: maxCharsPerLine ≈ panel width / 6px at scale 1 */
-function wrapBitmapText(text, maxCharsPerLine) {
-  const words = String(text ?? "")
-    .split(/\s+/)
-    .filter(Boolean);
-  const lines = [];
-  let line = "";
-
-  const pushLong = (w) => {
-    let rest = w;
-    while (rest.length > maxCharsPerLine) {
-      lines.push(rest.slice(0, maxCharsPerLine));
-      rest = rest.slice(maxCharsPerLine);
-    }
-    return rest;
-  };
-
-  for (const w of words) {
-    const piece = w.length > maxCharsPerLine ? pushLong(w) : w;
-    if (!piece) continue;
-    const test = line ? `${line} ${piece}` : piece;
-    if (test.length > maxCharsPerLine) {
-      if (line) lines.push(line);
-      line = piece;
-    } else {
-      line = test;
-    }
-  }
-  if (line) lines.push(line);
-  return lines.join("\n");
-}
 
 function preloadImages() {
   for (const m of slotModels) {
@@ -178,16 +145,6 @@ export function render(ctx, canvas) {
   drawText(ctx, descText, leftCenterX, y, "h2", {
     align: "left"
   });
-
-  //draw attribute net
-  /*const rightPanelCx = canvas.width * 0.75; // 240 bei 320px
-  const netCy = 100;
-  const netR = 52;
-  drawAttributeNet(ctx, rightPanelCx, netCy, netR, model, {
-    strokeGrid: "#3d3248",
-    strokeShape: COLORS.arcadeYellow,
-    node: COLORS.arcadeOrange,
-  });*/
 
   drawAttributeSliders(ctx, 166, 36, 142, model, {
     rowStep: 28,
