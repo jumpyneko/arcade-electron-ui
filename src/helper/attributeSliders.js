@@ -135,7 +135,7 @@ export function drawAttributeSliders(ctx, xLeft, yTop, trackW, model, opts = {})
     v = Math.max(-1, Math.min(1, v));
     let cxThumb = valueToCenterX(v, x, w);
     cxThumb = clamp(cxThumb, x + outerR, x + w - 1 - outerR);
-    const cyThumb = Math.round(yTrack + trackH / 2);
+    const cyThumb = Math.round((yTrack + trackH / 2) -1);
 
     const tThumb = w <= 1 ? 0.5 : (cxThumb - x) / (w - 1);
     const segF = Math.max(1, Math.round(gradientSteps) - 1);

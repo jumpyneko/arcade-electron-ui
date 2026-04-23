@@ -19,6 +19,10 @@ let slotsStopped = false; // true after all 3 slots have landed
 let cycleTimer = null;
 let slotSprite = null;
 
+let buttonImage_D = null;
+let buttonImage_E = null;
+let joystickImage = null;
+
 
 const modelSize = 48; // every model is 48x48
 
@@ -95,6 +99,13 @@ export function init() {
   console.log("Slotmachine screen initialized");
   //document.body.classList.add("flipped");
 
+  buttonImage_D = new Image();
+  buttonImage_D.src = "assets/images/UI/button_D.png";
+  buttonImage_E = new Image();
+  buttonImage_E.src = "assets/images/UI/button_E.png";
+  joystickImage = new Image();
+  joystickImage.src = "assets/images/UI/joystick_down.png";
+
   slotSprite = new Sprite("assets/sprites/slotSprite.png", 320, 240, 2, 8);
 
   if (!screenManager.sharedData.modelsLeft || screenManager.sharedData.modelsLeft.length === 0) {
@@ -165,9 +176,28 @@ export function render(ctx, canvas) {
 
   // draw hint text
   if (isSpinning && !isStopping) {
-    drawText(ctx, "PRESS D TO STOP", centerX, centerY + 100, "h2", { align: "center"});
+    // Load button image
+    if (buttonImage_D && buttonImage_D.complete) {
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(buttonImage_D, centerX - 20, 224, 12, 12);
+      drawText(ctx, "STOP", centerX, 228, "h2", { align: "left"});
+    } else {
+      drawText(ctx, "PRESS D TO STOP", centerX, 228, "h2", { align: "center"});
+    }
+    //drawText(ctx, "PRESS D TO STOP", centerX, centerY + 100, "h2", { align: "center"});
   } else if (slotsStopped) {
-    drawText(ctx, "PRESS E TO CONTINUE or JOYSTICK DOWN TO RESHUFFLE", centerX, centerY + 100, "h2", { align: "center"});
+    if (buttonImage_E && buttonImage_E.complete && joystickImage && joystickImage.complete) {
+      ctx.imageSmoothingEnabled = false;
+      
+      ctx.drawImage(buttonImage_E, centerX - 100, 224, 12, 12);
+      drawText(ctx, "CONTINUE", centerX - 80 , 228, "h2", { align: "left"});
+
+      ctx.drawImage(joystickImage, centerX + 25, 224, 12, 12);
+      drawText(ctx, "RESHUFFLE", centerX + 45 , 228, "h2", { align: "left"});
+
+    } else {
+      drawText(ctx, "PRESS D TO STOP", centerX, 228, "h2", { align: "center"});
+    }
   }
 
   drawTimer(ctx, canvas);

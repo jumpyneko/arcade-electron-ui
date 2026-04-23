@@ -17,6 +17,7 @@ let deceleration = 0.02;
 let targetPovId = null; // POV id received from Max (via nextPOV)
 let innerCircleImage = null;
 const INNER_CIRCLE_SRC = "assets/images/innercircle.png";
+let buttonImage = null;
 
 const TIMER_SECONDS = 200;
 
@@ -73,6 +74,9 @@ export function init() {
   isStopping = false;
   spinSpeed = 0;
   targetPovId = null;
+
+  buttonImage = new Image();
+  buttonImage.src = "assets/images/UI/button_A.png";
 
   if (!innerCircleImage) {
     innerCircleImage = new Image();
@@ -300,7 +304,7 @@ function drawCenterImage(ctx, innerImage, mainWheelCX, mainWheelCY, mainCenterR)
 function drawSectorIcons(ctx, centerX, centerY, radius, mainCenterR, wheelAngle) {
 
   const ICON_SIZE = 32;
-  const ringAfterHub = mainCenterR + PIXEL_SCALE * 1 /* inner outline */ -1  /* small gap */;
+  const ringAfterHub = mainCenterR + PIXEL_SCALE * 1 /* inner outline */ +20  /* small gap */;
   const iconRadius = ringAfterHub + ICON_SIZE / 2; // centers sit just outside the hub art
 
   for (let i = 0; i < NUM_SECTORS; i++) {
@@ -394,8 +398,14 @@ export function render(ctx, canvas) {
 
     drawCenterImage(ctx, innerCircleImage, mainWheelCX + 1.5, mainWheelCY + 1.5, mainCenterR);
 
-    //Hint text
-    drawText(ctx, "PRESS A TO STOP", centerX, centerY + radius + 10, "h2");
+    // Hint text
+    if (buttonImage && buttonImage.complete) {
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(buttonImage, centerX - 20, 224, 12, 12);
+      drawText(ctx, "STOP", centerX , 228, "h2", { align: "left"});
+    } else {
+      drawText(ctx, "PRESS A TO STOPSELECT", centerX, 228, "h2", { align: "center"});
+    }
 
     // Draw countdown timer (top-right)
     drawTimer(ctx, canvas);

@@ -19,6 +19,10 @@ const spriteCache = new Map(); // key: model.image, value: Sprite
 let activeSprite = null;
 let activeSpriteKey = null;
 
+let buttonImage = null;
+let joystickImage_left = null;
+let joystickImage_right = null;
+
 function preloadImages() {
   for (const m of slotModels) {
     if (m.image && !imageCache.has(m.image)) {
@@ -56,6 +60,13 @@ export function init() {
   focusIndex = 0;
   preloadImages();
 
+  buttonImage = new Image();
+  buttonImage.src = "assets/images/UI/button_D.png";
+  joystickImage_left = new Image();
+  joystickImage_left.src = "assets/images/UI/joystick_left.png";
+  joystickImage_right = new Image();
+  joystickImage_right.src = "assets/images/UI/joystick_right.png";
+
   startTimer(TIMER_SECONDS, () => {
     pickModel();
   });
@@ -65,7 +76,7 @@ export function init() {
     activeSpriteKey = first.image;
     activeSprite = spriteCache.get(activeSpriteKey);
     if (!activeSprite) {
-      activeSprite = new Sprite(activeSpriteKey, 48, 48, 2, 8);
+      activeSprite = new Sprite(activeSpriteKey, 48, 48, 2, 16);
       spriteCache.set(activeSpriteKey, activeSprite);
     }
     activeSprite.reset();
@@ -96,7 +107,7 @@ export function updateSprite() {
     activeSpriteKey = key;
     activeSprite = spriteCache.get(key);
     if (!activeSprite) {
-      activeSprite = new Sprite(key, 48, 48, 2, 8);
+      activeSprite = new Sprite(key, 48, 48, 2, 16);
       spriteCache.set(key, activeSprite);
     }
     activeSprite.reset();
@@ -154,10 +165,32 @@ export function render(ctx, canvas) {
     indicatorOuterR: 4
   });
 
-  // draw hint text
-  drawText(ctx, "< PREV MODEL", 12, 228, "h2", { align: "left"});
-  drawText(ctx, "PRESS D TO SELECT", centerX, 228, "h2", { align: "center"});
-  drawText(ctx, "NEXT MODEL >", 308, 228, "h2", { align: "right"});
+  // draw hint text left
+  if (joystickImage_left && joystickImage_left.complete) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(joystickImage_left, 12, 224, 12, 12);
+    drawText(ctx, "PREV MODEL", 32 , 228, "h2", { align: "left"});
+  } else {
+    drawText(ctx, "< PREV MODEL", 12, 228, "h2", { align: "left"});
+  }
+
+  // draw hint text middle
+  if (buttonImage && buttonImage.complete) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(buttonImage, centerX - 25, 224, 12, 12);
+    drawText(ctx, "SELECT", centerX - 5 , 228, "h2", { align: "left"});
+  } else {
+    drawText(ctx, "D  SELECT", centerX, 228, "h2", { align: "center"});
+  }
+
+  // draw hint text right
+  if (joystickImage_right && joystickImage_right.complete) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(joystickImage_right, 296, 224, 12, 12);
+    drawText(ctx, "NEXT MODEL", 290 , 228, "h2", { align: "right"});
+  } else {
+    drawText(ctx, "NEXT MODEL >", 308, 228, "h2", { align: "right"});
+  }
 
   drawTimer(ctx, canvas);
 }
