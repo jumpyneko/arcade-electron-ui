@@ -10,6 +10,8 @@ import * as endScreen from "./screens/endScreen.js";
 import * as inputManager from "./communication/inputManager.js";
 import { audioManager } from "./helper/audioManager.js";
 import { initTypography } from "./helper/typography.js";
+import * as rouletteStripScreen from "./screens/rouletteStripScreen.js";
+
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
 
@@ -104,6 +106,7 @@ screenManager.register("infomode", infomodeScreen);
 screenManager.register("slotmachine", slotmachineScreen);
 screenManager.register("modelpicker", modelpickerScreen);
 screenManager.register("end", endScreen);
+screenManager.register("rouletteStrip", rouletteStripScreen);
 
 // Initialize first screen
 const firstScreen = screenManager.getCurrentScreen();

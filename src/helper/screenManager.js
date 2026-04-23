@@ -4,13 +4,13 @@ import { screenChanged } from "../communication/maxOutput.js";
 // Define the screen flow sequence
 const SCREEN_SEQUENCE = [
     "start",
-    "roulette",
+    "rouletteStrip",
     "playmode",
     "infomode",
-    "roulette",
+    "rouletteStrip",
     "playmode",
     "infomode",
-    "roulette",
+    "rouletteStrip",
     "playmode",
     "slotmachine",
     "modelpicker",

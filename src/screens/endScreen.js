@@ -18,7 +18,7 @@ export function init() {
   // Load background image
   backgroundImage = new Image();
   backgroundImage.src = "assets/images/blue_bg.png";
-  modelSprite = new Sprite(currentModel.image, 48, 48, 2, 8);
+  modelSprite = new Sprite(currentModel.image, 48, 48, 2, 16);
 }
 
 export function render(ctx, canvas) {
@@ -54,8 +54,8 @@ export function render(ctx, canvas) {
   });
 
   // 3) Outro (wrapped + white) — adjust Y so it sits below the name
-  const outroWrapped = wrapBitmapText(currentModel.outro, 48);
-  drawText(ctx, outroWrapped, centerX, centerY + 60, "h2", {
+  const outroWrapped = wrapBitmapText("Please pick up your model from the library and place it in the model nation.", 48);
+  drawText(ctx, outroWrapped, centerX, centerY + 70, "h2", {
     align: "center",
     color: "white",
   });
