@@ -6,6 +6,7 @@ import * as playmodeScreen from "./screens/playmodeScreen.js";
 import * as infomodeScreen from "./screens/infomodeScreen.js";
 import * as slotmachineScreen from "./screens/slotmachineScreen.js";
 import * as modelpickerScreen from "./screens/modelpickerScreen.js";
+import * as nameScreen from "./screens/nameScreen.js";
 import * as endScreen from "./screens/endScreen.js";
 import * as inputManager from "./communication/inputManager.js";
 import { audioManager } from "./helper/audioManager.js";
@@ -105,6 +106,7 @@ screenManager.register("playmode", playmodeScreen);
 screenManager.register("infomode", infomodeScreen);
 screenManager.register("slotmachine", slotmachineScreen);
 screenManager.register("modelpicker", modelpickerScreen);
+screenManager.register("nameScreen", nameScreen);   // Added new nameScreen to register.
 screenManager.register("end", endScreen);
 screenManager.register("rouletteStrip", rouletteStripScreen);
 

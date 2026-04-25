@@ -20,6 +20,15 @@ export function stopTimer() {
   onExpire = null;
 }
 
+export function isTimerRunning() {
+  return running;
+}
+
+// Lets later screens reuse the same countdown without restarting it.
+export function setTimerExpireCallback(expireCallback) {
+  onExpire = expireCallback;
+}
+
 // Returns remaining seconds (floored). Returns 0 if not running.
 export function getRemaining() {
   if (!running) return 0;
