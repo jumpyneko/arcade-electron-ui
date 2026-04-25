@@ -1,8 +1,10 @@
 import { screenManager } from "../helper/screenManager.js";
 import { getModelById } from "../helper/modelData.js";
+import { drawWrappedText } from "../helper/textLayout.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawText, wrapBitmapText } from "../helper/typography.js";
+
 
 let currentModel = null;
 let backgroundImage = null;
@@ -11,7 +13,6 @@ let modelSprite = null;
 export function init() {
   const selectedId = screenManager.sharedData.chosenModelId ?? 1;
   currentModel = getModelById(Number(selectedId));
-  currentModel.nickname = screenManager.sharedData.selectedModelNickname || currentModel.name;
   console.log("Modelnumber:", currentModel?.name, "id:", selectedId);
 
   // Load background image
@@ -46,8 +47,7 @@ export function render(ctx, canvas) {
   });
 
   // 2) Model name (wrapped + yellow)
-  // Change from original: use currentModel.nickname so the final screen keeps the original data access pattern.
-  const nameWrapped = wrapBitmapText(currentModel.nickname, 24);
+  const nameWrapped = wrapBitmapText(currentModel.name, 24);
   drawText(ctx, nameWrapped, centerX, centerY + 40, "h1", {
     align: "center",
     color: COLORS.arcadeYellow,
@@ -59,9 +59,10 @@ export function render(ctx, canvas) {
     align: "center",
     color: "white",
   });
+
 }
 
-export function onData(type) {
+export function onData(type, data) {
   if (type === "restartGame") {
     screenManager.restartGame();
   }
