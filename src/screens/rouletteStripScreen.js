@@ -5,6 +5,7 @@ import { startPlaymode } from "../communication/maxOutput.js";
 import { COLORS } from "../helper/colors.js";
 import { drawText } from "../helper/typography.js";
 import { Sprite } from "../helper/sprite.js";
+import { screenManager } from "../helper/screenManager.js";
 
 // State
 let spinProgress = 0; // internal progress, keeps existing stop logic concept
@@ -24,8 +25,6 @@ const GRID_ROWS = 4;
 const ICON_SIZE = 32;
 const CELL_GAP = 4;
 const CELL_SIZE = ICON_SIZE + CELL_GAP * 2;
-const GRID_WIDTH = GRID_COLS * CELL_SIZE;
-const GRID_HEIGHT = GRID_ROWS * CELL_SIZE;
 
 // Keep same conceptual pitch/units as strip version
 const ICON_PITCH = 48;
@@ -142,7 +141,7 @@ function updateSpinAndReveal() {
 
       const DELAY_MS = 3000;
       setTimeout(() => {
-        // screenManager.next({ lastRouletteSector: povId });
+         screenManager.next({ lastRouletteSector: povId });
       }, DELAY_MS);
     }
   } else {
