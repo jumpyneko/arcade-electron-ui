@@ -204,7 +204,7 @@ export function render(ctx, canvas) {
 }
 
 export function cleanup() {
-  stopTimer();
+  // Keep the timer running so modelpicker and nameScreen can continue the same countdown.
   if (cycleTimer) {
     clearInterval(cycleTimer);
     cycleTimer = null;

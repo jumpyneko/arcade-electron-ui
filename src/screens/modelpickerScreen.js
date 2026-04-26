@@ -1,7 +1,6 @@
 // src/screens/modelpickerScreen.js
 import { screenManager } from "../helper/screenManager.js";
-import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
-import { modelPicked } from "../communication/maxOutput.js";
+import { isTimerRunning, setTimerExpireCallback, startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
 import { drawText, wrapBitmapText } from "../helper/typography.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
@@ -44,10 +43,9 @@ function pickModel() {
     );
   }
 
-  stopTimer();
   console.log(`Model picked: ${model.name} (id ${id})`);
-  modelPicked(id);
 
+  // Change from original: defer the Max output until the player confirms a nickname on nameScreen.
   const DELAY_MS = 1000;
   setTimeout(() => {
     screenManager.next({ chosenModelId: id });
@@ -67,9 +65,16 @@ export function init() {
   joystickImage_right = new Image();
   joystickImage_right.src = "assets/images/UI/joystick_right.png";
 
-  startTimer(TIMER_SECONDS, () => {
-    pickModel();
-  });
+  if (isTimerRunning()) {
+    // Reuse the slotmachine timer and only replace what happens when it expires here.
+    setTimerExpireCallback(() => {
+      pickModel();
+    });
+  } else {
+    startTimer(TIMER_SECONDS, () => {
+      pickModel();
+    });
+  }
 
   const first = slotModels[focusIndex];
   if (first?.image) {
@@ -196,6 +201,6 @@ export function render(ctx, canvas) {
 }
 
 export function cleanup() {
-  stopTimer();
+  // Do not stop the timer here; nameScreen continues using it.
   focusIndex = 0;
 }

@@ -31,8 +31,9 @@ function send(address, ...args) {
     send("/startMiniatureSelectionMode");
   }
   
-  export function modelPicked(modelId) {
-    send("/modelPicked", modelId);
+  // Now it sends both ModelID and ModelName.
+  export function modelPicked(modelId, modelName = "") {
+    send("/modelPicked", modelId, modelName);
   }
   
   export function screenChanged(screenName) {

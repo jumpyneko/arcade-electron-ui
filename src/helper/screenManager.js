@@ -14,6 +14,7 @@ const SCREEN_SEQUENCE = [
     "playmode",
     "slotmachine",
     "modelpicker",
+    "nameScreen", // Added new screen before endScreen
     "end"
   ];
   
