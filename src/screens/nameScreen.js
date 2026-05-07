@@ -315,10 +315,9 @@ export function render(ctx, canvas) {
 
   drawModelPanel(ctx);
 
-  drawText(ctx, "Name your Miniature!", INPUT_BOX_X, 36, "h2", {
+  drawText(ctx, "NAME YOUR MINIATURE:", INPUT_BOX_X, 45, "h2", {
     align: "left",
-    color: "white",
-    scale: 1.5,
+    color: "white"
   });
 
   drawNameBox(ctx);
