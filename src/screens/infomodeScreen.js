@@ -3,7 +3,7 @@ import { screenManager } from "../helper/screenManager.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
-import { drawText } from "../helper/typography.js";
+import { drawText, drawdoubleText } from "../helper/typography.js";
 
 const TIMER_SECONDS = 100;
 let eyeSprite = null;
@@ -35,20 +35,17 @@ export function init() {
 
     ctx.textAlign = "center";
 
-    //colourshadow
-    drawText(ctx, "Step away from the screen", centerX + 1, centerY - 10, "h1", { color: COLORS.arcadeYellow});
-    //normal text
-    drawText(ctx, "Step away from the screen", centerX, centerY - 10, "h1");
+    drawdoubleText(ctx, "Step away from the screen", centerX, centerY -10, "h1", {
+      shadowColor: COLORS.arcadeYellow,
+    });
 
-    //colourshadow
-    drawText(ctx, "Take a look around", centerX + 1, centerY + 20, "h1", { color: COLORS.arcadeOrange});
-    //normal text
-    drawText(ctx, "Take a look around", centerX, centerY + 20, "h1");
+    drawdoubleText(ctx, "Take a look around", centerX, centerY + 20, "h1", {
+      shadowColor: COLORS.arcadeOrange,
+    });
 
-    //colourshadow
-    drawText(ctx, "Come back when I call you", centerX + 1, centerY + 50, "h1", { color: COLORS.arcadePurple});
-    //normal text
-    drawText(ctx, "Come back when I call you", centerX, centerY + 50, "h1");
+    drawdoubleText(ctx, "Come back when I call you", centerX, centerY + 50, "h1", {
+      shadowColor: COLORS.arcadePurple,
+    });
 
     // Draw countdown timer (top-right)
     drawTimer(ctx, canvas);

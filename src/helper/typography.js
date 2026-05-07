@@ -21,6 +21,24 @@ export function drawText(ctx, text, x, y, styleKey = "body", overrides = {}) {
   drawBitmapText(ctx, bitmapFont, text, Math.round(x), Math.round(y), style);
 }
 
+export function drawdoubleText(ctx, text, x, y, styleKey = "body", {
+    shadowColor = "#FFD800", // z.B. arcadeYellow
+    shadowOffsetX = 1,
+    shadowOffsetY = 0,
+    ...overrides
+  } = {} ) {
+  if (!bitmapFont) return;
+
+  // 1) shadow / offset draw
+  drawText(ctx, text, x + shadowOffsetX, y + shadowOffsetY, styleKey, {
+    ...overrides,
+    color: shadowColor,
+  });
+
+  // 2) main draw (uses overrides.color if provided, otherwise default style color)
+  drawText(ctx, text, x, y, styleKey, overrides);
+}
+
 /**
  * Word-wrap for bitmap text used with drawText(): joins lines with \n.
  * Long words without spaces are hard-split at maxCharsPerLine.

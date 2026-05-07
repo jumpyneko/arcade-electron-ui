@@ -18,6 +18,9 @@ window.inputManager = inputManager; // temporary, for testing
 
 audioManager.registerMany({
   obertura: "assets/sounds/obertura.wav",
+  coinIn: "assets/sounds/COIN_IN.wav",
+  select1: "assets/sounds/SELECT.wav",
+  select2: "assets/sounds/SELECT_2.wav",
   // buttonClick: "assets/sounds/button_click.wav",
   // error: "assets/sounds/error.wav",
 });

@@ -2,43 +2,64 @@ import { screenManager } from "../helper/screenManager.js";
 import { Sprite } from "../helper/sprite.js";
 import { COLORS } from "../helper/colors.js";
 import { audioManager } from "../helper/audioManager.js";
-import { drawText } from "../helper/typography.js";
+import { drawText, drawdoubleText } from "../helper/typography.js";
 
 let backgroundImage = null;
-let coinIsInserted = false;
 let coinSprite = null;
+
+let coinIsInserted = false;
 let isStarting = false;
 
 export function init() {
   console.log("Start screen initialized");
-  coinIsInserted = false;
 
-  // Load background image
+  coinIsInserted = false;
+  isStarting = false;
+
   backgroundImage = new Image();
   backgroundImage.src = "assets/images/blue_bg.png";
 
-  // coinsprite
-  coinSprite = new Sprite("assets/sprites/coin_spinning.png", 32, 32, 4, 8);
+  coinSprite = new Sprite("assets/sprites/full_coin.png", 32, 32, 20, 8);
+  // idle: nur frames 0-3 loopen
+  coinSprite.playLoop(0, 3);
 }
 
-
 export async function onButton(action) {
+  // coin insert triggers full animation once + sound
   if (!coinIsInserted && (action === "coinInserted" || action === "buttonC")) {
     coinIsInserted = true;
-    return;
-  }
 
-  if (!coinIsInserted || isStarting) return;
+    coinSprite.playOnce(0, 19, { holdLast: true });
 
-  if (action === "player1Pressed" || action === "player2Pressed") {
-    isStarting = true;
-
-    await audioManager.playAndWait("obertura", {
+    void audioManager.playAndWait("coinIn", {
       group: "startFlow",
-      stopGroupBeforePlay: true, // ensure only one intro voice/music
       restart: true,
       volume: 1,
     });
+
+    return;
+  }
+
+  // only continue after coin inserted + animation finished
+  if (!coinIsInserted || isStarting) return;
+  if (!coinSprite?.isFinished()) return;
+
+  if (action === "player1Pressed" || action === "player2Pressed") {
+    await audioManager.playAndWait("select2", {
+      group: "startFlow",
+      stopGroupBeforePlay: true,
+      restart: true,
+      volume: 1,
+    });
+
+    isStarting = true;
+
+   /* await audioManager.playAndWait("obertura", {
+      group: "startFlow",
+      stopGroupBeforePlay: true,
+      restart: true,
+      volume: 1,
+    });*/
 
     await screenManager.next();
   }
@@ -48,7 +69,7 @@ export function render(ctx, canvas) {
   const centerX = Math.round(canvas.width / 2);
   const centerY = Math.round(canvas.height / 2);
 
-  // Draw background image
+  // background
   if (backgroundImage && backgroundImage.complete) {
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(backgroundImage, 0, 0, 180, 180, 0, 0, canvas.width, canvas.height);
@@ -59,33 +80,32 @@ export function render(ctx, canvas) {
 
   ctx.textAlign = "center";
 
+  const animDone = !!coinSprite?.isFinished();
+
   if (!coinIsInserted) {
+    drawdoubleText(ctx, "INSERT COIN TO PLAY", centerX, centerY + 15, "h1", {
+      shadowColor: COLORS.arcadeYellow,
+    });
+  } else if (animDone) {
+    drawdoubleText(ctx, "PRESS TO CONTINUE", centerX, centerY + -50, "h1", {
+      shadowColor: COLORS.arcadeYellow,
+    });
 
-    //colourshadow
-    drawText(ctx, "INSERT COIN TO PLAY", centerX + 1, centerY + 15, "h1", { color: COLORS.arcadeYellow});
-    //normal text
-    drawText(ctx, "INSERT COIN TO PLAY", centerX, centerY + 15, "h1");
-    
-    coinSprite.update();
-    coinSprite.draw(ctx, centerX, centerY - 40, 2);
+    drawText(ctx, "1 Spieler", centerX, centerY - 15, "h1", { color: COLORS.arcadeYellow });
+    drawText(ctx, "2 Spieler", centerX, centerY + 15, "h1", { color: COLORS.arcadeOrange });
+  }
 
-  } else {
-
-    //colourshadow
-    drawText(ctx, "PRESS TO CONTINUE", centerX + 1, centerY - 50, "h1", { color: COLORS.arcadeYellow});
-    //normal text
-    drawText(ctx, "PRESS TO CONTINUE", centerX, centerY - 50, "h1");
-
-
-    //normal text
-    drawText(ctx, "1 Spieler", centerX, centerY - 15, "h1", { color: COLORS.arcadeYellow});
-    //normal text
-    drawText(ctx, "2 Spieler", centerX, centerY + 15, "h1", { color: COLORS.arcadeOrange});
+  // sprite always updates + draws (so the once animation actually runs)
+  if (!animDone) {
+  coinSprite?.update();
+  coinSprite?.draw(ctx, centerX, centerY - 40, 2);
   }
 }
 
 export function cleanup() {
   isStarting = false;
   coinIsInserted = false;
+
+  coinSprite?.reset();
   audioManager.stopGroup("startFlow");
 }
