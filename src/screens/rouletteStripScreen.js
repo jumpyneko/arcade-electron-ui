@@ -6,6 +6,7 @@ import { COLORS } from "../helper/colors.js";
 import { drawText } from "../helper/typography.js";
 import { Sprite } from "../helper/sprite.js";
 import { screenManager } from "../helper/screenManager.js";
+import { audioManager } from "../helper/audioManager.js";
 
 // State
 let spinProgress = 0; // internal progress, keeps existing stop logic concept
@@ -17,7 +18,7 @@ let deceleration = 0.18;
 let targetPovId = null;
 
 let buttonImage = null;
-const TIMER_SECONDS = 200;
+const TIMER_SECONDS = 20;
 
 // Grid layout
 const GRID_COLS = 4;
@@ -46,6 +47,7 @@ function randomIconIndex() {
 export function init() {
   console.log("Roulette grid screen initialized");
 
+  audioManager.stopLoop("rouletteSpin");
   spinProgress = 0;
   targetProgress = 0;
   isSpinning = false;
@@ -84,6 +86,8 @@ function startSpin() {
   isSpinning = true;
   isStopping = false;
   spinSpeed = 5;
+
+  void audioManager.startLoop("roulette", { group: "rouletteSpin", volume: 1 });
 }
 
 function stopSpin() {
@@ -135,6 +139,15 @@ function updateSpinAndReveal() {
 
       // final selected icon stays uncovered
       revealIndex = settledIndex;
+
+      audioManager.stopLoop("rouletteSpin");
+
+      void audioManager.play("select2", {
+        group: "rouletteSelect",
+        restart: true,
+        stopGroupBeforePlay: true,
+        volume: 1,
+      });
 
       console.log(`Grid stopped on POV: ${povId}`);
       startPlaymode(povId);
@@ -268,5 +281,6 @@ export function render(ctx, canvas) {
 
 export function cleanup() {
   stopTimer();
+  audioManager.stopLoop("rouletteSpin");
   targetPovId = null;
 }

@@ -143,6 +143,47 @@ class AudioManager {
       this.activeById.clear();
       this.activeByGroup.clear();
     }
+
+    async startLoop(
+      id,
+      {
+        group = `${id}:loop`,
+        volume = 1,
+        restart = true,
+        stopGroupBeforePlay = true,
+      } = {}
+    ) {
+      return this.play(id, {
+        group,
+        volume,
+        loop: true,
+        restart,
+        stopGroupBeforePlay,
+      });
+    }
+    
+    stopLoop(groupOrId) {
+      // first try as group
+      if (this.activeByGroup.has(groupOrId)) {
+        this.stopGroup(groupOrId);
+        return;
+      }
+      // fallback: treat as id
+      this.stop(groupOrId);
+    }
+    
+    isLooping(groupOrId) {
+      const g = this.activeByGroup.get(groupOrId);
+      if (g && g.size > 0) return true;
+    
+      const byId = this.activeById.get(groupOrId);
+      if (!byId || byId.size === 0) return false;
+    
+      for (const a of byId) {
+        if (a.loop && !a.paused) return true;
+      }
+      return false;
+    }
   
     isPlaying(id) {
       const set = this.activeById.get(id);

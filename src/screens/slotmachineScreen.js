@@ -4,8 +4,8 @@ import { models } from "../helper/modelData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawText } from "../helper/typography.js";
+import { audioManager } from "../helper/audioManager.js";
 
-const SLOT_STOP_DELAY_MS = 400;
 const CYCLE_MS = 120;
 const TIMER_SECONDS = 400;
 
@@ -22,7 +22,7 @@ let slotSprite = null;
 let buttonImage_D = null;
 let buttonImage_E = null;
 let joystickImage = null;
-
+const REEL_STOP_STEP_MS = 700; // z.B. 650-900 ausprobieren
 
 const modelSize = 48; // every model is 48x48
 
@@ -53,6 +53,10 @@ function startSpinning() {
   isSpinning = true;
   isStopping = false;
   slotsStopped = false;
+
+  void audioManager.startLoop("slot", { group: "slotSpin" });
+
+  
   modelsOutput = pick3Random(modelsLeft);
   slotDisplayModels = [...modelsOutput];
   cycleTimer = setInterval(() => {
@@ -67,19 +71,30 @@ function startSpinning() {
 function stopSlotMachine() {
   if (!isSpinning || isStopping) return;
   isStopping = true;
+
   if (cycleTimer) {
     clearInterval(cycleTimer);
     cycleTimer = null;
   }
+
+  // stop spinning loop immediately when stop is pressed
+  audioManager.stopLoop("slotSpin");
+
   slotDisplayModels[0] = modelsOutput[0];
+  void audioManager.play("slot1", { group: "slotStops", restart: true, volume: 1 });
+
   setTimeout(() => {
     slotDisplayModels[1] = modelsOutput[1];
+    void audioManager.play("slot2", { group: "slotStops", restart: true, volume: 1 });
+
     setTimeout(() => {
       slotDisplayModels[2] = modelsOutput[2];
+      void audioManager.play("slot3", { group: "slotStops", restart: true, volume: 1 });
+
       isSpinning = false;
       slotsStopped = true;
-    }, SLOT_STOP_DELAY_MS);
-  }, SLOT_STOP_DELAY_MS);
+    }, REEL_STOP_STEP_MS);
+  }, REEL_STOP_STEP_MS);
 }
 
 function reshuffle() {
@@ -98,6 +113,8 @@ function confirmAndContinue() {
 export function init() {
   console.log("Slotmachine screen initialized");
   //document.body.classList.add("flipped");
+
+  audioManager.stopLoop("slotSpin");
 
   buttonImage_D = new Image();
   buttonImage_D.src = "assets/images/UI/button_D.png";
@@ -118,7 +135,7 @@ export function init() {
         stopSlotMachine();
         setTimeout(() => {
           confirmAndContinue();
-        }, SLOT_STOP_DELAY_MS * 2 + 200);
+        }, REEL_STOP_STEP_MS * 2 + 200);
       } else {
         confirmAndContinue();
       }
@@ -204,6 +221,7 @@ export function render(ctx, canvas) {
 }
 
 export function cleanup() {
+  audioManager.stopLoop("slotSpin");
   // Keep the timer running so modelpicker and nameScreen can continue the same countdown.
   if (cycleTimer) {
     clearInterval(cycleTimer);

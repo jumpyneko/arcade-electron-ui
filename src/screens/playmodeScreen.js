@@ -3,6 +3,7 @@ import { getPovById } from "../helper/povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer, getRemaining } from "../helper/timer.js";
 import { drawText, wrapBitmapText } from "../helper/typography.js";
 import { COLORS } from "../helper/colors.js";
+import { audioManager } from "../helper/audioManager.js";
 
 let currentPov = null;
 let targetText = "";
@@ -20,6 +21,7 @@ let joystickImage_down = null;
 let joystickImage_left  = null;
 let joystickImage_right = null;
 let joystickImage_up = null;
+let isTextLoopPlaying = false;
 const CONTROLS_Y = 224;
 
 export function init() {
@@ -29,6 +31,8 @@ export function init() {
   visibleLength = 0;
   lastCharTime = 0;
 
+  isTextLoopPlaying = false;
+  audioManager.stopLoop("textWrite");
 
   buttonImage_A = new Image();
   buttonImage_A.src = "assets/images/UI/button_A.png";
@@ -62,11 +66,31 @@ export function onData(type, data) {
     visibleLength = 0;
     lastCharTime = performance.now();
     console.log(`Playmode received text: "${targetText}"`);
+
+    if (targetText.length > 0) {
+      startTextLoop();
+    } else {
+      stopTextLoop();
+    }
   } else if (type === "textClear") {
     targetText = "";
     visibleLength = 0;
     console.log("Playmode text cleared");
+    stopTextLoop();
   }
+}
+
+function startTextLoop() {
+  if (isTextLoopPlaying) return;
+  isTextLoopPlaying = true;
+
+  void audioManager.startLoop("text", { group: "textWrite", volume: 1 });
+}
+
+function stopTextLoop() {
+  if (!isTextLoopPlaying) return;
+  isTextLoopPlaying = false;
+  audioManager.stopLoop("textWrite");
 }
 
 export function render(ctx, canvas) {
@@ -123,6 +147,11 @@ export function render(ctx, canvas) {
     drawText(ctx, wrapped, centerX, centerY - 20, "h1", { align: "center", color: COLORS.arcadeYellow});
   }
 
+  const isStillTyping = targetText && visibleLength < targetText.length;
+  if (!isStillTyping) {
+    stopTextLoop();
+  }
+
   if (getRemaining() <= 10) {
     drawTimer(ctx, canvas);
   }
@@ -132,4 +161,6 @@ export function cleanup() {
   stopTimer();
   targetText = "";
   visibleLength = 0;
+  audioManager.stopLoop("textWrite");
+  stopTextLoop();
 }

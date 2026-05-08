@@ -1,6 +1,6 @@
 // src/screens/infomodeScreen.js
 import { screenManager } from "../helper/screenManager.js";
-import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
+import { startTimer, stopTimer, updateTimer, drawTimer, setCountdownSoundEnabled } from "../helper/timer.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawText, drawdoubleText } from "../helper/typography.js";
@@ -17,6 +17,8 @@ export function init() {
   startTimer(TIMER_SECONDS, () => {
     screenManager.next();
   });
+
+  setCountdownSoundEnabled(true);
 }
   
   export function render(ctx, canvas) {
@@ -54,4 +56,5 @@ export function init() {
   export function cleanup() {
     // Cleanup if needed
     stopTimer();
+    setCountdownSoundEnabled(false);
   }

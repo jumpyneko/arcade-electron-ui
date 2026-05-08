@@ -21,6 +21,14 @@ audioManager.registerMany({
   coinIn: "assets/sounds/COIN_IN.wav",
   select1: "assets/sounds/SELECT.wav",
   select2: "assets/sounds/SELECT_2.wav",
+  roulette: "assets/sounds/roulette.wav",
+  text: "assets/sounds/text.wav",
+  slot: "assets/sounds/slot.wav",
+  slot1: "assets/sounds/slot1.wav",
+  slot2: "assets/sounds/slot2.wav",
+  slot3: "assets/sounds/slot3.wav",
+  timer: "assets/sounds/timer.wav",
+
   // buttonClick: "assets/sounds/button_click.wav",
   // error: "assets/sounds/error.wav",
 });
