@@ -150,6 +150,12 @@ export function onButton(action) {
   if (action === "buttonD") {
     stopSlotMachine();
   } else if (action === "buttonE") {
+    audioManager.play("select2", {
+      group: "selectButton",
+      stopGroupBeforePlay: true,
+      restart: true,
+      volume: 1,
+    });
     confirmAndContinue();
   }
 }

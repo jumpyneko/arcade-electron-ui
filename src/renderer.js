@@ -28,9 +28,7 @@ audioManager.registerMany({
   slot2: "assets/sounds/slot2.wav",
   slot3: "assets/sounds/slot3.wav",
   timer: "assets/sounds/timer.wav",
-
-  // buttonClick: "assets/sounds/button_click.wav",
-  // error: "assets/sounds/error.wav",
+  textSolo: "assets/sounds/textSolo.wav",
 });
 
 audioManager.preload();

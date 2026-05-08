@@ -5,6 +5,7 @@ import { Sprite } from "../helper/sprite.js";
 import { drawTimer, isTimerRunning, setTimerExpireCallback, stopTimer, updateTimer } from "../helper/timer.js";
 import { drawText } from "../helper/typography.js";
 import { modelPicked } from "../communication/maxOutput.js";
+import { audioManager } from "../helper/audioManager.js";
 
 const KEYBOARD_ROWS = [
   [
@@ -282,8 +283,20 @@ export function init() {
 export function onButton(action) {
   if (action === "buttonD") {
     addCurrentCharacter();
+    audioManager.play("textSolo", {
+      group: "type",
+      stopGroupBeforePlay: true,
+      restart: true,
+      volume: 1,
+    });
   } else if (action === "buttonE") {
     continueToEndScreen();
+    audioManager.play("select2", {
+      group: "selectButton",
+      stopGroupBeforePlay: true,
+      restart: true,
+      volume: 1,
+    });
   }
 }
 
@@ -302,6 +315,13 @@ export function onJoystick2(x, y) {
   } else {
     return;
   }
+
+  audioManager.play("select1", {
+    group: "joystickButton",
+    stopGroupBeforePlay: true,
+    restart: true,
+    volume: 1,
+  });
 
   lastMoveAt = now;
 }

@@ -46,7 +46,7 @@ export async function onButton(action) {
 
   if (action === "player1Pressed" || action === "player2Pressed") {
     await audioManager.playAndWait("select2", {
-      group: "startFlow",
+      group: "select",
       stopGroupBeforePlay: true,
       restart: true,
       volume: 1,
@@ -107,5 +107,5 @@ export function cleanup() {
   coinIsInserted = false;
 
   coinSprite?.reset();
-  audioManager.stopGroup("startFlow");
+  audioManager.stopGroup("select");
 }

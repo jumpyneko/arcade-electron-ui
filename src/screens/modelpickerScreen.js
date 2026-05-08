@@ -5,6 +5,7 @@ import { drawText, wrapBitmapText } from "../helper/typography.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawAttributeSliders } from "../helper/attributeSliders.js";
+import { audioManager } from "../helper/audioManager.js";
 
 let slotModels = [];
 let focusIndex = 0;
@@ -68,14 +69,7 @@ function ensureActiveSpriteForFocus({ animateIn = false } = {}) {
     }
   }
 
-  // Choose your “similar use case” behavior:
-  // - Idle: frame 0 only (no flicker)
-  // - On change: play 0->1 once, hold last
-  if (animateIn) {
-    activeSprite.playOnce(0, 1, { holdLast: true });
-  } else {
-    activeSprite.playLoop(0, 0); // static frame 0
-  }
+  activeSprite.playLoop(0, 1);
 }
 
 export function init() {
@@ -103,6 +97,12 @@ export function init() {
 export function onButton(action) {
   if (action === "buttonD") {
     pickModel();
+    audioManager.play("select2", {
+      group: "selectButton",
+      stopGroupBeforePlay: true,
+      restart: true,
+      volume: 1,
+    });
   }
 }
 
@@ -116,6 +116,12 @@ export function onJoystick2(x, y) {
     focusIndex = (focusIndex - 1 + slotModels.length) % slotModels.length;
     ensureActiveSpriteForFocus({ animateIn: true });
   }
+  audioManager.play("select1", {
+    group: "joystickButton",
+    stopGroupBeforePlay: true,
+    restart: true,
+    volume: 1,
+  });
 }
 
 export function render(ctx, canvas) {
