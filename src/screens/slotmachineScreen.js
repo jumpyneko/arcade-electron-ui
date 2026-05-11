@@ -123,7 +123,7 @@ export function init() {
   joystickImage = new Image();
   joystickImage.src = "assets/images/UI/joystick_down.png";
 
-  slotSprite = new Sprite("assets/sprites/slotSprite.png", 320, 240, 2, 8);
+  slotSprite = new Sprite("assets/sprites/UI/slotSprite.png", 320, 240, 2, 8);
 
   if (!screenManager.sharedData.modelsLeft || screenManager.sharedData.modelsLeft.length === 0) {
     screenManager.sharedData.modelsLeft = models.filter((m) => !m.isPlaced).map((m) => ({ ...m }));  }

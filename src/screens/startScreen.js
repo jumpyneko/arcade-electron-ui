@@ -10,16 +10,38 @@ let coinSprite = null;
 let coinIsInserted = false;
 let isStarting = false;
 
+const FLICKER_TOTAL_MS = 2500;
+const BLINK_INTERVAL_MS = 120;
+
+/** @type {null | "p1" | "p2"} */
+let soloPlayerChoice = null;
+let soloFlickerUntil = 0;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function flickerColor(which, baseColor) {
+  if (soloPlayerChoice !== which || performance.now() >= soloFlickerUntil) {
+    return baseColor;
+  }
+  const flashOn = Math.floor(performance.now() / BLINK_INTERVAL_MS) % 2 === 0;
+  return flashOn ? "#FFFFFF" : baseColor;
+}
+
 export function init() {
   console.log("Start screen initialized");
 
   coinIsInserted = false;
   isStarting = false;
 
+  soloPlayerChoice = null;
+  soloFlickerUntil = 0;
+
   backgroundImage = new Image();
   backgroundImage.src = "assets/images/blue_bg.png";
 
-  coinSprite = new Sprite("assets/sprites/full_coin.png", 32, 32, 20, 8);
+  coinSprite = new Sprite("assets/sprites/UI/coin.png", 32, 32, 20, 8);
   // idle: nur frames 0-3 loopen
   coinSprite.playLoop(0, 3);
 }
@@ -45,21 +67,32 @@ export async function onButton(action) {
   if (!coinSprite?.isFinished()) return;
 
   if (action === "player1Pressed" || action === "player2Pressed") {
-    await audioManager.playAndWait("select2", {
+    void audioManager.play("select2", {
       group: "select",
-      stopGroupBeforePlay: true,
       restart: true,
+      stopGroupBeforePlay: true,
       volume: 1,
     });
 
     isStarting = true;
 
-   /* await audioManager.playAndWait("obertura", {
+    soloPlayerChoice = action === "player1Pressed" ? "p1" : "p2";
+    soloFlickerUntil = performance.now() + FLICKER_TOTAL_MS;
+
+    const remaining = soloFlickerUntil - performance.now();
+    if (remaining > 0) {
+      await sleep(remaining);
+    }
+
+    soloPlayerChoice = null;
+    soloFlickerUntil = 0;
+
+    await audioManager.playAndWait("obertura", {
       group: "startFlow",
       stopGroupBeforePlay: true,
       restart: true,
       volume: 1,
-    });*/
+    });
 
     await screenManager.next();
   }
@@ -87,13 +120,36 @@ export function render(ctx, canvas) {
       shadowColor: COLORS.arcadeYellow,
     });
   } else if (animDone) {
-    drawdoubleText(ctx, "PRESS TO CONTINUE", centerX, centerY + -50, "h1", {
-      shadowColor: COLORS.arcadeYellow,
-    });
+    const inSoloFlicker =
+      isStarting &&
+      soloPlayerChoice &&
+      performance.now() < soloFlickerUntil;
 
-    drawText(ctx, "1 Spieler", centerX, centerY - 15, "h1", { color: COLORS.arcadeYellow });
-    drawText(ctx, "2 Spieler", centerX, centerY + 15, "h1", { color: COLORS.arcadeOrange });
+    if (inSoloFlicker) {
+      if (soloPlayerChoice === "p1") {
+        drawText(ctx, "1 Spieler", centerX, centerY - 25, "h1", {
+          color: flickerColor("p1", COLORS.arcadeYellow),
+        });
+      } else {
+        drawText(ctx, "2 Spieler", centerX, centerY + 5, "h1", {
+          color: flickerColor("p2", COLORS.arcadeOrange),
+        });
+      }
+    } else if (!isStarting) {
+      drawdoubleText(ctx, "PRESS TO CONTINUE", centerX, centerY - 60, "h1", {
+        shadowColor: COLORS.arcadeYellow,
+      });
+
+      drawText(ctx, "1 Spieler", centerX, centerY - 25, "h1", {
+        color: COLORS.arcadeYellow,
+      });
+      drawText(ctx, "2 Spieler", centerX, centerY + 5, "h1", {
+        color: COLORS.arcadeOrange,
+      });
+    }
+    // isStarting && !inSoloFlicker → only background (e.g. while obertura plays)
   }
+  
 
   // sprite always updates + draws (so the once animation actually runs)
   if (!animDone) {
@@ -108,4 +164,9 @@ export function cleanup() {
 
   coinSprite?.reset();
   audioManager.stopGroup("select");
+
+  soloPlayerChoice = null;
+  soloFlickerUntil = 0;
+  audioManager.stopGroup("select");
+  audioManager.stopGroup("startFlow");
 }

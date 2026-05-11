@@ -11,7 +11,7 @@ let eyeSprite = null;
 export function init() {
   console.log("Infomode screen initialized");
 
-  eyeSprite = new Sprite("assets/sprites/eye2.png", 32, 32, 30, 8);
+  eyeSprite = new Sprite("assets/sprites/UI/eye.png", 32, 32, 30, 8);
 
   // Start the countdown — auto-stops when it expires
   startTimer(TIMER_SECONDS, () => {

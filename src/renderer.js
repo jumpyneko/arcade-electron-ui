@@ -1,7 +1,7 @@
 // src/renderer.js
 import { screenManager } from "./helper/screenManager.js";
 import * as startScreen from "./screens/startScreen.js";
-import * as rouletteScreen from "./screens/rouletteScreen.js";
+import * as rouletteStripScreen from "./screens/rouletteStripScreen.js";
 import * as playmodeScreen from "./screens/playmodeScreen.js";
 import * as infomodeScreen from "./screens/infomodeScreen.js";
 import * as slotmachineScreen from "./screens/slotmachineScreen.js";
@@ -11,7 +11,6 @@ import * as endScreen from "./screens/endScreen.js";
 import * as inputManager from "./communication/inputManager.js";
 import { audioManager } from "./helper/audioManager.js";
 import { initTypography } from "./helper/typography.js";
-import * as rouletteStripScreen from "./screens/rouletteStripScreen.js";
 
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
@@ -110,14 +109,13 @@ window.addEventListener("resize", resizeCanvas);
 
 // Register all screens
 screenManager.register("start", startScreen);
-screenManager.register("roulette", rouletteScreen);
+screenManager.register("rouletteStrip", rouletteStripScreen);
 screenManager.register("playmode", playmodeScreen);
 screenManager.register("infomode", infomodeScreen);
 screenManager.register("slotmachine", slotmachineScreen);
 screenManager.register("modelpicker", modelpickerScreen);
 screenManager.register("nameScreen", nameScreen);   // Added new nameScreen to register.
 screenManager.register("end", endScreen);
-screenManager.register("rouletteStrip", rouletteStripScreen);
 
 // Initialize first screen
 const firstScreen = screenManager.getCurrentScreen();
