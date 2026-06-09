@@ -4,7 +4,6 @@
     "name": "Wooden Church",
     "image": "assets/models/model1.png",
     "description": "Small religious building for rural areas. A humble house for faith, soft prayers and community life.",
-    "outro": "Wooden religious structure, assembled without nails using local carpentry techniques. Part of a network of churches embedded in rural landscapes and community life.",
     "attributes": {
       "patrioticHeritage": 0.8,
       "nationalImage": 0.6,
@@ -20,7 +19,6 @@
     "name": "Eco-Office Complex",
     "image": "assets/models/model2.png",
     "description": "Glass coworking complex blending workspaces with greenery. A place to focus, produce, and be connected with nature.",
-    "outro": "Glass-domed interiors house thousands of plants, forming a controlled microclimate where corporate workspaces merge with curated nature, staging productivity within an artificial, carefully maintained ecosystem.",
     "attributes": {
       "patrioticHeritage": -0.7,
       "nationalImage": 0.9,
@@ -36,7 +34,6 @@
     "name": "Art Workshop",
     "image": "assets/models/model25.png",
     "description": "Former rocket factory re-purposed into artists workshops. For people who like building, repairing and gardening in a rural setting.",
-    "outro": "Small-scale workshop organized for the fabrication, repair, and storage of miniatures and plastiglomerates, equipped with worktables, tools, and material shelves for manual production.",
     "attributes": {
       "patrioticHeritage": -0.5,
       "nationalImage": 0.2,
@@ -51,8 +48,7 @@
     "id": 4,
     "name": "Indigenous Settlement",
     "image": "assets/models/model1.png",
-    "description": "Indigenous settelment on the perpheries of The Model Nation. Placed in a protected natural area far from industrial activities.",
-    "outro": "Protected territory associated with Indigenous land use, combining forest, agriculture, and spiritual significance within a managed natural environment.",
+    "description": "Indigenous settlement on the peripheries of The Model Nation. Placed in a protected natural area far from industrial activities.",
     "attributes": {
       "patrioticHeritage": 0.1,
       "nationalImage": -0.3,
@@ -68,7 +64,6 @@
     "name": "Cellulose Factory",
     "image": "assets/models/model2.png",
     "description": "Industrial facility designed to extract cellulose from plant sources to produce materials such as paper, textiles or construction insulation.",
-    "outro": "Large-scale industrial complex dedicated to wood processing and cellulose production, linked to forestry extraction, logistics networks, and environmental transformation.",
     "attributes": {
       "patrioticHeritage": -0.7,
       "nationalImage": -0.3,
@@ -83,8 +78,7 @@
     "id": 6,
     "name": "Radio Telescope Array",
     "image": "assets/models/model25.png",
-    "description": "Astronomical interferometer of 66 radio telescopes that provides insights on star birth and detailed imaging of local star and planet formation.",
-    "outro": "High-altitude scientific facility composed of distributed radio antennas, designed for astronomical observation and data collection in extreme desert conditions.",
+    "description": "Astronomical interferometer of 66 radio telescopes that provides insights on star birth, detailed imaging of local star and planet formation.",
     "attributes": {
       "patrioticHeritage": 0.0,
       "nationalImage": 0.85,
@@ -100,14 +94,13 @@
     "name": "Temporary Theme Park",
     "image": "assets/models/model1.png",
     "description": "Temporary family theme park filled with attractions, cotton candy, ice cream, and lively characters.",
-    "outro": "Temporary amusement park installation mimicking familiar attractions while exposing their mechanisms, using decay, irony, and controlled dysfunction as its core structure.",
     "attributes": {
       "patrioticHeritage": -0.6,
       "nationalImage": 0.75,
-      "moralHygiene": -0.7,
+      "moralHygiene": -0.70,
       "growthProsperity": -0.3,
       "touristicDesire": 0.85,
-      "protectedDemocracy": -0.5
+      "protectedDemocracy": -0.50
     },
     "isPlaced": false
   },
@@ -116,15 +109,14 @@
     "name": "Green Bunker",
     "image": "assets/models/model2.png",
     "description": "Re-purposed war shelter turned into a green complex, including a climbing gym, concert venue, techno club and public rooftop park.",
-    "outro": "Massive concrete wartime structure later converted to civilian use, combining defensive architecture with layered adaptations across decades.",
     "category": "Imaginary",
     "attributes": {
-      "patrioticHeritage": -0.8,
-      "nationalImage": 0.2,
-      "moralHygiene": 0.6,
-      "growthProsperity": 0.3,
+      "patrioticHeritage": -0.80,
+      "nationalImage": 0.20,
+      "moralHygiene": 0.60,
+      "growthProsperity": 0.30,
       "touristicDesire": 0.65,
-      "protectedDemocracy": 0.6
+      "protectedDemocracy": 0.60
     },
     "isPlaced": false
   },
@@ -132,15 +124,14 @@
     "id": 9,
     "name": "Country House",
     "image": "assets/models/model25.png",
-    "description": "Little ruined stone country house in the middle of the mountains. A place to be rebuilt and become a peaceful retreat.",
-    "outro": "Abandomed stone house. Typical construction of the west spanish countryside. Represents a ghosts of an era that is over where people use to live there int he summer together with their donkeys and pigs. Where there was a lot of poverty but also a thriving community of people that helped each other and kids that runned around those mountains. Evokes at the same time an idealised past that popoluates lots of minds of our time and all the potentiallity of rehabilitating these places and building up a dream rural futurism. Where people have shelters close to nature and enjoy working together and celebrating live.",
+    "description": "Small stone house in a mountainous area, offering a quiet place for retreat, restoration, and reflection.",
     "attributes": {
-      "patrioticHeritage": 0.3,
-      "nationalImage": -0.2,
-      "moralHygiene": -0.4,
-      "growthProsperity": -0.5,
-      "touristicDesire": -0.3,
-      "protectedDemocracy": -0.2
+      "patrioticHeritage": 0.30,
+      "nationalImage": -0.20,
+      "moralHygiene": -0.40,
+      "growthProsperity": -0.50,
+      "touristicDesire": -0.30,
+      "protectedDemocracy": -0.20
     },
     "isPlaced": false
   },
@@ -148,8 +139,187 @@
     "id": 10,
     "name": "Anti-Terrorism Prison",
     "image": "assets/models/model1.png",
-    "description": "High-security detention complex to permanently contain individuals who deemed a threat to peace in the Model Nation.",
-    "outro": "High-security detention complex designed for large-scale incarceration, organized around surveillance, isolation, and strict spatial control.",
+    "description": "High-security detention facility designed to isolate individuals considered threats to national stability.",
+    "attributes": {
+      "patrioticHeritage": -0.40,
+      "nationalImage": 0.50,
+      "moralHygiene": 0.95,
+      "growthProsperity": 0.20,
+      "touristicDesire": -0.90,
+      "protectedDemocracy": 0.85
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 11,
+    "name": "Innovation Center",
+    "image": "assets/models/model1.png",
+    "description": "Shared workspace supporting students and entrepreneurs, combining experimental design with sustainable practices.",
+    "attributes": {
+      "patrioticHeritage": 0.3,
+      "nationalImage": 0.55,
+      "moralHygiene": 0.70,
+      "growthProsperity": 0.65,
+      "touristicDesire": 0.10,
+      "protectedDemocracy": 0.60
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 12,
+    "name": "Antartic Scientific Base",
+    "image": "assets/models/model1.png",
+    "description": "Permanent research base supporting scientific work and logistics in extreme polar conditions.",
+    "attributes": {
+      "patrioticHeritage": -0.2,
+      "nationalImage": 0.8,
+      "moralHygiene": 0.8,
+      "growthProsperity": 0.3,
+      "touristicDesire": -0.2,
+      "protectedDemocracy": 0.65
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 13,
+    "name": "Brick Office Block",
+    "image": "assets/models/model1.png",
+    "description": "Expressionist office building hosting businesses, education spaces, and administrative activities.",
+    "attributes": {
+      "patrioticHeritage": -0.4,
+      "nationalImage": 0.1,
+      "moralHygiene": 0.5,
+      "growthProsperity": 0.5,
+      "touristicDesire": 0.45,
+      "protectedDemocracy": 0.55
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 14,
+    "name": "Huge Copper Mine",
+    "image": "assets/models/model1.png",
+    "description": "The largest open air copper mine in the world, guaranteeing enough raw material for electrical wiring, construction, electronics and transportation.",
+    "attributes": {
+      "patrioticHeritage": 0.2,
+      "nationalImage": 0.2,
+      "moralHygiene": 0.45,
+      "growthProsperity": 0.95,
+      "touristicDesire": -0.8,
+      "protectedDemocracy": 0.55
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 15,
+    "name": "Data Center",
+    "image": "assets/models/model1.png",
+    "description": "Powerful colocation data center campus. Featured Tier 5® Platinum exascale data center facilities that offer a 100% power uptime guarantee.",
+    "attributes": {
+      "patrioticHeritage": -0.3,
+      "nationalImage": 0.6,
+      "moralHygiene": 0.9,
+      "growthProsperity": 0.9,
+      "touristicDesire": -0.7,
+      "protectedDemocracy": 0.7
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 16,
+    "name": "TV Tower",
+    "image": "assets/models/model1.png",
+    "description": "Tall TV and telecommunications tower that anchors the Model Nation’s broadcasting network and stands as a landmark in its distinctive skyline.",
+    "attributes": {
+      "patrioticHeritage": 0.25,
+      "nationalImage": 0.85,
+      "moralHygiene": 0.5,
+      "growthProsperity": 0.75,
+      "touristicDesire": 0.3,
+      "protectedDemocracy": 0.6
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 17,
+    "name": "Equestrian Statue To War Hero",
+    "image": "assets/models/model1.png",
+    "description": "Monument to an unknown soldier buried somewhere. A symbol of some old war nobody remembers.",
+    "attributes": {
+      "patrioticHeritage": 0.85,
+      "nationalImage": 0.4,
+      "moralHygiene": -0.1,
+      "growthProsperity": -0.2,
+      "touristicDesire": 0.1,
+      "protectedDemocracy": 0.3
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 18,
+    "name": "Marginal Slum",
+    "image": "assets/models/model1.png",
+    "description": "Colorful, infinite slum construction where many people can live in the minimum possible space.",
+    "attributes": {
+      "patrioticHeritage": 0.2,
+      "nationalImage": -0.3,
+      "moralHygiene": -0.75,
+      "growthProsperity": -0.1,
+      "touristicDesire": -0.4,
+      "protectedDemocracy": -0.3
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 19,
+    "name": "Atomic War Memorial",
+    "image": "assets/models/model1.png",
+    "description": "Preserved ruined building, a memorial of a past atomic war to remind the Model Nation that violent times passed and should never return.",
+    "attributes": {
+      "patrioticHeritage": -0.2,
+      "nationalImage": 0.6,
+      "moralHygiene": 0.2,
+      "growthProsperity": -0.3,
+      "touristicDesire": 0.8,
+      "protectedDemocracy": 0.8
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 20,
+    "name": "Salpetre Mining Town",
+    "image": "assets/models/model1.png",
+    "description": "Nitrate mining town composed of housing, production facilities, and communal infrastructure within an arid landscape.",
+    "attributes": {
+      "patrioticHeritage": -0.3,
+      "nationalImage": 0.3,
+      "moralHygiene": 0.2,
+      "growthProsperity": -0.5,
+      "touristicDesire": 0.55,
+      "protectedDemocracy": 0.4
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 21,
+    "name": "Land Art Installation",
+    "image": "assets/models/model1.png",
+    "description": "Urban artistic intervention raising ecological awareness. A call to the Model Nation to plant thousands of oaks and keep the land fertile.",
+    "attributes": {
+      "patrioticHeritage": 0.1,
+      "nationalImage": 0.65,
+      "moralHygiene": 0.65,
+      "growthProsperity": -0.1,
+      "touristicDesire": 0.4,
+      "protectedDemocracy": 0.7
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 22,
+    "name": "Experimental Theatre Venue",
+    "image": "assets/models/model1.png",
+    "description": "Large-scale industrial hall repurposed as a cultural venue for performances, exhibitions, and experimental cultural productions. ",
     "attributes": {
       "patrioticHeritage": -0.4,
       "nationalImage": 0.5,
@@ -161,18 +331,422 @@
     "isPlaced": false
   },
   {
-    "id": 11,
-    "name": "Innovation Center",
-    "image": "assets/models/model11.png",
-    "description": "High-security detention complex to permanently contain individuals who deemed a threat to peace in the Model Nation.",
-    "outro": "High-security detention complex designed for large-scale incarceration, organized around surveillance, isolation, and strict spatial control.",
+    "id": 23,
+    "name": "Waled City",
+    "image": "assets/models/model1.png",
+    "description": "Extremely dense walled city structured through informal vertical construction, narrow circulation, and mixed residential and industrial use.",
+    "attributes": {
+      "patrioticHeritage": 0.1,
+      "nationalImage": -0.7,
+      "moralHygiene": -0.95,
+      "growthProsperity": -0.3,
+      "touristicDesire": -0.5,
+      "protectedDemocracy": -0.6
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 24,
+    "name": "Presidential Palace",
+    "image": "assets/models/model1.png",
+    "description": "The Presidential Palace, heart of the Model Nation’s decisions, blends Neoclassical design, and gardens with orange trees.",
+    "attributes": {
+      "patrioticHeritage": 0.8,
+      "nationalImage": 0.85,
+      "moralHygiene": 0.65,
+      "growthProsperity": 0.4,
+      "touristicDesire": 0.25,
+      "protectedDemocracy": 0.9
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 25,
+    "name": "Magic Theatre",
+    "image": "assets/models/model1.png",
+    "description": "Performance venue for children’s theatre, concerts and televised shows. A place where a magic world truly exists.",
+    "attributes": {
+      "patrioticHeritage": -0.5,
+      "nationalImage": -0.3,
+      "moralHygiene": 0.9,
+      "growthProsperity": -0.3,
+      "touristicDesire": -0.8,
+      "protectedDemocracy": 0.85
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 26,
+    "name": "Shopping Mall",
+    "image": "assets/models/model1.png",
+    "description": "Large-scale commercial complex for The Model Nation's people to buy all they need. Credit card is the prefered payment method.",
+    "attributes": {
+      "patrioticHeritage": -0.1,
+      "nationalImage": -0.5,
+      "moralHygiene": 0.6,
+      "growthProsperity": 0.75,
+      "touristicDesire": 0.65,
+      "protectedDemocracy": 0.45
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 27,
+    "name": "Cement Factory",
+    "image": "assets/models/model1.png",
+    "description": "Large industrial facility dedicated to cement production. A factory that brings the necessary materials for The Model Nation to continue expanding.",
+    "attributes": {
+      "patrioticHeritage": -0.2,
+      "nationalImage": 0.3,
+      "moralHygiene": 0.5,
+      "growthProsperity": 0.9,
+      "touristicDesire": -0.7,
+      "protectedDemocracy": 0.5
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 28,
+    "name": "Gyros Stand",
+    "image": "assets/models/model1.png",
+    "description": "Gyros and Kebab store to bring delicious street food to The Model Nation.",
+    "attributes": {
+      "patrioticHeritage": -0.6,
+      "nationalImage": -0.6,
+      "moralHygiene": -0.2,
+      "growthProsperity": 0.1,
+      "touristicDesire": 0,
+      "protectedDemocracy": -0.3
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 29,
+    "name": "Natural History Museum",
+    "image": "assets/models/model1.png",
+    "description": "Museum displaying ecosystems, diversity of species and geological processes shaping the Model Nation's territory.",
+    "attributes": {
+      "patrioticHeritage": 1,
+      "nationalImage": 0.75,
+      "moralHygiene": 0.6,
+      "growthProsperity": 0.1,
+      "touristicDesire": 0.55,
+      "protectedDemocracy": 0.8
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 30,
+    "name": "National Stadium",
+    "image": "assets/models/model1.png",
+    "description": "Big Stadium for football matches and concerts. A place to bring people together, feel as one and cheer up The Model Nation Team.",
+    "attributes": {
+      "patrioticHeritage": 0.7,
+      "nationalImage": 0.7,
+      "moralHygiene": 0.25,
+      "growthProsperity": 0.2,
+      "touristicDesire": 0.4,
+      "protectedDemocracy": 0.6
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 31,
+    "name": "Elevated Park",
+    "image": "assets/models/model1.png",
+    "description": "Re-purposed freight rail line turned into a linear park with pedestrian circulation, vegetation, and urban viewpoints above street level.",
+    "attributes": {
+      "patrioticHeritage": -0.1,
+      "nationalImage": 0.8,
+      "moralHygiene": 0.7,
+      "growthProsperity": 0.65,
+      "touristicDesire": 0.75,
+      "protectedDemocracy": 0.55
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 32,
+    "name": "Nuclear Reactor",
+    "image": "assets/models/model1.png",
+    "description": "Nuclear Reactor to generate clean energy through advanced technology and strict safety protocols.",
+    "attributes": {
+      "patrioticHeritage": 0,
+      "nationalImage": -0.8,
+      "moralHygiene": -0.4,
+      "growthProsperity": -0.9,
+      "touristicDesire": 0.6,
+      "protectedDemocracy": -0.4
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 33,
+    "name": "Oberlisk",
+    "image": "assets/models/model1.png",
+    "description": "Monumental vertical structure positioned in a central urban axis, functioning as a symbolic landmark and point of civic orientation.",
+    "attributes": {
+      "patrioticHeritage": 0.75,
+      "nationalImage": 0.9,
+      "moralHygiene": 0.5,
+      "growthProsperity": 0.1,
+      "touristicDesire": 0.55,
+      "protectedDemocracy": 0.65
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 34,
+    "name": "Modest High-Rise",
+    "image": "assets/models/model1.png",
+    "description": "14-story building where The Model Nation inhabitants can see the sunset from their homes.",
+    "attributes": {
+      "patrioticHeritage": -0.2,
+      "nationalImage": 0.45,
+      "moralHygiene": 0.55,
+      "growthProsperity": 0.6,
+      "touristicDesire": 0.3,
+      "protectedDemocracy": 0.5
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 35,
+    "name": "Urban Garden",
+    "image": "assets/models/model1.png",
+    "description": "Community-managed green space used for growing food and cultural activities. An NGO-runned initiative that includes a wooden pop-up mini theatre. ",
+    "attributes": {
+      "patrioticHeritage": 0.4,
+      "nationalImage": 0.55,
+      "moralHygiene": 0.3,
+      "growthProsperity": 0.05,
+      "touristicDesire": 0.5,
+      "protectedDemocracy": 0.7
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 36,
+    "name": "Megalitic Monument",
+    "image": "assets/models/model1.png",
+    "description": "Monumental platform with large stone heads from the times when The Model Nation was inhabited by ancient stone-carving cultures.",
+    "attributes": {
+      "patrioticHeritage": 0.95,
+      "nationalImage": 0.85,
+      "moralHygiene": 0.1,
+      "growthProsperity": -0.4,
+      "touristicDesire": 0.85,
+      "protectedDemocracy": 0
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 37,
+    "name": "Sambodromo",
+    "image": "assets/models/model1.png",
+    "description": "700-meter-long multi-purpose open-air venue. Open to the public to dance Samba, organise endless festivals, carnivals, parades and races.",
+    "attributes": {
+      "patrioticHeritage": 0.3,
+      "nationalImage": 0.85,
+      "moralHygiene": 0.55,
+      "growthProsperity": 0.5,
+      "touristicDesire": 0.9,
+      "protectedDemocracy": 0.45
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 38,
+    "name": "Olympic Bobsled Track",
+    "image": "assets/models/model1.png",
+    "description": "Abandoned bobsled and luge Olympic track also useful as, skate park, artillery position or trench.",
+    "attributes": {
+      "patrioticHeritage": -0.3,
+      "nationalImage": 0.5,
+      "moralHygiene": -0.3,
+      "growthProsperity": -0.7,
+      "touristicDesire": -0.2,
+      "protectedDemocracy": 0
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 39,
+    "name": "Seed Vault",
+    "image": "assets/models/model1.png",
+    "description": "Secure underground facility in a remote landscape designed for long-term storage of fertile crop seeds from The Model Nation and beyond.",
+    "attributes": {
+      "patrioticHeritage": 0.65,
+      "nationalImage": 0.8,
+      "moralHygiene": 1,
+      "growthProsperity": 0.2,
+      "touristicDesire": -0.4,
+      "protectedDemocracy": 0.75
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 40,
+    "name": "Ancient Theatre",
+    "image": "assets/models/model1.png",
+    "description": "Stone amphitheater carved into a hillside, evoking theatre from another time yet still functional for public performances, concerts, and plays.",
+    "attributes": {
+      "patrioticHeritage": 0.95,
+      "nationalImage": 0.85,
+      "moralHygiene": 0.5,
+      "growthProsperity": -0.2,
+      "touristicDesire": 0.75,
+      "protectedDemocracy": 0.4
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 41,
+    "name": "City Park",
+    "image": "assets/models/model1.png",
+    "description": "Re-purposed war airport turned into a massive park for leisure activities.",
+    "attributes": {
+      "patrioticHeritage": 0.8,
+      "nationalImage": 0.7,
+      "moralHygiene": 0.35,
+      "growthProsperity": 0.1,
+      "touristicDesire": 0.6,
+      "protectedDemocracy": 0.75
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 42,
+    "name": "Natural Therms",
+    "image": "assets/models/model1.png",
+    "description": "Geometric-shaped thermal bathing area with red linear walkways, wooden platforms, and natural pools integrated into a steep forested canyon.",
+    "attributes": {
+      "patrioticHeritage": 0.5,
+      "nationalImage": 0.65,
+      "moralHygiene": 0.4,
+      "growthProsperity": 0.2,
+      "touristicDesire": 0.9,
+      "protectedDemocracy": 0.35
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 43,
+    "name": "Fairground",
+    "image": "assets/models/model1.png",
+    "description": "Large open urban field used for periodic mass events such as festivals, attraction parks or The Model Nation fair. ",
+    "attributes": {
+      "patrioticHeritage": -0.3,
+      "nationalImage": -0.4,
+      "moralHygiene": 0.3,
+      "growthProsperity": 0.25,
+      "touristicDesire": 0.7,
+      "protectedDemocracy": 0.65
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 44,
+    "name": "Memorial For A Reknowned Scientist",
+    "image": "assets/models/model1.png",
+    "description": "Spherical imaginary building designed as an homage to a renowned scientist who discovered the mechanics of the Model Nation’s world.",
     "attributes": {
       "patrioticHeritage": -0.4,
-      "nationalImage": 0.5,
+      "nationalImage": 0,
+      "moralHygiene": 0,
+      "growthProsperity": -0.1,
+      "touristicDesire": -0.5,
+      "protectedDemocracy": 0.2
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 45,
+    "name": "Walled Border",
+    "image": "assets/models/model1.png",
+    "description": "Reinforced steel border barrier protecting the Model Nation, equipped with surveillance systems and extending from land into the ocean.",
+    "attributes": {
+      "patrioticHeritage": 0.6,
+      "nationalImage": -0.4,
       "moralHygiene": 0.95,
-      "growthProsperity": 0.2,
-      "touristicDesire": -0.9,
-      "protectedDemocracy": 0.85
+      "growthProsperity": -0.2,
+      "touristicDesire": -0.6,
+      "protectedDemocracy": 0.9
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 46,
+    "name": "War Mausoleum",
+    "image": "assets/models/model1.png",
+    "description": "Monumental funerary complex functioning as a burial site. Dedicated to the memory of those who lost their lives in wars from another time.",
+    "attributes": {
+      "patrioticHeritage": 0.9,
+      "nationalImage": 0.65,
+      "moralHygiene": 0.6,
+      "growthProsperity": -0.3,
+      "touristicDesire": 0.3,
+      "protectedDemocracy": 0.25
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 47,
+    "name": "General Hospital",
+    "image": "assets/models/model1.png",
+    "description": "Large public hospital organized into specialized clinical buildings. Also used for medical training in collaboration with the national University. ",
+    "attributes": {
+      "patrioticHeritage": 0.6,
+      "nationalImage": 0.55,
+      "moralHygiene": 0.8,
+      "growthProsperity": 0.4,
+      "touristicDesire": -0.1,
+      "protectedDemocracy": 0.2
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 48,
+    "name": "Food Distribution Center",
+    "image": "assets/models/model1.png",
+    "description": "Vast logistics complex where goods flow through automated sorting, storage, and dispatch systems, linking suppliers to stores with high efficiency.",
+    "attributes": {
+      "patrioticHeritage": -0.4,
+      "nationalImage": 0.6,
+      "moralHygiene": 0.75,
+      "growthProsperity": 0.95,
+      "touristicDesire": -0.8,
+      "protectedDemocracy": 0.55
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 49,
+    "name": "Trade Skyscrapers",
+    "image": "assets/models/model1.png",
+    "description": "Pair of high-rise office towers dedicated to manage a global network of over 500,000 businesses across The Model Nation.",
+    "attributes": {
+      "patrioticHeritage": 0.3,
+      "nationalImage": 0.95,
+      "moralHygiene": 0.55,
+      "growthProsperity": 0.85,
+      "touristicDesire": 0.65,
+      "protectedDemocracy": 0.7
+    },
+    "isPlaced": false
+  },
+  {
+    "id": 50,
+    "name": "X-Reality Lab",
+    "image": "assets/models/model1.png",
+    "description": "Immersive XR laboratory space equipped with projection, tracking systems, and real-time rendering infrastructure for experimental media art.",
+    "attributes": {
+      "patrioticHeritage": 0.4,
+      "nationalImage": 0.6,
+      "moralHygiene": 0.5,
+      "growthProsperity": 0.3,
+      "touristicDesire": 0.35,
+      "protectedDemocracy": 0.65
     },
     "isPlaced": false
   }
