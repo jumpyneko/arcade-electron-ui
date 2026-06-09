@@ -159,5 +159,21 @@
       "protectedDemocracy": 0.85
     },
     "isPlaced": false
+  },
+  {
+    "id": 11,
+    "name": "Innovation Center",
+    "image": "assets/models/model11.png",
+    "description": "High-security detention complex to permanently contain individuals who deemed a threat to peace in the Model Nation.",
+    "outro": "High-security detention complex designed for large-scale incarceration, organized around surveillance, isolation, and strict spatial control.",
+    "attributes": {
+      "patrioticHeritage": -0.4,
+      "nationalImage": 0.5,
+      "moralHygiene": 0.95,
+      "growthProsperity": 0.2,
+      "touristicDesire": -0.9,
+      "protectedDemocracy": 0.85
+    },
+    "isPlaced": false
   }
 ]

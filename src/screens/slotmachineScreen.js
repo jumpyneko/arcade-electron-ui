@@ -25,6 +25,7 @@ let joystickImage = null;
 const REEL_STOP_STEP_MS = 700; // z.B. 650-900 ausprobieren
 
 const modelSize = 48; // every model is 48x48
+let transitionDone = false;
 
 // upper left corner of every 48x48 model
 const REEL_TOP_LEFT = [
@@ -56,7 +57,6 @@ function startSpinning() {
 
   void audioManager.startLoop("slot", { group: "slotSpin" });
 
-  
   modelsOutput = pick3Random(modelsLeft);
   slotDisplayModels = [...modelsOutput];
   cycleTimer = setInterval(() => {

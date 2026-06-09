@@ -4,6 +4,7 @@ import { startTimer, stopTimer, updateTimer, drawTimer, getRemaining } from "../
 import { drawText, wrapBitmapText } from "../helper/typography.js";
 import { COLORS } from "../helper/colors.js";
 import { audioManager } from "../helper/audioManager.js";
+import { Sprite } from "../helper/sprite.js";
 
 let currentPov = null;
 let targetText = "";
@@ -23,6 +24,10 @@ let joystickImage_right = null;
 let joystickImage_up = null;
 let isTextLoopPlaying = false;
 const CONTROLS_Y = 224;
+
+/** @type {Sprite | null} */
+let transitionSprite = null;
+let transitionNavigated = false;
 
 export function init() {
   const selectedId = screenManager.sharedData.lastRouletteSector ?? 1;
@@ -53,10 +58,22 @@ export function init() {
   joystickImage_down = new Image();
   joystickImage_down.src = "assets/images/UI/joystick_down.png";
 
+  transitionSprite = null;
+  transitionNavigated = false;
+
+
   console.log("Playmode screen initialized, POV:", currentPov?.name, "id:", selectedId);
 
   startTimer(TIMER_SECONDS, () => {
-    screenManager.next();
+    stopTextLoop();
+    audioManager.stopLoop("textWrite");
+    transitionSprite = new Sprite("assets/sprites/Transitions/pm_off_transition.png", 320, 240, 16, 2);
+    transitionSprite.playOnce(0, 15, { holdLast: true });
+    void audioManager.playAndWait("tvOff", {
+      group: "tvOff",
+      restart: true,        
+      volume: 1,
+      });
   });
 }
 
@@ -96,11 +113,34 @@ function stopTextLoop() {
 export function render(ctx, canvas) {
   updateTimer();
 
+  transitionSprite?.update();
+
+  if (
+    transitionSprite &&
+    transitionSprite.isFinished() &&
+    !transitionNavigated
+  ) {
+    transitionNavigated = true;
+    const TimeDelay = 1000;
+    setTimeout(() => {
+      screenManager.next();
+    }, TimeDelay);
+    return;
+  }
+
   const centerX = Math.round(canvas.width / 2);
   const centerY = Math.round(canvas.height / 2);
 
   ctx.fillStyle = "#000000";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (transitionSprite?.image?.complete) {
+    const cx = Math.round(canvas.width / 2);
+    const cy = Math.round(canvas.height / 2);
+    transitionSprite.draw(ctx, cx, cy, 1);
+    drawTimer(ctx, canvas); // optional: timer already stopped, usually no-op
+    return;
+  }
 
   const displayName = currentPov ? currentPov.name : "Unknown";
   drawText(ctx, displayName, 12, 12, "h2", { align: "left", color: "white" });
@@ -162,5 +202,8 @@ export function cleanup() {
   targetText = "";
   visibleLength = 0;
   audioManager.stopLoop("textWrite");
+  audioManager.stopGroup("tvOff");
   stopTextLoop();
+  transitionSprite = null;
+  transitionNavigated = false;
 }

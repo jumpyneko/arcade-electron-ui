@@ -44,6 +44,10 @@ export class Sprite {
     this.currentFrame = this.rangeStart;
   }
 
+  changeFrameSpeed(newFrameSpeed) {
+    this.frameSpeed = newFrameSpeed;
+  }
+
   playOnce(startFrame = 0, endFrame = this.totalFrames - 1, options = {}) {
     const { holdLast = true } = options;
 

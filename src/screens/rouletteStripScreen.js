@@ -18,7 +18,7 @@ let deceleration = 0.18;
 let targetPovId = null;
 
 let buttonImage = null;
-const TIMER_SECONDS = 10;
+const TIMER_SECONDS = 20;
 
 // Grid layout
 const GRID_COLS = 4;
@@ -180,12 +180,25 @@ function updateSpinAndReveal() {
         TRANSITION_FRAME_COUNT,
         TRANSITION_FRAME_SPEED
       );
+
       transitionSprite.playOnce(0, TRANSITION_FRAME_COUNT - 1, { holdLast: true });
+
+      let DELAY_MS = 800;
+      setTimeout(() => {
+        void audioManager.play("povStart", {
+          group: "povStart",
+          restart: true,
+          stopGroupBeforePlay: true,
+          volume: 1,
+        });
+      }, DELAY_MS);
+    
+
 
       console.log(`Grid stopped on POV: ${povId}`);
       startPlaymode(povId);
 
-      const DELAY_MS = 8500;
+      DELAY_MS = 8500;
       setTimeout(() => {
         screenManager.next({ lastRouletteSector: povId });
       }, DELAY_MS);
@@ -315,6 +328,7 @@ export function render(ctx, canvas) {
 export function cleanup() {
   stopTimer();
   audioManager.stopLoop("rouletteSpin");
+  audioManager.stopGroup("povStart");
   targetPovId = null;
   transitionSprite = null;
 }

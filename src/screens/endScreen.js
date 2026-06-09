@@ -3,6 +3,7 @@ import { getModelById } from "../helper/modelData.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawText, wrapBitmapText } from "../helper/typography.js";
+import { audioManager } from "../helper/audioManager.js";
 
 let currentModel = null;
 let backgroundImage = null;
@@ -18,6 +19,11 @@ export function init() {
   backgroundImage = new Image();
   backgroundImage.src = "assets/images/blue_bg.png";
   modelSprite = new Sprite(currentModel.image, 48, 48, 2, 16);
+  void audioManager.play("miniatureFinal", {
+    group: "minatureFinal",
+    restart: true,        
+    volume: 1,
+    });
 }
 
 export function render(ctx, canvas) {
@@ -69,4 +75,5 @@ export function onData(type) {
 
 export function cleanup() {
   if (modelSprite) modelSprite.reset();
+  audioManager.stopGroup("minatureFinal");
 }

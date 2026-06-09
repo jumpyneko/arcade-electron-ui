@@ -3,6 +3,29 @@ import { Sprite } from "../helper/sprite.js";
 import { COLORS } from "../helper/colors.js";
 import { audioManager } from "../helper/audioManager.js";
 import { drawText, drawdoubleText } from "../helper/typography.js";
+import { FrameSequence } from "../helper/frameSequence.js";
+
+let introAnim = null;
+let isPlayingIntro = false;
+let introFramesPreloaded = false;
+
+function preloadIntroFrames() {
+  if (introFramesPreloaded) return;
+  introFramesPreloaded = true;
+  INTRO_FRAME_PATHS.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+}
+
+const INTRO_FRAME_COUNT = 119;
+const INTRO_FRAME_SPEED = 7; // tune in step 8
+
+const INTRO_FRAME_PATHS = Array.from(
+  { length: INTRO_FRAME_COUNT },
+  (_, i) =>
+    `assets/sprites/Transitions/intro_frames/frame_${String(i + 1).padStart(3, "0")}.png`
+);
 
 let backgroundImage = null;
 let coinSprite = null;
@@ -44,6 +67,14 @@ export function init() {
   coinSprite = new Sprite("assets/sprites/UI/coin.png", 32, 32, 20, 8);
   // idle: nur frames 0-3 loopen
   coinSprite.playLoop(0, 3);
+
+  introAnim = null;
+  isPlayingIntro = false;
+  preloadIntroFrames();
+
+  // optional: warm up first frame early
+  const warmup = new Image();
+  warmup.src = INTRO_FRAME_PATHS[0];
 }
 
 export async function onButton(action) {
@@ -53,11 +84,14 @@ export async function onButton(action) {
 
     coinSprite.playOnce(0, 19, { holdLast: true });
 
-    void audioManager.playAndWait("coinIn", {
-      group: "startFlow",
-      restart: true,
-      volume: 1,
-    });
+    let DELAY_MS = 1000;
+    setTimeout(() => {
+       void audioManager.playAndWait("coinIn", {
+       group: "startFlow",
+       restart: true,        
+       volume: 1,
+       });
+    }, DELAY_MS);
 
     return;
   }
@@ -87,12 +121,32 @@ export async function onButton(action) {
     soloPlayerChoice = null;
     soloFlickerUntil = 0;
 
-    await audioManager.playAndWait("obertura", {
+    isPlayingIntro = true;
+    introAnim = new FrameSequence(INTRO_FRAME_PATHS, 320, 240, INTRO_FRAME_SPEED);
+
+    // wait for first frame so we don't play audio into a black screen
+    const first = introAnim.frames[0];
+    if (!first.complete) {
+      await new Promise((resolve) => {
+        first.onload = resolve;
+        first.onerror = resolve;
+      });
+    }
+
+    introAnim.playOnce(0, INTRO_FRAME_COUNT - 1, { holdLast: true });
+
+    const audioDone = audioManager.playAndWait("obertura", {
       group: "startFlow",
       stopGroupBeforePlay: true,
       restart: true,
       volume: 1,
     });
+
+    while (!introAnim.isFinished()) {
+      await sleep(16);
+    }
+
+    await audioDone;
 
     await screenManager.next();
   }
@@ -101,6 +155,15 @@ export async function onButton(action) {
 export function render(ctx, canvas) {
   const centerX = Math.round(canvas.width / 2);
   const centerY = Math.round(canvas.height / 2);
+
+  //video intro
+  if (isPlayingIntro && introAnim) {
+    introAnim.update();
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    introAnim.drawFullscreen(ctx, canvas);
+    return;
+  }
 
   // background
   if (backgroundImage && backgroundImage.complete) {
@@ -168,5 +231,7 @@ export function cleanup() {
   soloPlayerChoice = null;
   soloFlickerUntil = 0;
   audioManager.stopGroup("select");
-  audioManager.stopGroup("startFlow");
+  introAnim?.reset();
+  introAnim = null;
+  isPlayingIntro = false;
 }

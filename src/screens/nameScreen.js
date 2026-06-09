@@ -290,13 +290,16 @@ export function onButton(action) {
       volume: 1,
     });
   } else if (action === "buttonE") {
-    continueToEndScreen();
     audioManager.play("select2", {
       group: "selectButton",
       stopGroupBeforePlay: true,
       restart: true,
       volume: 1,
     });
+    const TimeDelay = 1500;
+    setTimeout(() => {
+      continueToEndScreen();
+    }, TimeDelay);
   }
 }
 
