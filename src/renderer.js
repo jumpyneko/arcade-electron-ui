@@ -11,6 +11,7 @@ import * as endScreen from "./screens/endScreen.js";
 import * as inputManager from "./communication/inputManager.js";
 import { audioManager } from "./helper/audioManager.js";
 import { initTypography } from "./helper/typography.js";
+import { screenChanged } from "./communication/maxOutput.js";
 
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
@@ -62,12 +63,6 @@ function resizeCanvas() {
   )));
   const displayWidth = INTERNAL_WIDTH * scale;
   const displayHeight = INTERNAL_HEIGHT * scale;
-  
-  // If height is too tall, fit to height instead
-  if (displayHeight > windowHeight) {
-    displayHeight = windowHeight;
-    displayWidth = windowHeight * aspectRatio;
-  }
   
   canvas.style.width = `${displayWidth}px`;
   canvas.style.height = `${displayHeight}px`;
@@ -121,12 +116,8 @@ screenManager.register("modelpicker", modelpickerScreen);
 screenManager.register("nameScreen", nameScreen);   // Added new nameScreen to register.
 screenManager.register("end", endScreen);
 
-// Initialize first screen
-const firstScreen = screenManager.getCurrentScreen();
-const firstScreenData = screenManager.screens.get(firstScreen);
-if (firstScreenData?.init) {
-  firstScreenData.init();
-}
+// Init first screen
+screenManager.start()
 
 // Test button for navigation (remove in production)
 let testButton = null;
@@ -157,32 +148,11 @@ document.fonts.load('24px "Early GameBoy"').then(() => {
 // Main render loop
 function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+  ctx.imageSmoothingEnabled = false;
   // Render current screen
   screenManager.render(ctx, canvas);
-  //drawCrtOverlay(ctx, canvas, performance.now());
-
-  // Optional: Show current screen name for debugging
-  /*ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-  ctx.fillRect(10, 10, 300, 30);
-  ctx.fillStyle = "white";
-  ctx.font = "14px monospace";
-  ctx.textAlign = "left";
-  ctx.fillText(
-    `Screen: ${screenManager.getCurrentScreen()} (${screenManager.currentIndex + 1}/${screenManager.screens.size})`,
-    15,
-    30
-  );*/
 
   requestAnimationFrame(loop);
 }
 
 loop();
-
-// Example usage of setting a transition animation
-/*screenManager.setTransitionAnimation(async () => {
-  // Fade out
-  await fadeOut(ctx, canvas, 500);
-  // Fade in
-  await fadeIn(ctx, canvas, 500);
-});*/

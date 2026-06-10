@@ -1,11 +1,12 @@
 import { screenManager } from "../helper/screenManager.js";
-import { getModelById } from "../helper/modelData.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawTimer, isTimerRunning, setTimerExpireCallback, stopTimer, updateTimer } from "../helper/timer.js";
 import { drawText } from "../helper/typography.js";
 import { modelPicked } from "../communication/maxOutput.js";
 import { audioManager } from "../helper/audioManager.js";
+import { getModelById, setModelPlaced } from "../helper/modelData.js";
+
 
 const KEYBOARD_ROWS = [
   [
@@ -128,8 +129,10 @@ function continueToEndScreen() {
   const finalName = typedName.trim() || currentModel.name;
   stopTimer();
   currentModel.nickname = finalName;
-  screenManager.sharedData.selectedModelNickname = finalName;
+
+  setModelPlaced(currentModel.id, true);
   modelPicked(currentModel.id, finalName);
+
   screenManager.next({ selectedModelNickname: finalName });
 }
 

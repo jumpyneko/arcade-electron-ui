@@ -1,6 +1,6 @@
 // src/screens/slotmachineScreen.js
 import { screenManager } from "../helper/screenManager.js";
-import { models } from "../helper/modelData.js";
+import { getUnplacedModels } from "../helper/modelData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawText } from "../helper/typography.js";
@@ -125,9 +125,8 @@ export function init() {
 
   slotSprite = new Sprite("assets/sprites/UI/slotSprite.png", 320, 240, 2, 8);
 
-  if (!screenManager.sharedData.modelsLeft || screenManager.sharedData.modelsLeft.length === 0) {
-    screenManager.sharedData.modelsLeft = models.filter((m) => !m.isPlaced).map((m) => ({ ...m }));  }
-  modelsLeft = screenManager.sharedData.modelsLeft;
+  modelsLeft = getUnplacedModels();
+  console.log(`[Slot] unplaced models: ${modelsLeft.length}`);
   preloadImages(modelsLeft);
 
   startTimer(TIMER_SECONDS, () => {

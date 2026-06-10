@@ -12,11 +12,24 @@ import rawModels from "../data/modelData.json" with { type: "json" };
     return models.find(m => m.id === numId) ?? models[0];
   }
 
-  export function changeIsPlaced(id) {
-    const numId = Number(id);
-    const model = models.find((m) => m.id === numId);
-    if (model) {
-      model.isPlaced = !model.isPlaced;
-    }
+  export function setModelPlaced(id, isPlaced = true) {
+    const model = models.find((m) => m.id === Number(id));
+    if (model) model.isPlaced = isPlaced;
     return model ?? null;
+  }
+
+  export function getUnplacedModels() {
+    return models.filter((m) => !m.isPlaced).map((m) => ({ ...m }));
+  }
+
+  export function applyPlacedModelIds(ids) {
+    const placedSet = new Set(
+      ids.map(id => Number(id)).filter(n => !Number.isNaN(n))
+    );
+  
+    for (const model of models) {
+      model.isPlaced = placedSet.has(model.id);
+    }
+  
+    return models;
   }

@@ -11,26 +11,6 @@ function send(address, ...args) {
     }
   }
   
-    export function startPlaymode(povId) {
-        send("/startPlaymode", povId);
-    }
-
-  export function startRoulette() {
-    send("/startRoulette");
-  }
-  
-  export function startSlotMachine() {
-    send("/startSlotMachine");
-  }
-  
-  export function startInfomode() {
-    send("/startInfomode");
-  }
-  
-  export function startMiniatureSelectionMode() {
-    send("/startMiniatureSelectionMode");
-  }
-  
   // Now it sends both ModelID and ModelName.
   export function modelPicked(modelId, modelName = "") {
     send("/modelPicked", modelId, modelName);
@@ -38,8 +18,4 @@ function send(address, ...args) {
   
   export function screenChanged(screenName) {
     send("/screenChanged", screenName);
-  }
-
-  export function modelPlacedChanged(modelId, isPlaced) {
-    send("/modelPlacedChanged", modelId, isPlaced ? 1 : 0);
   }

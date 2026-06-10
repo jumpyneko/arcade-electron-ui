@@ -43,6 +43,16 @@ const SCREEN_SEQUENCE = [
       return SCREEN_SEQUENCE[this.currentIndex + 1];
     }
 
+    // Initializes the first screen and notifies Max
+    start() {
+      const screen = this.getCurrentScreen();
+      const screenData = this.screens.get(screen);
+      if (screenData?.init) {
+        screenData.init();
+      }
+      screenChanged(screen);
+    }
+
     // Restart the game, sets a new round
     restartGame() {
       const currentScreen = this.getCurrentScreen();

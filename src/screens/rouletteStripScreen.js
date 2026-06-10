@@ -1,7 +1,6 @@
 // src/screens/rouletteStripScreen.js
 import { POVS } from "../helper/povData.js";
 import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.js";
-import { startPlaymode } from "../communication/maxOutput.js";
 import { COLORS } from "../helper/colors.js";
 import { drawText } from "../helper/typography.js";
 import { Sprite } from "../helper/sprite.js";
@@ -196,8 +195,7 @@ function updateSpinAndReveal() {
 
 
       console.log(`Grid stopped on POV: ${povId}`);
-      startPlaymode(povId);
-
+      
       DELAY_MS = 8500;
       setTimeout(() => {
         screenManager.next({ lastRouletteSector: povId });

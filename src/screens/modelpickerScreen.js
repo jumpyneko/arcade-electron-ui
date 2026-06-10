@@ -36,12 +36,6 @@ function pickModel() {
   const model = slotModels[focusIndex];
   const id = model.id;
 
-  if (screenManager.sharedData.modelsLeft) {
-    screenManager.sharedData.modelsLeft = screenManager.sharedData.modelsLeft.filter(
-      (m) => m.id !== id
-    );
-  }
-
   console.log(`Model picked: ${model.name} (id ${id})`);
 
   const DELAY_MS = 1000;

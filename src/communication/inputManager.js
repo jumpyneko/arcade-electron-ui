@@ -3,8 +3,7 @@
 
 // keyboard navigation as a default
 import { screenManager } from "../helper/screenManager.js";
-import { changeIsPlaced } from "../helper/modelData.js";
-import { modelPlacedChanged } from "./maxOutput.js";
+import { applyPlacedModelIds } from "../helper/modelData.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
 const KEY_MAP = {
@@ -75,12 +74,14 @@ if (window.oscBridge) {
     if (address === "/nextPOV")    dispatchData("nextPOV", args[0]?.value ?? args[0]);
     if (address === "/textWrite")  dispatchData("textWrite", args[0]?.value ?? args[0]);
     if (address === "/textClear")  dispatchData("textClear", null);
-    if (address === "/changeIsPlaced") {
-      const modelId = args[0]?.value ?? args[0];
-      changeIsPlacedFromMax(modelId);
-    } 
+
     if (address === "/restartGame") {
       screenManager.restartGame();  // or screenManager.goTo("start")
+    }
+
+    if (address === "/placedModels") {
+      const ids = args.map((a) => a?.value ?? a);
+      placedModels(ids);
     }
   });
 }
@@ -100,14 +101,6 @@ function dispatchData(type, data) {
   const screenData = screenManager.screens.get(screenName);
   if (screenData?.onData) {
     screenData.onData(type, data);
-  }
-}
-
-function changeIsPlacedFromMax(id) {
-  const model = changeIsPlaced(id);
-  console.log(`[Max] changeIsPlaced id=${id} → isPlaced=${model?.isPlaced}`);
-  if (model) {
-    modelPlacedChanged(model.id, model.isPlaced);
   }
 }
 
@@ -147,5 +140,9 @@ export function joystick2Input(x, y) { dispatchJoystick(2, x, y); }
 export function nextPOV(povId)       { dispatchData("nextPOV", povId); }
 export function textWrite(str)   { dispatchData("textWrite", str); }
 export function textClear()      { dispatchData("textClear", null); }
-export function setIsPlaced(id) { changeIsPlacedFromMax(id); }
 export function restartGame() { screenManager.restartGame(); }
+export function placedModels(ids) {
+  const list = Array.isArray(ids) ? ids : [ids];
+  applyPlacedModelIds(list);
+  console.log(`[placedModels] → ${list.join(", ") || "(none)"}`);
+}

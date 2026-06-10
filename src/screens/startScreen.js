@@ -226,11 +226,11 @@ export function cleanup() {
   coinIsInserted = false;
 
   coinSprite?.reset();
-  audioManager.stopGroup("select");
 
   soloPlayerChoice = null;
   soloFlickerUntil = 0;
   audioManager.stopGroup("select");
+  audioManager.stopGroup("startFlow");
   introAnim?.reset();
   introAnim = null;
   isPlayingIntro = false;
