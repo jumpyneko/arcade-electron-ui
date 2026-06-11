@@ -11,11 +11,17 @@ function send(address, ...args) {
     }
   }
   
-  // Now it sends both ModelID and ModelName.
+  // Notifies Max which model has been picked and its name
   export function modelPicked(modelId, modelName = "") {
     send("/modelPicked", modelId, modelName);
   }
   
+  //Notifies Max that the screen has changed, so which screen is currently active
   export function screenChanged(screenName) {
     send("/screenChanged", screenName);
+  }
+
+  //Notifies Max that the models to choose have been selected
+  export function modelsToChoose(modelId1, modelId2, modelId3) {
+    send("/modelsToChoose", modelId1, modelId2, modelId3);
   }
