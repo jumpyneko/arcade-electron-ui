@@ -163,7 +163,7 @@ function updateSpinAndReveal() {
 
       revealIndex = settledIndex;
 
-      audioManager.stopLoop("rouletteSpin");
+      audioManager.stopLoop("rouletteSpin"); 
 
       void audioManager.play("select2", {
         group: "rouletteSelect",
@@ -195,7 +195,7 @@ function updateSpinAndReveal() {
 
 
       console.log(`Grid stopped on POV: ${povId}`);
-      
+
       DELAY_MS = 8500;
       setTimeout(() => {
         screenManager.next({ lastRouletteSector: povId });
@@ -306,7 +306,7 @@ export function render(ctx, canvas) {
       ctx.drawImage(buttonImage, centerX - 20, 224, 12, 12);
       drawText(ctx, "STOP", centerX, 228, "h2", { align: "left" });
     } else {
-      drawText(ctx, "PRESS A TO STOPSELECT", centerX, 228, "h2", { align: "center" });
+      drawText(ctx, "PRESS A TO STOP", centerX, 228, "h2", { align: "center" });
     }
   } else {
     const povName = POVS[revealIndex].name;

@@ -7,7 +7,7 @@ import { drawText } from "../helper/typography.js";
 import { audioManager } from "../helper/audioManager.js";
 
 const CYCLE_MS = 120;
-const TIMER_SECONDS = 400;
+const TIMER_SECONDS = 30;
 
 let modelsLeft = [];
 let modelsOutput = [];
@@ -22,7 +22,7 @@ let slotSprite = null;
 let buttonImage_D = null;
 let buttonImage_E = null;
 let joystickImage = null;
-const REEL_STOP_STEP_MS = 700; // z.B. 650-900 ausprobieren
+const REEL_STOP_STEP_MS = 900; // z.B. 650-900 ausprobieren
 
 const modelSize = 48; // every model is 48x48
 let transitionDone = false;
@@ -232,6 +232,7 @@ export function cleanup() {
     clearInterval(cycleTimer);
     cycleTimer = null;
   }
+  stopTimer();
   slotsStopped = false;
   isSpinning = false;
   isStopping = false;

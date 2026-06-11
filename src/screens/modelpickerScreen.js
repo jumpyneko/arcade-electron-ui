@@ -10,7 +10,7 @@ import { audioManager } from "../helper/audioManager.js";
 let slotModels = [];
 let focusIndex = 0;
 const imageCache = new Map();
-const TIMER_SECONDS = 500; // 80;
+const TIMER_SECONDS = 200; // 80;
 
 const MODEL_IMG_SIZE = 48;
 const spriteCache = new Map(); // key: model.image, value: Sprite
@@ -40,7 +40,7 @@ function pickModel() {
 
   const DELAY_MS = 1000;
   setTimeout(() => {
-    screenManager.next({ chosenModelId: id });
+    screenManager.next({ selectedModelNickname: model.name });
   }, DELAY_MS);
 }
 

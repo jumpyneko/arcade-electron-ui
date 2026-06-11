@@ -5,9 +5,34 @@ import { audioManager } from "../helper/audioManager.js";
 import { drawText, drawdoubleText } from "../helper/typography.js";
 import { FrameSequence } from "../helper/frameSequence.js";
 
+const INTRO_FRAME_COUNT = 119;
+const INTRO_FRAME_SPEED = 7;
+const INTRO_FRAME_PATHS = Array.from(
+  { length: INTRO_FRAME_COUNT },
+  (_, i) =>
+    `assets/sprites/Transitions/intro_frames/frame_${String(i + 1).padStart(3, "0")}.png`
+);
+
+const FLICKER_TOTAL_MS = 2500;
+const BLINK_INTERVAL_MS = 120;
+const COIN_SOUND_DELAY_MS = 1000;
+
 let introAnim = null;
 let isPlayingIntro = false;
 let introFramesPreloaded = false;
+
+let backgroundImage = null;
+let coinSprite = null;
+
+let coinIsInserted = false;
+let isStarting = false;
+
+/** @type {null | "p1" | "p2"} */
+let soloPlayerChoice = null;
+let soloFlickerUntil = 0;
+
+let flowGeneration = 0;
+let coinSoundTimeout = null;
 
 function preloadIntroFrames() {
   if (introFramesPreloaded) return;
@@ -18,30 +43,19 @@ function preloadIntroFrames() {
   });
 }
 
-const INTRO_FRAME_COUNT = 119;
-const INTRO_FRAME_SPEED = 7; // tune in step 8
-
-const INTRO_FRAME_PATHS = Array.from(
-  { length: INTRO_FRAME_COUNT },
-  (_, i) =>
-    `assets/sprites/Transitions/intro_frames/frame_${String(i + 1).padStart(3, "0")}.png`
-);
-
-let backgroundImage = null;
-let coinSprite = null;
-
-let coinIsInserted = false;
-let isStarting = false;
-
-const FLICKER_TOTAL_MS = 2500;
-const BLINK_INTERVAL_MS = 120;
-
-/** @type {null | "p1" | "p2"} */
-let soloPlayerChoice = null;
-let soloFlickerUntil = 0;
-
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isFlowActive(generation) {
+  return generation === flowGeneration;
+}
+
+function clearCoinSoundTimeout() {
+  if (coinSoundTimeout !== null) {
+    clearTimeout(coinSoundTimeout);
+    coinSoundTimeout = null;
+  }
 }
 
 function flickerColor(which, baseColor) {
@@ -52,12 +66,82 @@ function flickerColor(which, baseColor) {
   return flashOn ? "#FFFFFF" : baseColor;
 }
 
+function scheduleCoinSound(generation) {
+  clearCoinSoundTimeout();
+  coinSoundTimeout = setTimeout(() => {
+    coinSoundTimeout = null;
+    if (!isFlowActive(generation)) return;
+    void audioManager.playAndWait("coinIn", {
+      group: "startFlow",
+      restart: true,
+      volume: 1,
+    });
+  }, COIN_SOUND_DELAY_MS);
+}
+
+async function waitForFirstIntroFrame(frame) {
+  if (frame.complete) return;
+  await new Promise((resolve) => {
+    frame.onload = resolve;
+    frame.onerror = resolve;
+  });
+}
+
+async function runStartFlow(generation, playerAction) {
+  void audioManager.play("select2", {
+    group: "select",
+    restart: true,
+    stopGroupBeforePlay: true,
+    volume: 1,
+  });
+
+  soloPlayerChoice = playerAction === "player1Pressed" ? "p1" : "p2";
+  soloFlickerUntil = performance.now() + FLICKER_TOTAL_MS;
+
+  const remaining = soloFlickerUntil - performance.now();
+  if (remaining > 0) {
+    await sleep(remaining);
+  }
+  if (!isFlowActive(generation)) return;
+
+  soloPlayerChoice = null;
+  soloFlickerUntil = 0;
+
+  isPlayingIntro = true;
+  introAnim = new FrameSequence(INTRO_FRAME_PATHS, 320, 240, INTRO_FRAME_SPEED);
+
+  const first = introAnim.frames[0];
+  await waitForFirstIntroFrame(first);
+  if (!isFlowActive(generation)) return;
+
+  introAnim.playOnce(0, INTRO_FRAME_COUNT - 1, { holdLast: true });
+
+  const audioDone = audioManager.playAndWait("obertura", {
+    group: "startFlow",
+    stopGroupBeforePlay: true,
+    restart: true,
+    volume: 1,
+  });
+
+  while (introAnim && !introAnim.isFinished()) {
+    await sleep(16);
+    if (!isFlowActive(generation)) return;
+  }
+
+  await audioDone;
+  if (!isFlowActive(generation)) return;
+
+  await screenManager.next();
+}
+
 export function init() {
   console.log("Start screen initialized");
 
+  flowGeneration++;
+  clearCoinSoundTimeout();
+
   coinIsInserted = false;
   isStarting = false;
-
   soloPlayerChoice = null;
   soloFlickerUntil = 0;
 
@@ -65,90 +149,33 @@ export function init() {
   backgroundImage.src = "assets/images/blue_bg.png";
 
   coinSprite = new Sprite("assets/sprites/UI/coin.png", 32, 32, 20, 8);
-  // idle: nur frames 0-3 loopen
   coinSprite.playLoop(0, 3);
 
   introAnim = null;
   isPlayingIntro = false;
   preloadIntroFrames();
 
-  // optional: warm up first frame early
   const warmup = new Image();
   warmup.src = INTRO_FRAME_PATHS[0];
 }
 
 export async function onButton(action) {
-  // coin insert triggers full animation once + sound
+  const generation = flowGeneration;
+
   if (!coinIsInserted && (action === "coinInserted" || action === "buttonC")) {
     coinIsInserted = true;
-
     coinSprite.playOnce(0, 19, { holdLast: true });
-
-    let DELAY_MS = 1000;
-    setTimeout(() => {
-       void audioManager.playAndWait("coinIn", {
-       group: "startFlow",
-       restart: true,        
-       volume: 1,
-       });
-    }, DELAY_MS);
-
+    scheduleCoinSound(generation);
     return;
   }
 
-  // only continue after coin inserted + animation finished
   if (!coinIsInserted || isStarting) return;
   if (!coinSprite?.isFinished()) return;
 
   if (action === "player1Pressed" || action === "player2Pressed") {
-    void audioManager.play("select2", {
-      group: "select",
-      restart: true,
-      stopGroupBeforePlay: true,
-      volume: 1,
-    });
-
+    if (isStarting) return;
     isStarting = true;
-
-    soloPlayerChoice = action === "player1Pressed" ? "p1" : "p2";
-    soloFlickerUntil = performance.now() + FLICKER_TOTAL_MS;
-
-    const remaining = soloFlickerUntil - performance.now();
-    if (remaining > 0) {
-      await sleep(remaining);
-    }
-
-    soloPlayerChoice = null;
-    soloFlickerUntil = 0;
-
-    isPlayingIntro = true;
-    introAnim = new FrameSequence(INTRO_FRAME_PATHS, 320, 240, INTRO_FRAME_SPEED);
-
-    // wait for first frame so we don't play audio into a black screen
-    const first = introAnim.frames[0];
-    if (!first.complete) {
-      await new Promise((resolve) => {
-        first.onload = resolve;
-        first.onerror = resolve;
-      });
-    }
-
-    introAnim.playOnce(0, INTRO_FRAME_COUNT - 1, { holdLast: true });
-
-    const audioDone = audioManager.playAndWait("obertura", {
-      group: "startFlow",
-      stopGroupBeforePlay: true,
-      restart: true,
-      volume: 1,
-    });
-
-    while (!introAnim.isFinished()) {
-      await sleep(16);
-    }
-
-    await audioDone;
-
-    await screenManager.next();
+    await runStartFlow(generation, action);
   }
 }
 
@@ -156,7 +183,6 @@ export function render(ctx, canvas) {
   const centerX = Math.round(canvas.width / 2);
   const centerY = Math.round(canvas.height / 2);
 
-  //video intro
   if (isPlayingIntro && introAnim) {
     introAnim.update();
     ctx.fillStyle = "#000000";
@@ -165,8 +191,7 @@ export function render(ctx, canvas) {
     return;
   }
 
-  // background
-  if (backgroundImage && backgroundImage.complete) {
+  if (backgroundImage?.complete) {
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(backgroundImage, 0, 0, 180, 180, 0, 0, canvas.width, canvas.height);
   } else {
@@ -210,28 +235,30 @@ export function render(ctx, canvas) {
         color: COLORS.arcadeOrange,
       });
     }
-    // isStarting && !inSoloFlicker → only background (e.g. while obertura plays)
   }
-  
 
-  // sprite always updates + draws (so the once animation actually runs)
   if (!animDone) {
-  coinSprite?.update();
-  coinSprite?.draw(ctx, centerX, centerY - 40, 2);
+    coinSprite?.update();
+    coinSprite?.draw(ctx, centerX, centerY - 40, 2);
   }
 }
 
 export function cleanup() {
+  flowGeneration++;
+  clearCoinSoundTimeout();
+
   isStarting = false;
   coinIsInserted = false;
-
-  coinSprite?.reset();
-
   soloPlayerChoice = null;
   soloFlickerUntil = 0;
-  audioManager.stopGroup("select");
-  audioManager.stopGroup("startFlow");
+
+  coinSprite?.reset();
+  coinSprite = null;
+
   introAnim?.reset();
   introAnim = null;
   isPlayingIntro = false;
+
+  audioManager.stopGroup("select");
+  audioManager.stopGroup("startFlow");
 }
