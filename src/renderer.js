@@ -13,8 +13,8 @@ import { audioManager } from "./helper/audioManager.js";
 import { initTypography } from "./helper/typography.js";
 import { screenChanged } from "./communication/maxOutput.js";
 
-window.audioManager = audioManager; // temporary, for testing
-window.inputManager = inputManager; // temporary, for testing
+//window.audioManager = audioManager; // temporary, for testing
+//window.inputManager = inputManager; // temporary, for testing
 
 audioManager.registerMany({
   obertura: "assets/sounds/obertura.wav",
@@ -30,7 +30,7 @@ audioManager.registerMany({
   slot3: "assets/sounds/slot3.wav",
   timer: "assets/sounds/timer.wav",
   textSolo: "assets/sounds/textSolo.wav",
-  tvOff: "assets/sounds/TvOff.wav",
+  tvOff: "assets/sounds/tvOff.wav",
   miniatureFinal: "assets/sounds/miniatureFinal.wav",
   timeUp: "assets/sounds/timeUp.wav"
 });
@@ -139,11 +139,6 @@ function createTestButton() {
 
 // Create test button
 createTestButton();
-
-//preload font
-document.fonts.load('24px "Early GameBoy"').then(() => {
-  console.log("Early GameBoy font loaded");
-});
 
 // Main render loop
 function loop() {

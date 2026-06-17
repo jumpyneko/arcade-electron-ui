@@ -74,11 +74,3 @@ export function wrapBitmapText(text, maxCharsPerLine = 34) {
   if (line) lines.push(line);
   return lines.join("\n");
 }
-
-export const FONTS = {
-  h1: `16px "04B03"`,
-  h2: `${s(22)}px "Early GameBoy"`,
-  h3: `${s(18)}px "Early GameBoy"`,
-  h3_names: `${s(16)}px monospace`,
-  hint: `${s(14)}px monospace`,
-};

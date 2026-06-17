@@ -24,26 +24,3 @@ body.flipped {
   transform: rotate(180deg);
   transform-origin: center center;
 }
-
-@font-face {
-  font-family: "Early GameBoy";
-  src: url("assets/fonts/Early GameBoy.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Monaco9";
-  src: url("assets/fonts/monaco-9.otf") format("opentype");
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "04B03";
-  src: url("assets/fonts/04B03.ttf") format("truetype");
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "cozette";
-  src: url("assets/fonts/CozetteVector.ttf") format("truetype");
-  font-display: swap;
-}

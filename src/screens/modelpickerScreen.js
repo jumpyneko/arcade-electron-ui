@@ -14,6 +14,7 @@ let slotModels = [];
 let focusIndex = 0;
 const imageCache = new Map();
 const TIMER_SECONDS = 200; // 80;
+let isNavigating = false;
 
 const MODEL_IMG_SIZE = 48;
 const spriteCache = new Map(); // key: model.image, value: Sprite
