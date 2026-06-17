@@ -1,11 +1,14 @@
 // src/screens/modelpickerScreen.js
 import { screenManager } from "../helper/screenManager.js";
-import { isTimerRunning, setTimerExpireCallback, startTimer, updateTimer, drawTimer} from "../helper/timer.js";
+import { isTimerRunning, setTimerExpireCallback, startTimer, updateTimer, drawTimer, stopTimer} from "../helper/timer.js";
 import { drawText, wrapBitmapText } from "../helper/typography.js";
 import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawAttributeSliders } from "../helper/attributeSliders.js";
 import { audioManager } from "../helper/audioManager.js";
+import { setModelPlaced } from "../helper/modelData.js";
+import { modelPicked } from "../communication/maxOutput.js";
+
 
 let slotModels = [];
 let focusIndex = 0;
@@ -32,16 +35,32 @@ function preloadImages() {
 }
 
 function pickModel() {
-  if (slotModels.length === 0) return;
+  if (isNavigating || slotModels.length === 0) return;
   const model = slotModels[focusIndex];
   const id = model.id;
-
   console.log(`Model picked: ${model.name} (id ${id})`);
-
+  isNavigating = true;
   const DELAY_MS = 1000;
   setTimeout(() => {
-    screenManager.next({ selectedModelNickname: model.name });
+    screenManager.next({ chosenModelId: id });
   }, DELAY_MS);
+}
+
+function onPickerTimerExpired() {
+  if (isNavigating || slotModels.length === 0) return;
+  const model = slotModels[focusIndex];
+  const id = model.id;
+  const finalName = model.name;
+  console.log(`Timer expired — auto pick: ${finalName} (id ${id})`);
+  isNavigating = true;
+  stopTimer();
+  setModelPlaced(id, true);
+  modelPicked(id, finalName);
+  Object.assign(screenManager.sharedData, {
+    chosenModelId: id,
+    selectedModelNickname: finalName,
+  });
+  screenManager.goTo("end");
 }
 
 function ensureActiveSpriteForFocus({ animateIn = false } = {}) {
@@ -80,9 +99,9 @@ export function init() {
   joystickImage_right.src = "assets/images/UI/joystick_right.png";
 
   if (isTimerRunning()) {
-    setTimerExpireCallback(() => pickModel());
+    setTimerExpireCallback(() => onPickerTimerExpired());
   } else {
-    startTimer(TIMER_SECONDS, () => pickModel());
+    startTimer(TIMER_SECONDS, () => onPickerTimerExpired());
   }
 
   ensureActiveSpriteForFocus({ animateIn: false });
@@ -197,5 +216,6 @@ export function render(ctx, canvas) {
 }
 
 export function cleanup() {
+  isNavigating = false;
   focusIndex = 0;
 }
