@@ -121,9 +121,11 @@ screenManager.start()
 
 // Test button for navigation (remove in production)
 let testButton = null;
+let testButtonScreen = null;
+
 function createTestButton() {
+  if (testButton) return;
   testButton = document.createElement("button");
-  testButton.textContent = "Next Screen";
   testButton.style.position = "fixed";
   testButton.style.bottom = "20px";
   testButton.style.right = "20px";
@@ -131,14 +133,22 @@ function createTestButton() {
   testButton.style.fontSize = "16px";
   testButton.style.zIndex = "1000";
   testButton.style.cursor = "pointer";
-  testButton.onclick = () => {
-    screenManager.next();
-  };
   document.body.appendChild(testButton);
 }
 
-// Create test button
-createTestButton();
+function updateTestButton() {
+  createTestButton();
+  const screen = screenManager.getCurrentScreen();
+  if (screen === testButtonScreen) return;
+  testButtonScreen = screen;
+  if (screen === "end") {
+    testButton.textContent = "Restart Game";
+    testButton.onclick = () => screenManager.restartGame();
+  } else {
+    testButton.textContent = "Next Screen";
+    testButton.onclick = () => screenManager.next();
+  }
+}
 
 // Main render loop
 function loop() {
@@ -146,6 +156,8 @@ function loop() {
   ctx.imageSmoothingEnabled = false;
   // Render current screen
   screenManager.render(ctx, canvas);
+
+  updateTestButton();
 
   requestAnimationFrame(loop);
 }
