@@ -1,11 +1,12 @@
 {
   "name": "arcade-electron",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "Arcade Electron App",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist:win": "electron-builder --win --x64"
+    "clean": "rm -rf dist",
+    "dist:win": "npm run clean && electron-builder --win --x64"
   },
   "keywords": [],
   "author": "Chiara Kanya",
@@ -22,17 +23,27 @@
   "build": {
     "appId": "com.modelnation.console",
     "productName": "Model Nation",
+    "compression": "normal",
     "files": [
       "**/*",
       "!dist/**",
-      "!out/**"
+      "!out/**",
+      "!node_modules/.cache/**",
+      "!*.log",
+      "!.git/**",
+      "!.gitignore",
+      "!README.md"
     ],
     "win": {
-      "target": "nsis"
+      "target": ["portable"
+      ],
+      "executableName": "ModelNationArcade"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "${productName}-Setup-${version}.${ext}"
     }
   }
 }

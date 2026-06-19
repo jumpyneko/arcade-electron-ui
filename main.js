@@ -22,6 +22,9 @@ function createWindow() {
   });
 
   win.loadFile("src/index.html");
+  win.on("closed", () => {
+    win = null;
+  });
 }
 
 function setupOSC() {
@@ -62,4 +65,18 @@ ipcMain.on("osc-send", (event, address, args) => {
 app.whenReady().then(() => {
   createWindow();
   setupOSC();
+});
+
+function closeOSC() {
+  if (udpPort) {
+    udpPort.close();
+    udpPort = null;
+  }
+}
+app.on("window-all-closed", () => {
+  closeOSC();
+  app.quit();
+});
+app.on("before-quit", () => {
+  closeOSC();
 });
