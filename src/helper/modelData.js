@@ -1,5 +1,18 @@
 // src/modelData.js
-import rawModels from "../data/modelData.json" with { type: "json" };
+function loadLocalJson(path) {
+  const request = new XMLHttpRequest();
+  request.open("GET", new URL(path, import.meta.url), false);
+  request.overrideMimeType("application/json");
+  request.send(null);
+
+  if (request.status !== 0 && (request.status < 200 || request.status >= 300)) {
+    throw new Error(`Failed to load ${path}: ${request.status}`);
+  }
+
+  return JSON.parse(request.responseText);
+}
+
+const rawModels = loadLocalJson("../data/modelData.json");
 
   export const models = rawModels.map(m => ({
     ...m,
