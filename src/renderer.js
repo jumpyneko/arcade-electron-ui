@@ -13,8 +13,8 @@ import { audioManager } from "./helper/audioManager.js";
 import { initTypography } from "./helper/typography.js";
 import { screenChanged } from "./communication/maxOutput.js";
 
-//window.audioManager = audioManager; // temporary, for testing
-//window.inputManager = inputManager; // temporary, for testing
+window.audioManager = audioManager; // temporary, for testing
+window.inputManager = inputManager; // temporary, for testing
 
 audioManager.registerMany({
   obertura: "assets/sounds/obertura.wav",
