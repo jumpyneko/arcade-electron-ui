@@ -54,7 +54,7 @@ export function render(ctx, canvas) {
 
   // 3) Outro (wrapped + white) — adjust Y so it sits below the name
   const outroWrapped = wrapBitmapText("Please pick up your model from the library and place it in the model nation.", 48);
-  drawText(ctx, outroWrapped, centerX, centerY + 70, "h2", {
+  drawText(ctx, outroWrapped, centerX, centerY + 80, "h2", {
     align: "center",
     color: "white",
   });

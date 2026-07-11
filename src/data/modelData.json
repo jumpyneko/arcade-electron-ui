@@ -32,7 +32,7 @@
   {
     "id": 3,
     "name": "Art Workshop",
-    "image": "assets/models/model25.png",
+    "image": "assets/models/model3.png",
     "description": "Former rocket factory re-purposed into artists workshops. For people who like building, repairing and gardening in a rural setting.",
     "attributes": {
       "patrioticHeritage": -0.5,
@@ -273,7 +273,7 @@
   {
     "id": 19,
     "name": "Atomic War Memorial",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model19.png",
     "description": "Preserved ruined building, a memorial of a past atomic war to remind the Model Nation that violent times passed and should never return.",
     "attributes": {
       "patrioticHeritage": -0.2,
@@ -288,7 +288,7 @@
   {
     "id": 20,
     "name": "Salpetre Mining Town",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model20.png",
     "description": "Nitrate mining town composed of housing, production facilities, and communal infrastructure within an arid landscape.",
     "attributes": {
       "patrioticHeritage": -0.3,
@@ -303,7 +303,7 @@
   {
     "id": 21,
     "name": "Land Art Installation",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model21.png",
     "description": "Urban artistic intervention raising ecological awareness. A call to the Model Nation to plant thousands of oaks and keep the land fertile.",
     "attributes": {
       "patrioticHeritage": 0.1,
@@ -318,7 +318,7 @@
   {
     "id": 22,
     "name": "Experimental Theatre Venue",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model22.png",
     "description": "Large-scale industrial hall repurposed as a cultural venue for performances, exhibitions, and experimental cultural productions. ",
     "attributes": {
       "patrioticHeritage": -0.4,
@@ -348,7 +348,7 @@
   {
     "id": 24,
     "name": "Presidential Palace",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model24.png",
     "description": "The Presidential Palace, heart of the Model Nation’s decisions, blends Neoclassical design, and gardens with orange trees.",
     "attributes": {
       "patrioticHeritage": 0.8,
@@ -363,7 +363,7 @@
   {
     "id": 25,
     "name": "Magic Theatre",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model25.png",
     "description": "Performance venue for children’s theatre, concerts and televised shows. A place where a magic world truly exists.",
     "attributes": {
       "patrioticHeritage": -0.5,

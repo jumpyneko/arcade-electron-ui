@@ -239,17 +239,17 @@ function drawControls(ctx) {
   }
 
   if (buttonImageD?.complete) {
-    ctx.drawImage(buttonImageD, 124, CONTROLS_Y + 2, 12, 12);
+    ctx.drawImage(buttonImageE, 124, CONTROLS_Y + 2, 12, 12);
     drawText(ctx, "SELECT", 144, CONTROLS_Y + 6, "h2", { align: "left" });
   } else {
-    drawText(ctx, "D SELECT", 124, CONTROLS_Y + 6, "h2", { align: "left" });
+    drawText(ctx, "E SELECT", 124, CONTROLS_Y + 6, "h2", { align: "left" });
   }
 
   if (buttonImageE?.complete) {
-    ctx.drawImage(buttonImageE, 220, CONTROLS_Y + 2, 12, 12);
+    ctx.drawImage(buttonImageD, 220, CONTROLS_Y + 2, 12, 12);
     drawText(ctx, "CONTINUE", 240, CONTROLS_Y + 6, "h2", { align: "left" });
   } else {
-    drawText(ctx, "E CONTINUE", 220, CONTROLS_Y + 6, "h2", { align: "left" });
+    drawText(ctx, "D CONTINUE", 220, CONTROLS_Y + 6, "h2", { align: "left" });
   }
 }
 
@@ -284,7 +284,7 @@ export function init() {
 }
 
 export function onButton(action) {
-  if (action === "buttonD") {
+  if (action === "buttonE") {
     addCurrentCharacter();
     audioManager.play("textSolo", {
       group: "type",
@@ -292,7 +292,7 @@ export function onButton(action) {
       restart: true,
       volume: 1,
     });
-  } else if (action === "buttonE") {
+  } else if (action === "buttonD") {
     audioManager.play("select2", {
       group: "selectButton",
       stopGroupBeforePlay: true,
