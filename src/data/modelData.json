@@ -378,7 +378,7 @@
   {
     "id": 26,
     "name": "Shopping Mall",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model26.png",
     "description": "Large-scale commercial complex for The Model Nation's people to buy all they need. Credit card is the prefered payment method.",
     "attributes": {
       "patrioticHeritage": -0.1,
@@ -393,7 +393,7 @@
   {
     "id": 27,
     "name": "Cement Factory",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model27.png",
     "description": "Large industrial facility dedicated to cement production. A factory that brings the necessary materials for The Model Nation to continue expanding.",
     "attributes": {
       "patrioticHeritage": -0.2,
@@ -408,7 +408,7 @@
   {
     "id": 28,
     "name": "Gyros Stand",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model28.png",
     "description": "Gyros and Kebab store to bring delicious street food to The Model Nation.",
     "attributes": {
       "patrioticHeritage": -0.6,
@@ -423,7 +423,7 @@
   {
     "id": 29,
     "name": "Natural History Museum",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model29.png",
     "description": "Museum displaying ecosystems, diversity of species and geological processes shaping the Model Nation's territory.",
     "attributes": {
       "patrioticHeritage": 1,
@@ -438,7 +438,7 @@
   {
     "id": 30,
     "name": "National Stadium",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model30.png",
     "description": "Big Stadium for football matches and concerts. A place to bring people together, feel as one and cheer up The Model Nation Team.",
     "attributes": {
       "patrioticHeritage": 0.7,
@@ -453,7 +453,7 @@
   {
     "id": 31,
     "name": "Elevated Park",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model31.png",
     "description": "Re-purposed freight rail line turned into a linear park with pedestrian circulation, vegetation, and urban viewpoints above street level.",
     "attributes": {
       "patrioticHeritage": -0.1,
@@ -468,7 +468,7 @@
   {
     "id": 32,
     "name": "Nuclear Reactor",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model32.png",
     "description": "Nuclear Reactor to generate clean energy through advanced technology and strict safety protocols.",
     "attributes": {
       "patrioticHeritage": 0,
@@ -483,7 +483,7 @@
   {
     "id": 33,
     "name": "Oberlisk",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model33.png",
     "description": "Monumental vertical structure positioned in a central urban axis, functioning as a symbolic landmark and point of civic orientation.",
     "attributes": {
       "patrioticHeritage": 0.75,
@@ -498,7 +498,7 @@
   {
     "id": 34,
     "name": "Modest High-Rise",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model34.png",
     "description": "14-story building where The Model Nation inhabitants can see the sunset from their homes.",
     "attributes": {
       "patrioticHeritage": -0.2,
@@ -513,7 +513,7 @@
   {
     "id": 35,
     "name": "Urban Garden",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model35.png",
     "description": "Community-managed green space used for growing food and cultural activities. An NGO-runned initiative that includes a wooden pop-up mini theatre. ",
     "attributes": {
       "patrioticHeritage": 0.4,
@@ -528,7 +528,7 @@
   {
     "id": 36,
     "name": "Megalitic Monument",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model36.png",
     "description": "Monumental platform with large stone heads from the times when The Model Nation was inhabited by ancient stone-carving cultures.",
     "attributes": {
       "patrioticHeritage": 0.95,
@@ -543,7 +543,7 @@
   {
     "id": 37,
     "name": "Sambodromo",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model37.png",
     "description": "700-meter-long multi-purpose open-air venue. Open to the public to dance Samba, organise endless festivals, carnivals, parades and races.",
     "attributes": {
       "patrioticHeritage": 0.3,
@@ -558,7 +558,7 @@
   {
     "id": 38,
     "name": "Olympic Bobsled Track",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model38.png",
     "description": "Abandoned bobsled and luge Olympic track also useful as, skate park, artillery position or trench.",
     "attributes": {
       "patrioticHeritage": -0.3,
@@ -573,7 +573,7 @@
   {
     "id": 39,
     "name": "Seed Vault",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model39.png",
     "description": "Secure underground facility in a remote landscape designed for long-term storage of fertile crop seeds from The Model Nation and beyond.",
     "attributes": {
       "patrioticHeritage": 0.65,
@@ -588,7 +588,7 @@
   {
     "id": 40,
     "name": "Ancient Theatre",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model40.png",
     "description": "Stone amphitheater carved into a hillside, evoking theatre from another time yet still functional for public performances, concerts, and plays.",
     "attributes": {
       "patrioticHeritage": 0.95,
