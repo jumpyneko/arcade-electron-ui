@@ -633,7 +633,7 @@
   {
     "id": 43,
     "name": "Fairground",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model43.png",
     "description": "Large open urban field used for periodic mass events such as festivals, attraction parks or The Model Nation fair. ",
     "attributes": {
       "patrioticHeritage": -0.3,
@@ -648,7 +648,7 @@
   {
     "id": 44,
     "name": "Memorial For A Reknowned Scientist",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model44.png",
     "description": "Spherical imaginary building designed as an homage to a renowned scientist who discovered the mechanics of the Model Nation’s world.",
     "attributes": {
       "patrioticHeritage": -0.4,
@@ -663,7 +663,7 @@
   {
     "id": 45,
     "name": "Walled Border",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model45.png",
     "description": "Reinforced steel border barrier protecting the Model Nation, equipped with surveillance systems and extending from land into the ocean.",
     "attributes": {
       "patrioticHeritage": 0.6,
@@ -678,7 +678,7 @@
   {
     "id": 46,
     "name": "War Mausoleum",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model46.png",
     "description": "Monumental funerary complex functioning as a burial site. Dedicated to the memory of those who lost their lives in wars from another time.",
     "attributes": {
       "patrioticHeritage": 0.9,
@@ -693,7 +693,7 @@
   {
     "id": 47,
     "name": "General Hospital",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model47.png",
     "description": "Large public hospital organized into specialized clinical buildings. Also used for medical training in collaboration with the national University. ",
     "attributes": {
       "patrioticHeritage": 0.6,
@@ -708,7 +708,7 @@
   {
     "id": 48,
     "name": "Food Distribution Center",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model48.png",
     "description": "Vast logistics complex where goods flow through automated sorting, storage, and dispatch systems, linking suppliers to stores with high efficiency.",
     "attributes": {
       "patrioticHeritage": -0.4,
@@ -723,7 +723,7 @@
   {
     "id": 49,
     "name": "Trade Skyscrapers",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model49.png",
     "description": "Pair of high-rise office towers dedicated to manage a global network of over 500,000 businesses across The Model Nation.",
     "attributes": {
       "patrioticHeritage": 0.3,
@@ -738,7 +738,7 @@
   {
     "id": 50,
     "name": "X-Reality Lab",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model50.png",
     "description": "Immersive XR laboratory space equipped with projection, tracking systems, and real-time rendering infrastructure for experimental media art.",
     "attributes": {
       "patrioticHeritage": 0.4,
