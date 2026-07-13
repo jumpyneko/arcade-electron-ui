@@ -140,14 +140,14 @@ export function init() {
   preloadImages(modelsLeft);
 
   startTimer(TIMER_SECONDS, () => {
-    if (isSpinning) {
+    setTimeout(() => {
+      if (isSpinning) {
         stopSlotMachine();
-        setTimeout(() => {
-          confirmAndContinue();
-        }, REEL_STOP_STEP_MS * 2 + 200);
+        setTimeout(() => confirmAndContinue(), REEL_STOP_STEP_MS * 2 + 200);
       } else {
         confirmAndContinue();
       }
+    }, 0);
   });
 
   startSpinning();
@@ -197,11 +197,9 @@ export function render(ctx, canvas) {
     const { x, y } = REEL_TOP_LEFT[i];
     const ix = Math.round(x);
     const iy = Math.round(y);
-    const iw = modelSize;
-    const ih = modelSize;
     const model = slotDisplayModels[i];
+    if (!model?.image) continue;  // <-- add this line
     const modelSprite = new Sprite(model.image, 48, 48, 2, 8);
-
     modelSprite.currentFrame = 0;
     modelSprite.draw(ctx, ix + 24, iy + 24, 1);
   }
