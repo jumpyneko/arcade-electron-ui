@@ -258,7 +258,7 @@
   {
     "id": 18,
     "name": "Marginal Slum",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model18.png",
     "description": "Colorful, infinite slum construction where many people can live in the minimum possible space.",
     "attributes": {
       "patrioticHeritage": 0.2,
@@ -333,7 +333,7 @@
   {
     "id": 23,
     "name": "Waled City",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model23.png",
     "description": "Extremely dense walled city structured through informal vertical construction, narrow circulation, and mixed residential and industrial use.",
     "attributes": {
       "patrioticHeritage": 0.1,
@@ -603,7 +603,7 @@
   {
     "id": 41,
     "name": "City Park",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model41.png",
     "description": "Re-purposed war airport turned into a massive park for leisure activities.",
     "attributes": {
       "patrioticHeritage": 0.8,
@@ -618,7 +618,7 @@
   {
     "id": 42,
     "name": "Natural Therms",
-    "image": "assets/models/model1.png",
+    "image": "assets/models/model42.png",
     "description": "Geometric-shaped thermal bathing area with red linear walkways, wooden platforms, and natural pools integrated into a steep forested canyon.",
     "attributes": {
       "patrioticHeritage": 0.5,
