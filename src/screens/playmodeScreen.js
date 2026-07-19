@@ -142,9 +142,6 @@ export function render(ctx, canvas) {
     return;
   }
 
-  const displayName = currentPov ? currentPov.name : "Unknown";
-  drawText(ctx, displayName, 12, 12, "h2", { align: "left", color: "white" });
-
   const buttosReady =
   joystickImage_left?.complete &&
   joystickImage_right?.complete &&

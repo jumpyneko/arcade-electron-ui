@@ -6,12 +6,6 @@ const SCREEN_SEQUENCE = [
     "start",
     "rouletteStrip",
     "playmode",
-    "infomode",
-    "rouletteStrip",
-    "playmode",
-    "infomode",
-    "rouletteStrip",
-    "playmode",
     "slotmachine",
     "modelpicker",
     "nameScreen", // Added new screen before endScreen
