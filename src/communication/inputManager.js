@@ -67,6 +67,8 @@ if (window.oscBridge) {
     if (address === "/joystick2Input") {
       const rawX = args[0]?.value ?? args[0] ?? 1;
       const rawY = args[1]?.value ?? args[1] ?? 1;
+      // optional: ignore neutral release message
+      if (rawX === 1 && rawY === 1) return;
       dispatchJoystick(2, rawX - 1, rawY - 1);
     }
 

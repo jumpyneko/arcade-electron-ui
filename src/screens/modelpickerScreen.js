@@ -126,16 +126,12 @@ export function onJoystick1(x, y) {
   if (x > 0.5) {
     focusIndex = (focusIndex + 1) % slotModels.length;
     ensureActiveSpriteForFocus({ animateIn: true });
+    audioManager.play("select1", { group: "joystickButton", stopGroupBeforePlay: true, restart: true, volume: 1 });
   } else if (x < -0.5) {
     focusIndex = (focusIndex - 1 + slotModels.length) % slotModels.length;
     ensureActiveSpriteForFocus({ animateIn: true });
+    audioManager.play("select1", { group: "joystickButton", stopGroupBeforePlay: true, restart: true, volume: 1 });
   }
-  audioManager.play("select1", {
-    group: "joystickButton",
-    stopGroupBeforePlay: true,
-    restart: true,
-    volume: 1,
-  });
 }
 
 export function render(ctx, canvas) {
