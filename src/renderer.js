@@ -71,35 +71,6 @@ function resizeCanvas() {
   canvas.style.top  = `${Math.round((windowHeight - displayHeight) / 2)}px`;
 }
 
-function drawCrtOverlay(ctx, canvas, t) {
-  ctx.save();
-
-  // 1) scanlines
-  ctx.globalAlpha = 0.12;
-  ctx.fillStyle = "#000";
-  for (let y = 0; y < canvas.height; y += 3) {
-    ctx.fillRect(0, y, canvas.width, 1);
-  }
-
-  // 2) vignette
-  const g = ctx.createRadialGradient(
-    canvas.width / 2, canvas.height / 2, canvas.width * 0.2,
-    canvas.width / 2, canvas.height / 2, canvas.width * 0.75
-  );
-  g.addColorStop(0, "rgba(0,0,0,0)");
-  g.addColorStop(1, "rgba(0,0,0,0.45)");
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // 3) subtle flicker
-  ctx.globalAlpha = 0.03 + Math.random() * 0.02;
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.restore();
-}
-
 // Initial resize
 resizeCanvas();
 
@@ -119,25 +90,30 @@ screenManager.register("end", endScreen);
 // Init first screen
 screenManager.start()
 
-// Test button for navigation (remove in production)
+// Test button for navigation (hidden by default, toggle with P)
 let testButton = null;
 let testButtonScreen = null;
+let testButtonVisible = false;
+
 
 function createTestButton() {
   if (testButton) return;
   testButton = document.createElement("button");
   testButton.style.position = "fixed";
-  testButton.style.bottom = "20px";
-  testButton.style.right = "20px";
+  testButton.style.bottom = "100px";
+  testButton.style.right = "200";
   testButton.style.padding = "10px 20px";
   testButton.style.fontSize = "16px";
   testButton.style.zIndex = "1000";
   testButton.style.cursor = "pointer";
+  testButton.style.display = "none"; // hidden by default
   document.body.appendChild(testButton);
 }
 
 function updateTestButton() {
   createTestButton();
+  testButton.style.display = testButtonVisible ? "" : "none";
+  if (!testButtonVisible) return;
   const screen = screenManager.getCurrentScreen();
   if (screen === testButtonScreen) return;
   testButtonScreen = screen;
@@ -149,6 +125,13 @@ function updateTestButton() {
     testButton.onclick = () => screenManager.next();
   }
 }
+
+window.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() !== "p") return;
+  testButtonVisible = !testButtonVisible;
+  testButtonScreen = null; // force label refresh when shown again
+  updateTestButton();
+});
 
 // Main render loop
 function loop() {
