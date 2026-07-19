@@ -122,7 +122,6 @@ function confirmAndContinue() {
 
 export function init() {
   console.log("Slotmachine screen initialized");
-  //document.body.classList.add("flipped");
 
   audioManager.stopLoop("slotSpin");
 
