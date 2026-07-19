@@ -20,8 +20,8 @@ let slotsStopped = false; // true after all 3 slots have landed
 let cycleTimer = null;
 let slotSprite = null;
 
-let buttonImage_D = null;
-let buttonImage_E = null;
+let buttonImage_A = null;
+let buttonImage_B = null;
 let joystickImage = null;
 const REEL_STOP_STEP_MS = 900; // z.B. 650-900 ausprobieren
 
@@ -125,10 +125,10 @@ export function init() {
 
   audioManager.stopLoop("slotSpin");
 
-  buttonImage_D = new Image();
-  buttonImage_D.src = "assets/images/UI/button_D.png";
-  buttonImage_E = new Image();
-  buttonImage_E.src = "assets/images/UI/button_E.png";
+  buttonImage_A = new Image();
+  buttonImage_A.src = "assets/images/UI/button_A.png";
+  buttonImage_B = new Image();
+  buttonImage_B.src = "assets/images/UI/button_B.png";
   joystickImage = new Image();
   joystickImage.src = "assets/images/UI/joystick_down.png";
 
@@ -155,9 +155,9 @@ export function init() {
 // --- Input handlers ---
 
 export function onButton(action) {
-  if (action === "buttonD") {
+  if (action === "buttonA") {
     stopSlotMachine();
-  } else if (action === "buttonE") {
+  } else if (action === "buttonB") {
     audioManager.play("select2", {
       group: "selectButton",
       stopGroupBeforePlay: true,
@@ -168,7 +168,7 @@ export function onButton(action) {
   }
 }
 
-export function onJoystick2(x, y) {
+export function onJoystick1(x, y) {
   if (y < -0.5) reshuffle();
 }
 
@@ -206,27 +206,23 @@ export function render(ctx, canvas) {
   // draw hint text
   if (isSpinning && !isStopping) {
     // Load button image
-    if (buttonImage_D && buttonImage_D.complete) {
+    if (buttonImage_A && buttonImage_A.complete) {
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(buttonImage_D, centerX - 20, 224, 12, 12);
-      drawText(ctx, "STOP", centerX, 228, "h2", { align: "left"});
-    } else {
-      drawText(ctx, "PRESS D TO STOP", centerX, 228, "h2", { align: "center"});
-    }
+      ctx.drawImage(buttonImage_A, centerX - 20, canvas.height - 20, 12, 12);
+      drawText(ctx, "STOP", centerX, canvas.height - 16, "h2", { align: "left"});
+    } 
     //drawText(ctx, "PRESS D TO STOP", centerX, centerY + 100, "h2", { align: "center"});
   } else if (slotsStopped) {
-    if (buttonImage_E && buttonImage_E.complete && joystickImage && joystickImage.complete) {
+    if (buttonImage_B && buttonImage_B.complete && joystickImage && joystickImage.complete) {
       ctx.imageSmoothingEnabled = false;
       
-      ctx.drawImage(buttonImage_E, centerX - 100, 224, 12, 12);
-      drawText(ctx, "CONTINUE", centerX - 80 , 228, "h2", { align: "left"});
+      ctx.drawImage(buttonImage_B, centerX - 100, canvas.height - 20, 12, 12);
+      drawText(ctx, "CONTINUE", centerX - 80 , canvas.height - 16, "h2", { align: "left"});
 
-      ctx.drawImage(joystickImage, centerX + 25, 224, 12, 12);
-      drawText(ctx, "RESHUFFLE", centerX + 45 , 228, "h2", { align: "left"});
+      ctx.drawImage(joystickImage, centerX + 25, canvas.height - 20, 12, 12);
+      drawText(ctx, "RESHUFFLE", centerX + 45 , canvas.height - 16, "h2", { align: "left"});
 
-    } else {
-      drawText(ctx, "PRESS D TO STOP", centerX, 228, "h2", { align: "center"});
-    }
+    } 
   }
 
   drawTimer(ctx, canvas);

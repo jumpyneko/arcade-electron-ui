@@ -228,10 +228,10 @@ export function render(ctx, canvas) {
         shadowColor: COLORS.arcadeYellow,
       });
 
-      drawText(ctx, "1 Spieler", centerX, centerY - 25, "h1", {
+      drawText(ctx, "1 Player", centerX, centerY - 25, "h1", {
         color: COLORS.arcadeYellow,
       });
-      drawText(ctx, "2 Spieler", centerX, centerY + 5, "h1", {
+      drawText(ctx, "2 Player", centerX, centerY + 5, "h1", {
         color: COLORS.arcadeOrange,
       });
     }

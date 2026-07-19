@@ -34,7 +34,7 @@ window.addEventListener("keydown", (e) => {
   }
   const joystick = JOYSTICK_MAP[key];
   if (joystick) {
-    dispatchJoystick(2, joystick[0], joystick[1]);
+    dispatchJoystick(1, joystick[0], joystick[1]);
   }
 });
 

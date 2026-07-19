@@ -42,7 +42,7 @@ const INPUT_BOX_X = GRID_X;
 const INPUT_BOX_Y = 64;
 const INPUT_BOX_W = 6 * CELL_W;
 const INPUT_BOX_H = 22;
-const CONTROLS_Y = 224;
+const CONTROLS_Y = 220;
 
 let currentModel = null;
 let modelSprite = null;
@@ -51,8 +51,8 @@ let selectedRow = 0;
 let selectedCol = 0;
 let lastMoveAt = 0;
 
-let buttonImageD = null;
-let buttonImageE = null;
+let buttonImageA = null;
+let buttonImageB = null;
 let joystickImageLeft = null;
 let joystickImageRight = null;
 let joystickImageUp = null;
@@ -229,28 +229,22 @@ function drawControls(ctx) {
     joystickImageDown?.complete;
 
   if (joystickReady) {
-    ctx.drawImage(joystickImageUp, 20, CONTROLS_Y - 10, 12, 12);
-    ctx.drawImage(joystickImageLeft, 8, CONTROLS_Y + 2, 12, 12);
-    ctx.drawImage(joystickImageDown, 20, CONTROLS_Y + 2, 12, 12);
-    ctx.drawImage(joystickImageRight, 32, CONTROLS_Y + 2, 12, 12);
-    drawText(ctx, "MOVE", 50, CONTROLS_Y + 6, "h2", { align: "left" });
-  } else {
-    drawText(ctx, "JOYSTICK MOVE", 8, CONTROLS_Y + 6, "h2", { align: "left" });
-  }
+    ctx.drawImage(joystickImageUp, 32, CONTROLS_Y - 8, 12, 12);
+    ctx.drawImage(joystickImageLeft, 20, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImageDown, 32, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImageRight, 44, CONTROLS_Y, 12, 12);
+    drawText(ctx, "MOVE", 62, CONTROLS_Y + 4, "h2", { align: "left" });
+  } 
 
-  if (buttonImageD?.complete) {
-    ctx.drawImage(buttonImageE, 124, CONTROLS_Y + 2, 12, 12);
-    drawText(ctx, "SELECT", 144, CONTROLS_Y + 6, "h2", { align: "left" });
-  } else {
-    drawText(ctx, "E SELECT", 124, CONTROLS_Y + 6, "h2", { align: "left" });
-  }
+  if (buttonImageA?.complete) {
+    ctx.drawImage(buttonImageA, 124, CONTROLS_Y , 12, 12);
+    drawText(ctx, "SELECT", 144, CONTROLS_Y + 4, "h2", { align: "left" });
+  } 
 
-  if (buttonImageE?.complete) {
-    ctx.drawImage(buttonImageD, 220, CONTROLS_Y + 2, 12, 12);
-    drawText(ctx, "CONTINUE", 240, CONTROLS_Y + 6, "h2", { align: "left" });
-  } else {
-    drawText(ctx, "D CONTINUE", 220, CONTROLS_Y + 6, "h2", { align: "left" });
-  }
+  if (buttonImageB?.complete) {
+    ctx.drawImage(buttonImageB, 220, CONTROLS_Y, 12, 12);
+    drawText(ctx, "CONTINUE", 240, CONTROLS_Y + 4, "h2", { align: "left" });
+  } 
 }
 
 export function init() {
@@ -269,10 +263,10 @@ export function init() {
     });
   }
 
-  buttonImageD = new Image();
-  buttonImageD.src = "assets/images/UI/button_D.png";
-  buttonImageE = new Image();
-  buttonImageE.src = "assets/images/UI/button_E.png";
+  buttonImageA = new Image();
+  buttonImageA.src = "assets/images/UI/button_A.png";
+  buttonImageB = new Image();
+  buttonImageB.src = "assets/images/UI/button_B.png";
   joystickImageLeft = new Image();
   joystickImageLeft.src = "assets/images/UI/joystick_left.png";
   joystickImageRight = new Image();
@@ -284,7 +278,7 @@ export function init() {
 }
 
 export function onButton(action) {
-  if (action === "buttonE") {
+  if (action === "buttonA") {
     addCurrentCharacter();
     audioManager.play("textSolo", {
       group: "type",
@@ -292,7 +286,7 @@ export function onButton(action) {
       restart: true,
       volume: 1,
     });
-  } else if (action === "buttonD") {
+  } else if (action === "buttonB") {
     audioManager.play("select2", {
       group: "selectButton",
       stopGroupBeforePlay: true,
@@ -306,7 +300,7 @@ export function onButton(action) {
   }
 }
 
-export function onJoystick2(x, y) {
+export function onJoystick1(x, y) {
   const now = performance.now();
   if (now - lastMoveAt < JOYSTICK_REPEAT_MS) return;
 

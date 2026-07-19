@@ -303,11 +303,9 @@ export function render(ctx, canvas) {
 
   if (!transitionSprite?.image?.complete) {
     if (buttonImage && buttonImage.complete) {
-      ctx.drawImage(buttonImage, centerX - 20, 224, 12, 12);
-      drawText(ctx, "STOP", centerX, 228, "h2", { align: "left" });
-    } else {
-      drawText(ctx, "PRESS A TO STOP", centerX, 228, "h2", { align: "center" });
-    }
+      ctx.drawImage(buttonImage, centerX - 20, canvas.height - 20, 12, 12);
+      drawText(ctx, "STOP", centerX, canvas.height - 16, "h2", { align: "left" });
+    } 
   } else {
     const povName = POVS[revealIndex].name;
     const visible =

@@ -23,7 +23,7 @@ let joystickImage_left  = null;
 let joystickImage_right = null;
 let joystickImage_up = null;
 let isTextLoopPlaying = false;
-const CONTROLS_Y = 224;
+const CONTROLS_Y = 220;
 
 /** @type {Sprite | null} */
 let transitionSprite = null;
@@ -155,17 +155,22 @@ export function render(ctx, canvas) {
 
   //hint text
   if (buttosReady) {
-    ctx.drawImage(joystickImage_up, 20, CONTROLS_Y - 10, 12, 12);
-    ctx.drawImage(joystickImage_left, 8, CONTROLS_Y + 2, 12, 12);
-    ctx.drawImage(joystickImage_down, 20, CONTROLS_Y + 2, 12, 12);
-    ctx.drawImage(joystickImage_right, 32, CONTROLS_Y + 2, 12, 12);
-    ctx.drawImage(buttonImage_A, 50, CONTROLS_Y, 12, 12);
-    ctx.drawImage(buttonImage_B, 70, CONTROLS_Y, 12, 12);
-    ctx.drawImage(buttonImage_C, 90, CONTROLS_Y, 12, 12);
-    ctx.drawImage(buttonImage_D, 110, CONTROLS_Y, 12, 12);
-    ctx.drawImage(buttonImage_E, 130, CONTROLS_Y, 12, 12);
-    drawText(ctx, "PLAY", 150, CONTROLS_Y + 4, "h2", { align: "left" });
-  } else {
+    ctx.drawImage(joystickImage_up, 32, CONTROLS_Y - 8, 12, 12);
+    ctx.drawImage(joystickImage_left, 20, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImage_down, 32, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImage_right, 44, CONTROLS_Y, 12, 12);
+    ctx.drawImage(buttonImage_A, canvas.width - 80, CONTROLS_Y, 12, 12);
+    ctx.drawImage(buttonImage_B, canvas.width - 60, CONTROLS_Y, 12, 12);
+    ctx.drawImage(buttonImage_C, canvas.width - 40, CONTROLS_Y, 12, 12);
+
+
+    ctx.drawImage(joystickImage_up, canvas.width - 72, 10, 12, 12);
+    ctx.drawImage(joystickImage_left, canvas.width - 84, 10, 12, 12);
+    ctx.drawImage(joystickImage_down, canvas.width - 72, 18, 12, 12);
+    ctx.drawImage(joystickImage_right, canvas.width - 60, 10, 12, 12);
+    drawImageUpsideDown(ctx, buttonImage_D, 20, 10, 12, 12);
+    drawImageUpsideDown(ctx, buttonImage_E, 40, 10, 12, 12);
+    } else {
     drawText(ctx, "use arcade buttons and joystick to play", 12, canvas.height - 12, "h2", { align: "left", color: "grey" });
   }
 
@@ -192,6 +197,14 @@ export function render(ctx, canvas) {
   if (getRemaining() <= 10) {
     drawTimer(ctx, canvas);
   }
+}
+
+function drawImageUpsideDown(ctx, image, x, y, width, height) {
+  ctx.save();
+  ctx.translate(x + width / 2, y + height / 2);
+  ctx.rotate(Math.PI);
+  ctx.drawImage(image, -width / 2, -height / 2, width, height);
+  ctx.restore();
 }
 
 export function cleanup() {

@@ -82,7 +82,7 @@ export function drawTimer(ctx, canvas) {
 
   ctx.save();
   let colour = seconds <= 10 ? COLORS.arcadeRed : "white";
-  drawText(ctx, seconds.toString(), canvas.width - 12, 12, "h1", {
+  drawText(ctx, seconds.toString(), canvas.width - 20, 20, "h1", {
     align: "right",
     color: colour,
   });

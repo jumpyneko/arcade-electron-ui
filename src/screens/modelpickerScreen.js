@@ -93,7 +93,7 @@ export function init() {
   preloadImages();
 
   buttonImage = new Image();
-  buttonImage.src = "assets/images/UI/button_D.png";
+  buttonImage.src = "assets/images/UI/button_C.png";
   joystickImage_left = new Image();
   joystickImage_left.src = "assets/images/UI/joystick_left.png";
   joystickImage_right = new Image();
@@ -109,7 +109,7 @@ export function init() {
 }
 
 export function onButton(action) {
-  if (action === "buttonD") {
+  if (action === "buttonC") {
     pickModel();
     audioManager.play("select2", {
       group: "selectButton",
@@ -120,7 +120,7 @@ export function onButton(action) {
   }
 }
 
-export function onJoystick2(x, y) {
+export function onJoystick1(x, y) {
   if (slotModels.length === 0) return;
 
   if (x > 0.5) {
@@ -145,7 +145,7 @@ export function render(ctx, canvas) {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = false;
 
-  const leftCenterX = 12;
+  const leftCenterX = 20;
   const centerX = canvas.width / 2;
   const maxChars = Math.max(8, Math.floor(centerX / 6));
 
@@ -172,7 +172,7 @@ export function render(ctx, canvas) {
 
   let y = imgY + MODEL_IMG_SIZE * 2 + 8;
 
-  drawText(ctx, model.name, leftCenterX, 12, "h1", {
+  drawText(ctx, model.name, leftCenterX, 12, "h2", {
     align: "left",
     color: COLORS.arcadeYellow,
   });
@@ -191,27 +191,21 @@ export function render(ctx, canvas) {
   // hints
   if (joystickImage_left && joystickImage_left.complete) {
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(joystickImage_left, 12, 224, 12, 12);
-    drawText(ctx, "PREV MODEL", 32, 228, "h2", { align: "left" });
-  } else {
-    drawText(ctx, "< PREV MODEL", 12, 228, "h2", { align: "left" });
+    ctx.drawImage(joystickImage_left, 20, canvas.height - 20, 12, 12);
+    drawText(ctx, "PREV MODEL", 36, canvas.height - 16, "h2", { align: "left" });
   }
 
   if (buttonImage && buttonImage.complete) {
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(buttonImage, centerX - 25, 224, 12, 12);
-    drawText(ctx, "SELECT", centerX - 5, 228, "h2", { align: "left" });
-  } else {
-    drawText(ctx, "D  SELECT", centerX, 228, "h2", { align: "center" });
-  }
+    ctx.drawImage(buttonImage, centerX - 25, canvas.height - 20, 12, 12);
+    drawText(ctx, "SELECT", centerX - 5, canvas.height - 16, "h2", { align: "left" });
+  } 
 
   if (joystickImage_right && joystickImage_right.complete) {
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(joystickImage_right, 296, 224, 12, 12);
-    drawText(ctx, "NEXT MODEL", 290, 228, "h2", { align: "right" });
-  } else {
-    drawText(ctx, "NEXT MODEL >", 308, 228, "h2", { align: "right" });
-  }
+    ctx.drawImage(joystickImage_right, canvas.width - 20, canvas.height - 20, 12, 12);
+    drawText(ctx, "NEXT MODEL", 298, canvas.height - 16, "h2", { align: "right" });
+  } 
 
   drawTimer(ctx, canvas);
 }
