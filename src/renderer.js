@@ -17,14 +17,14 @@ window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
 
 audioManager.registerMany({
-  obertura: "assets/sounds/obertura.wav",
-  coinIn: "assets/sounds/coin.wav",
+  obertura: "assets/sounds/obertura_new.wav",
+  coinIn: "assets/sounds/coin_new.wav",
   select1: "assets/sounds/SELECT.wav",
   select2: "assets/sounds/SELECT_2.wav",
-  roulette: "assets/sounds/roulette.wav",
+  roulette: "assets/sounds/roulette_new.wav",
   povStart: "assets/sounds/POV-INIT.wav",
   text: "assets/sounds/text.wav",
-  slot: "assets/sounds/slot.wav",
+  slot: "assets/sounds/slot_new.wav",
   slot1: "assets/sounds/slot1.wav",
   slot2: "assets/sounds/slot2.wav",
   slot3: "assets/sounds/slot3.wav",
