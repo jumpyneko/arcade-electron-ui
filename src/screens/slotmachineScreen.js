@@ -208,19 +208,19 @@ export function render(ctx, canvas) {
     // Load button image
     if (buttonImage_A && buttonImage_A.complete) {
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(buttonImage_A, centerX - 20, canvas.height - 20, 12, 12);
-      drawText(ctx, "STOP", centerX, canvas.height - 16, "h2", { align: "left"});
+      ctx.drawImage(buttonImage_A, centerX, canvas.height - 20, 12, 12);
+      drawText(ctx, "STOP", centerX + 20, canvas.height - 16, "h2", { align: "left"});
     } 
     //drawText(ctx, "PRESS D TO STOP", centerX, centerY + 100, "h2", { align: "center"});
   } else if (slotsStopped) {
     if (buttonImage_B && buttonImage_B.complete && joystickImage && joystickImage.complete) {
       ctx.imageSmoothingEnabled = false;
       
-      ctx.drawImage(buttonImage_B, centerX - 100, canvas.height - 20, 12, 12);
-      drawText(ctx, "CONTINUE", centerX - 80 , canvas.height - 16, "h2", { align: "left"});
+      ctx.drawImage(buttonImage_B, canvas.width - 100, canvas.height - 20, 12, 12);
+      drawText(ctx, "CONTINUE", canvas.width - 80 , canvas.height - 16, "h2", { align: "left"});
 
-      ctx.drawImage(joystickImage, centerX + 25, canvas.height - 20, 12, 12);
-      drawText(ctx, "RESHUFFLE", centerX + 45 , canvas.height - 16, "h2", { align: "left"});
+      ctx.drawImage(joystickImage, 20, canvas.height - 20, 12, 12);
+      drawText(ctx, "RESHUFFLE", 40 , canvas.height - 16, "h2", { align: "left"});
 
     } 
   }

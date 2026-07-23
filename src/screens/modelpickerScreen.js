@@ -188,19 +188,20 @@ export function render(ctx, canvas) {
   if (joystickImage_left && joystickImage_left.complete) {
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(joystickImage_left, 20, canvas.height - 20, 12, 12);
-    drawText(ctx, "PREV MODEL", 36, canvas.height - 16, "h2", { align: "left" });
   }
-
-  if (buttonImage && buttonImage.complete) {
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(buttonImage, centerX - 25, canvas.height - 20, 12, 12);
-    drawText(ctx, "SELECT", centerX - 5, canvas.height - 16, "h2", { align: "left" });
-  } 
 
   if (joystickImage_right && joystickImage_right.complete) {
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(joystickImage_right, canvas.width - 20, canvas.height - 20, 12, 12);
-    drawText(ctx, "NEXT MODEL", 298, canvas.height - 16, "h2", { align: "right" });
+    ctx.drawImage(joystickImage_right, 34, canvas.height - 20, 12, 12);
+  } 
+
+  drawText(ctx, "Switch Models", 50, canvas.height - 16, "h2", { align: "left" });
+
+
+  if (buttonImage && buttonImage.complete) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(buttonImage, canvas.width - 40, canvas.height - 20, 12, 12);
+    drawText(ctx, "SELECT", canvas.width - 80, canvas.height - 16, "h2", { align: "left" });
   } 
 
   drawTimer(ctx, canvas);

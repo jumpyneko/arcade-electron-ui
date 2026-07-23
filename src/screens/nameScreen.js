@@ -237,13 +237,13 @@ function drawControls(ctx) {
   } 
 
   if (buttonImageA?.complete) {
-    ctx.drawImage(buttonImageA, 124, CONTROLS_Y , 12, 12);
-    drawText(ctx, "SELECT", 144, CONTROLS_Y + 4, "h2", { align: "left" });
+    ctx.drawImage(buttonImageA, 160, CONTROLS_Y , 12, 12);
+    drawText(ctx, "SELECT", 176, CONTROLS_Y + 4, "h2", { align: "left" });
   } 
 
   if (buttonImageB?.complete) {
     ctx.drawImage(buttonImageB, 220, CONTROLS_Y, 12, 12);
-    drawText(ctx, "CONTINUE", 240, CONTROLS_Y + 4, "h2", { align: "left" });
+    drawText(ctx, "CONTINUE", 236, CONTROLS_Y + 4, "h2", { align: "left" });
   } 
 }
 
