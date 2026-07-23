@@ -148,7 +148,7 @@ export function init() {
   backgroundImage = new Image();
   backgroundImage.src = "assets/images/blue_bg.png";
 
-  coinSprite = new Sprite("assets/sprites/UI/coin.png", 32, 32, 20, 8);
+  coinSprite = new Sprite("assets/sprites/UI/willy_coin.png", 32, 32, 20, 8);
   coinSprite.playLoop(0, 3);
 
   introAnim = null;
