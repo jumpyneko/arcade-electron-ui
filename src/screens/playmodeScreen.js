@@ -29,6 +29,10 @@ const CONTROLS_Y = 220;
 let transitionSprite = null;
 let transitionNavigated = false;
 
+let eyeSprite = null;
+let eyeVisibleUntil = 0;
+const EYE_INTRO_MS = 5000;
+
 export function init() {
   const selectedId = screenManager.sharedData.lastRouletteSector ?? 1;
   currentPov = getPovById(Number(selectedId));
@@ -61,8 +65,11 @@ export function init() {
   transitionSprite = null;
   transitionNavigated = false;
 
-
   console.log("Playmode screen initialized, POV:", currentPov?.name, "id:", selectedId);
+
+  eyeSprite = new Sprite("assets/sprites/UI/eye.png", 32, 32, 30, 8);
+  eyeSprite.playLoop(0, 29);
+  eyeVisibleUntil = performance.now() + EYE_INTRO_MS;
 
   startTimer(TIMER_SECONDS, () => {
     stopTextLoop();
@@ -133,6 +140,11 @@ export function render(ctx, canvas) {
 
   ctx.fillStyle = "#000000";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (eyeSprite && performance.now() < eyeVisibleUntil) {
+    eyeSprite.update();
+    eyeSprite.draw(ctx, centerX, centerY, 2); // same pose as infomode
+  }
 
   if (transitionSprite?.image?.complete) {
     const cx = Math.round(canvas.width / 2);
@@ -216,4 +228,8 @@ export function cleanup() {
   stopTextLoop();
   transitionSprite = null;
   transitionNavigated = false;
+
+  eyeSprite?.reset();
+  eyeSprite = null;
+  eyeVisibleUntil = 0;
 }
