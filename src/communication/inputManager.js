@@ -4,6 +4,7 @@
 // keyboard navigation as a default
 import { screenManager } from "../helper/screenManager.js";
 import { applyPlacedModelIds } from "../helper/modelData.js";
+import { logOsc } from "../helper/debugOverlay.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
 const KEY_MAP = {
@@ -42,6 +43,7 @@ window.addEventListener("keydown", (e) => {
 if (window.oscBridge) {
   window.oscBridge.onMessage((address, args) => {
     console.log(`[OSC ←] ${address}`, args);
+    logOsc("IN", address, args);
 
     // Buttons
     if (address === "/coinInserted")    dispatchButton("coinInserted");

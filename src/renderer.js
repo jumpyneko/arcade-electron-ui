@@ -12,6 +12,7 @@ import * as inputManager from "./communication/inputManager.js";
 import { audioManager } from "./helper/audioManager.js";
 import { initTypography } from "./helper/typography.js";
 import { screenChanged } from "./communication/maxOutput.js";
+import { toggleDebugOverlay, renderDebugOverlay } from "./helper/debugOverlay.js";
 
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
@@ -127,11 +128,17 @@ function updateTestButton() {
 }
 
 window.addEventListener("keydown", (e) => {
-  if (e.key.toLowerCase() !== "p") return;
-  testButtonVisible = !testButtonVisible;
-  testButtonScreen = null; // force label refresh when shown again
-  updateTestButton();
+  const key = e.key.toLowerCase();
+  if (key === "p") {
+    testButtonVisible = !testButtonVisible;
+    testButtonScreen = null;
+    updateTestButton();
+  }
+  if (key === "o") {
+    toggleDebugOverlay();
+  }
 });
+
 
 // Main render loop
 function loop() {
@@ -139,6 +146,8 @@ function loop() {
   ctx.imageSmoothingEnabled = false;
   // Render current screen
   screenManager.render(ctx, canvas);
+
+  renderDebugOverlay(ctx, canvas); // on top
 
   updateTestButton();
 

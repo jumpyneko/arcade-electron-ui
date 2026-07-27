@@ -141,7 +141,7 @@ export function render(ctx, canvas) {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = false;
 
-  const leftCenterX = 20;
+  const leftCenterX = 40;
   const centerX = canvas.width / 2;
   const maxChars = Math.max(8, Math.floor(centerX / 6));
 
@@ -168,7 +168,7 @@ export function render(ctx, canvas) {
 
   let y = imgY + MODEL_IMG_SIZE * 2 + 8;
 
-  drawText(ctx, model.name, leftCenterX, 12, "h2", {
+  drawText(ctx, model.name.toUpperCase(), leftCenterX, 20, "h2", {
     align: "left",
     color: COLORS.arcadeYellow,
   });
@@ -176,7 +176,7 @@ export function render(ctx, canvas) {
   const descText = wrapBitmapText(model.description ?? "", maxChars);
   drawText(ctx, descText, leftCenterX, y, "h2", { align: "left" });
 
-  drawAttributeSliders(ctx, 166, 36, 142, model, {
+  drawAttributeSliders(ctx, 166, 36, 126, model, {
     rowStep: 28,
     labelColor: "white",
     gradientSteps: 16,
@@ -187,15 +187,15 @@ export function render(ctx, canvas) {
   // hints
   if (joystickImage_left && joystickImage_left.complete) {
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(joystickImage_left, 20, canvas.height - 20, 12, 12);
+    ctx.drawImage(joystickImage_left, 40, canvas.height - 20, 12, 12);
   }
 
   if (joystickImage_right && joystickImage_right.complete) {
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(joystickImage_right, 34, canvas.height - 20, 12, 12);
+    ctx.drawImage(joystickImage_right, 54, canvas.height - 20, 12, 12);
   } 
 
-  drawText(ctx, "Switch Models", 50, canvas.height - 16, "h2", { align: "left" });
+  drawText(ctx, "Switch Models", 70, canvas.height - 16, "h2", { align: "left" });
 
 
   if (buttonImage && buttonImage.complete) {

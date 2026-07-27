@@ -34,7 +34,7 @@ const KEYBOARD_ROWS = [
 const BASE_NAME_LENGTH = 12;
 const MAX_NAME_LENGTH = 25;
 const JOYSTICK_REPEAT_MS = 140;
-const CELL_W = 24;
+const CELL_W = 20;
 const CELL_H = 14;
 const GRID_X = 152;
 const GRID_Y = 90;
@@ -212,7 +212,7 @@ function drawKeyboard(ctx) {
 }
 
 function drawModelPanel(ctx) {
-  const leftCenterX = 12;
+  const leftCenterX = 40;
   const imgY = 36;
 
   if (modelSprite) {
@@ -229,11 +229,11 @@ function drawControls(ctx) {
     joystickImageDown?.complete;
 
   if (joystickReady) {
-    ctx.drawImage(joystickImageUp, 32, CONTROLS_Y - 8, 12, 12);
-    ctx.drawImage(joystickImageLeft, 20, CONTROLS_Y, 12, 12);
-    ctx.drawImage(joystickImageDown, 32, CONTROLS_Y, 12, 12);
-    ctx.drawImage(joystickImageRight, 44, CONTROLS_Y, 12, 12);
-    drawText(ctx, "MOVE", 62, CONTROLS_Y + 4, "h2", { align: "left" });
+    ctx.drawImage(joystickImageUp, 52, CONTROLS_Y - 8, 12, 12);
+    ctx.drawImage(joystickImageLeft, 40, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImageDown, 52, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImageRight, 64, CONTROLS_Y, 12, 12);
+    drawText(ctx, "MOVE", 82, CONTROLS_Y + 4, "h2", { align: "left" });
   } 
 
   if (buttonImageA?.complete) {

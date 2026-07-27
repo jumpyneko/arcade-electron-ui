@@ -8,7 +8,7 @@ let startTime = 0;
 let duration = 0;
 let running = false;
 let onExpire = null;
-let enableCountdownSound = false;
+let enableCountdownSound = true;
 let lastCountdownBeepSecond = null;
 
 export function startTimer(seconds, expireCallback) {

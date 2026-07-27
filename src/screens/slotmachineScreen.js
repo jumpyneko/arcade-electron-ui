@@ -21,7 +21,7 @@ let cycleTimer = null;
 let slotSprite = null;
 
 let buttonImage_A = null;
-let buttonImage_B = null;
+let buttonImage_C = null;
 let joystickImage = null;
 const REEL_STOP_STEP_MS = 900; // z.B. 650-900 ausprobieren
 
@@ -127,8 +127,8 @@ export function init() {
 
   buttonImage_A = new Image();
   buttonImage_A.src = "assets/images/UI/button_A.png";
-  buttonImage_B = new Image();
-  buttonImage_B.src = "assets/images/UI/button_B.png";
+  buttonImage_C = new Image();
+  buttonImage_C.src = "assets/images/UI/button_C.png";
   joystickImage = new Image();
   joystickImage.src = "assets/images/UI/joystick_down.png";
 
@@ -157,7 +157,7 @@ export function init() {
 export function onButton(action) {
   if (action === "buttonA") {
     stopSlotMachine();
-  } else if (action === "buttonB") {
+  } else if (action === "buttonC") {
     audioManager.play("select2", {
       group: "selectButton",
       stopGroupBeforePlay: true,
@@ -213,14 +213,14 @@ export function render(ctx, canvas) {
     } 
     //drawText(ctx, "PRESS D TO STOP", centerX, centerY + 100, "h2", { align: "center"});
   } else if (slotsStopped) {
-    if (buttonImage_B && buttonImage_B.complete && joystickImage && joystickImage.complete) {
+    if (buttonImage_C && buttonImage_C.complete && joystickImage && joystickImage.complete) {
       ctx.imageSmoothingEnabled = false;
       
-      ctx.drawImage(buttonImage_B, canvas.width - 100, canvas.height - 20, 12, 12);
-      drawText(ctx, "CONTINUE", canvas.width - 80 , canvas.height - 16, "h2", { align: "left"});
+      ctx.drawImage(buttonImage_C, canvas.width - 40, canvas.height - 20, 12, 12);
+      drawText(ctx, "CONTINUE", canvas.width - 95 , canvas.height - 16, "h2", { align: "left"});
 
-      ctx.drawImage(joystickImage, 20, canvas.height - 20, 12, 12);
-      drawText(ctx, "RESHUFFLE", 40 , canvas.height - 16, "h2", { align: "left"});
+      ctx.drawImage(joystickImage, 40, canvas.height - 20, 12, 12);
+      drawText(ctx, "RESHUFFLE", 60 , canvas.height - 16, "h2", { align: "left"});
 
     } 
   }

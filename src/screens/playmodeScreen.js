@@ -167,20 +167,20 @@ export function render(ctx, canvas) {
 
   //hint text
   if (buttosReady) {
-    ctx.drawImage(joystickImage_up, 32, CONTROLS_Y - 8, 12, 12);
-    ctx.drawImage(joystickImage_left, 20, CONTROLS_Y, 12, 12);
-    ctx.drawImage(joystickImage_down, 32, CONTROLS_Y, 12, 12);
-    ctx.drawImage(joystickImage_right, 44, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImage_up, 52, CONTROLS_Y - 8, 12, 12);
+    ctx.drawImage(joystickImage_left, 40, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImage_down, 52, CONTROLS_Y, 12, 12);
+    ctx.drawImage(joystickImage_right, 64, CONTROLS_Y, 12, 12);
     ctx.drawImage(buttonImage_A, canvas.width/2, CONTROLS_Y, 12, 12);
     ctx.drawImage(buttonImage_B, canvas.width - 100, CONTROLS_Y, 12, 12);
     ctx.drawImage(buttonImage_C, canvas.width - 40, CONTROLS_Y, 12, 12);
 
 
-    ctx.drawImage(joystickImage_up, canvas.width - 42, 10, 12, 12);
-    ctx.drawImage(joystickImage_left, canvas.width - 54, 10, 12, 12);
-    ctx.drawImage(joystickImage_down, canvas.width - 42, 18, 12, 12);
-    ctx.drawImage(joystickImage_right, canvas.width - 30, 10, 12, 12);
-    drawImageUpsideDown(ctx, buttonImage_E, 20, 10, 12, 12);
+    ctx.drawImage(joystickImage_up, canvas.width - 67, 10, 12, 12);
+    ctx.drawImage(joystickImage_left, canvas.width -79, 10, 12, 12);
+    ctx.drawImage(joystickImage_down, canvas.width - 67, 18, 12, 12);
+    ctx.drawImage(joystickImage_right, canvas.width - 55, 10, 12, 12);
+    drawImageUpsideDown(ctx, buttonImage_E, 40, 10, 12, 12);
     drawImageUpsideDown(ctx, buttonImage_D, canvas.width/2, 10, 12, 12);
     } else {
     drawText(ctx, "use arcade buttons and joystick to play", 12, canvas.height - 12, "h2", { align: "left", color: "grey" });

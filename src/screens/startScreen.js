@@ -231,7 +231,7 @@ export function render(ctx, canvas) {
       drawText(ctx, "1 Player", centerX, centerY - 25, "h1", {
         color: COLORS.arcadeYellow,
       });
-      drawText(ctx, "2 Player", centerX, centerY + 5, "h1", {
+      drawText(ctx, "2 Players", centerX, centerY + 5, "h1", {
         color: COLORS.arcadeOrange,
       });
     }

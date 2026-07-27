@@ -1,15 +1,18 @@
 // src/maxOutput.js
+import { logOsc } from "../helper/debugOverlay.js";
+
 // Outbound messages from JS → Max (via OSC)
 function send(address, ...args) {
-    console.log(`[→ Max] ${address}`, args);
-    if (window.oscBridge) {
-      const oscArgs = args.map(a => {
-        if (typeof a === "number") return { type: "i", value: a };
-        return { type: "s", value: String(a) };
-      });
-      window.oscBridge.send(address, oscArgs);
-    }
+  console.log(`[→ Max] ${address}`, args);
+  logOsc("OUT", address, args);
+  if (window.oscBridge) {
+    const oscArgs = args.map((a) => {
+      if (typeof a === "number") return { type: "i", value: a };
+      return { type: "s", value: String(a) };
+    });
+    window.oscBridge.send(address, oscArgs);
   }
+}
   
   // Notifies Max which model has been picked and its name
   export function modelPicked(modelId, modelName = "") {
