@@ -8,12 +8,12 @@ import { drawAttributeSliders } from "../helper/attributeSliders.js";
 import { audioManager } from "../helper/audioManager.js";
 import { setModelPlaced } from "../helper/modelData.js";
 import { modelPicked } from "../communication/maxOutput.js";
+import { debugSettings } from "../helper/debugSettings.js";
 
 
 let slotModels = [];
 let focusIndex = 0;
 const imageCache = new Map();
-const TIMER_SECONDS = 200; // 80;
 let isNavigating = false;
 
 const MODEL_IMG_SIZE = 48;
@@ -102,7 +102,7 @@ export function init() {
   if (isTimerRunning()) {
     setTimerExpireCallback(() => onPickerTimerExpired());
   } else {
-    startTimer(TIMER_SECONDS, () => onPickerTimerExpired());
+    startTimer(debugSettings.modelpickerTimerSeconds, () => onPickerTimerExpired());
   }
 
   ensureActiveSpriteForFocus({ animateIn: false });

@@ -12,8 +12,7 @@ import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawdoubleText } from "../helper/typography.js";
 import { audioManager } from "../helper/audioManager.js";
-
-const TIMER_SECONDS = 100;
+import { debugSettings } from "../helper/debugSettings.js";
 
 let eyeSprite = null;
 
@@ -56,7 +55,7 @@ export function init() {
   eyeSprite = new Sprite("assets/sprites/UI/eye.png", 32, 32, 30, 8);
   eyeSprite.playLoop(0, 29);
 
-  startTimer(TIMER_SECONDS, () => {
+  startTimer(debugSettings.infoTimerSeconds, () => {
     isOutroPlaying = true;
   });
 

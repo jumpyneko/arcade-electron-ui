@@ -5,13 +5,13 @@ import { drawText, wrapBitmapText } from "../helper/typography.js";
 import { COLORS } from "../helper/colors.js";
 import { audioManager } from "../helper/audioManager.js";
 import { Sprite } from "../helper/sprite.js";
+import { debugSettings } from "../helper/debugSettings.js";
 
 let currentPov = null;
 let targetText = "";
 let visibleLength = 0;
 let lastCharTime = 0;
 const CHAR_DELAY = 40;
-const TIMER_SECONDS = 120;
 
 let buttonImage_A = null;
 let buttonImage_B = null;
@@ -71,7 +71,7 @@ export function init() {
   eyeSprite.playLoop(0, 29);
   eyeVisibleUntil = performance.now() + EYE_INTRO_MS;
 
-  startTimer(TIMER_SECONDS, () => {
+  startTimer(debugSettings.playmodeTimerSeconds, () => {
     stopTextLoop();
     audioManager.stopLoop("textWrite");
     transitionSprite = new Sprite("assets/sprites/Transitions/pm_off_transition.png", 320, 240, 16, 2);

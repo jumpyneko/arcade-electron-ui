@@ -4,6 +4,8 @@ import { COLORS } from "../helper/colors.js";
 import { audioManager } from "../helper/audioManager.js";
 import { drawText, drawdoubleText } from "../helper/typography.js";
 import { FrameSequence } from "../helper/frameSequence.js";
+import { titleDisplayed } from "../communication/maxOutput.js";
+import { debugSettings } from "../helper/debugSettings.js";
 
 const INTRO_FRAME_COUNT = 119;
 const INTRO_FRAME_SPEED = 7;
@@ -13,7 +15,6 @@ const INTRO_FRAME_PATHS = Array.from(
     `assets/sprites/Transitions/intro_frames/frame_${String(i + 1).padStart(3, "0")}.png`
 );
 
-const FLICKER_TOTAL_MS = 2500;
 const BLINK_INTERVAL_MS = 120;
 const COIN_SOUND_DELAY_MS = 1000;
 
@@ -96,7 +97,7 @@ async function runStartFlow(generation, playerAction) {
   });
 
   soloPlayerChoice = playerAction === "player1Pressed" ? "p1" : "p2";
-  soloFlickerUntil = performance.now() + FLICKER_TOTAL_MS;
+  soloFlickerUntil = performance.now() + debugSettings.startSelectionSeconds * 1000;
 
   const remaining = soloFlickerUntil - performance.now();
   if (remaining > 0) {
@@ -114,6 +115,7 @@ async function runStartFlow(generation, playerAction) {
   await waitForFirstIntroFrame(first);
   if (!isFlowActive(generation)) return;
 
+  titleDisplayed();
   introAnim.playOnce(0, INTRO_FRAME_COUNT - 1, { holdLast: true });
 
   const audioDone = audioManager.playAndWait("obertura", {
@@ -215,11 +217,11 @@ export function render(ctx, canvas) {
 
     if (inSoloFlicker) {
       if (soloPlayerChoice === "p1") {
-        drawText(ctx, "1 Spieler", centerX, centerY - 25, "h1", {
+        drawText(ctx, "1 Player", centerX, centerY - 25, "h1", {
           color: flickerColor("p1", COLORS.arcadeYellow),
         });
       } else {
-        drawText(ctx, "2 Spieler", centerX, centerY + 5, "h1", {
+        drawText(ctx, "2 Players", centerX, centerY + 5, "h1", {
           color: flickerColor("p2", COLORS.arcadeOrange),
         });
       }

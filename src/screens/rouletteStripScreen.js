@@ -6,6 +6,8 @@ import { drawText } from "../helper/typography.js";
 import { Sprite } from "../helper/sprite.js";
 import { screenManager } from "../helper/screenManager.js";
 import { audioManager } from "../helper/audioManager.js";
+import { debugSettings } from "../helper/debugSettings.js";
+import { rouletteSelected } from "../communication/maxOutput.js";
 
 // State
 let spinProgress = 0;
@@ -17,7 +19,6 @@ let deceleration = 0.18;
 let targetPovId = null;
 
 let buttonImage = null;
-const TIMER_SECONDS = 20;
 
 // Grid layout
 const GRID_COLS = 4;
@@ -85,7 +86,7 @@ export function init() {
   buttonImage = new Image();
   buttonImage.src = "assets/images/UI/button_A.png";
 
-  startTimer(TIMER_SECONDS, () => {
+  startTimer(debugSettings.rouletteTimerSeconds, () => {
     stopSpin();
   });
 
@@ -93,7 +94,8 @@ export function init() {
 }
 
 export function onButton(action) {
-  if (action === "buttonA") {
+  if (action === "buttonA" && isSpinning && !isStopping) {
+    rouletteSelected();
     stopSpin();
   }
 }
@@ -196,7 +198,7 @@ function updateSpinAndReveal() {
 
       console.log(`Grid stopped on POV: ${povId}`);
 
-      DELAY_MS = 8500;
+      DELAY_MS = debugSettings.rouletteResultSeconds * 1000;
       setTimeout(() => {
         screenManager.next({ lastRouletteSector: povId });
       }, DELAY_MS);

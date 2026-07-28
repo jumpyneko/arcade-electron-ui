@@ -17,6 +17,20 @@ import { toggleDebugOverlay, renderDebugOverlay } from "./helper/debugOverlay.js
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
 
+let displayRotated180 = true;
+
+function applyDisplayRotation() {
+  document.body.classList.toggle("rotated-180", displayRotated180);
+}
+
+function toggleDisplayRotation() {
+  displayRotated180 = !displayRotated180;
+  applyDisplayRotation();
+}
+
+// Match the physical installation orientation on every application launch.
+applyDisplayRotation();
+
 audioManager.registerMany({
   obertura: "assets/sounds/obertura_new.wav",
   coinIn: "assets/sounds/coin_new.wav",
@@ -129,6 +143,14 @@ function updateTestButton() {
 
 window.addEventListener("keydown", (e) => {
   const key = e.key.toLowerCase();
+  if (key === "r" && !e.repeat) {
+    e.preventDefault();
+    toggleDisplayRotation();
+  }
+  if (e.code === "Space" && !e.repeat) {
+    e.preventDefault();
+    screenManager.restartGame();
+  }
   if (key === "p") {
     testButtonVisible = !testButtonVisible;
     testButtonScreen = null;

@@ -20,7 +20,7 @@ canvas {
   image-rendering: crisp-edges;
 }
 
-body.flipped {
+body.rotated-180 {
   transform: rotate(180deg);
   transform-origin: center center;
 }

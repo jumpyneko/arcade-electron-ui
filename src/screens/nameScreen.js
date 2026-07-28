@@ -5,6 +5,7 @@ import { drawTimer, isTimerRunning, setTimerExpireCallback, stopTimer, updateTim
 import { drawText } from "../helper/typography.js";
 import { modelPicked } from "../communication/maxOutput.js";
 import { audioManager } from "../helper/audioManager.js";
+import { debugSettings } from "../helper/debugSettings.js";
 import { getModelById, setModelPlaced } from "../helper/modelData.js";
 
 
@@ -293,7 +294,7 @@ export function onButton(action) {
       restart: true,
       volume: 1,
     });
-    const TimeDelay = 1500;
+    const TimeDelay = debugSettings.nameConfirmSeconds * 1000;
     setTimeout(() => {
       continueToEndScreen();
     }, TimeDelay);

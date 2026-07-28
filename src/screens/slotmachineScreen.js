@@ -6,9 +6,9 @@ import { Sprite } from "../helper/sprite.js";
 import { drawText } from "../helper/typography.js";
 import { audioManager } from "../helper/audioManager.js";
 import { modelsToChoose } from "../communication/maxOutput.js";
+import { debugSettings } from "../helper/debugSettings.js";
 
 const CYCLE_MS = 120;
-const TIMER_SECONDS = 30;
 
 let modelsLeft = [];
 let modelsOutput = [];
@@ -138,7 +138,7 @@ export function init() {
   console.log(`[Slot] unplaced models: ${modelsLeft.length}`);
   preloadImages(modelsLeft);
 
-  startTimer(TIMER_SECONDS, () => {
+  startTimer(debugSettings.slotmachineTimerSeconds, () => {
     setTimeout(() => {
       if (isSpinning) {
         stopSlotMachine();

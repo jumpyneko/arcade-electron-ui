@@ -14,7 +14,7 @@ function createWindow() {
     width: 1280,
     height: 720,
     fullscreen: true,
-    frame: false,
+    frame: true,
     kiosk: true,
     webPreferences: {
       preload: __dirname + "/preload.js"
@@ -22,6 +22,31 @@ function createWindow() {
   });
 
   win.loadFile("src/index.html");
+
+  // Keep window-level shortcuts independent from the active game screen.
+  win.webContents.on("before-input-event", (event, input) => {
+    const key = input.key?.toLowerCase();
+    if (input.type !== "keyDown" || input.isAutoRepeat) return;
+
+    if (key === "f") {
+      event.preventDefault();
+      if (win.isKiosk() || win.isFullScreen()) {
+        win.setKiosk(false);
+        win.setFullScreen(false);
+        win.setSize(960, 720);
+        win.center();
+      } else {
+        win.setFullScreen(true);
+        win.setKiosk(true);
+      }
+    }
+
+    if (key === "escape") {
+      event.preventDefault();
+      app.quit();
+    }
+  });
+
   win.on("closed", () => {
     win = null;
   });

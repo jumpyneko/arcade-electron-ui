@@ -24,6 +24,15 @@ function send(address, ...args) {
     send("/screenChanged", screenName);
   }
 
+  // Notifies Max when the title animation becomes visible after player selection.
+  export function titleDisplayed() {
+    send("/title");
+  }
+
+  export function rouletteSelected() {
+    send("/RouletteSelected");
+  }
+
   //Notifies Max that the models to choose have been selected
   export function modelsToChoose(modelId1, modelId2, modelId3) {
     send("/modelsToChoose", modelId1, modelId2, modelId3);

@@ -4,7 +4,7 @@
 // keyboard navigation as a default
 import { screenManager } from "../helper/screenManager.js";
 import { applyPlacedModelIds } from "../helper/modelData.js";
-import { logOsc } from "../helper/debugOverlay.js";
+import { logOsc, markMaxAlive } from "../helper/debugOverlay.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
 const KEY_MAP = {
@@ -42,6 +42,11 @@ window.addEventListener("keydown", (e) => {
 // --- OSC messages from Max (via preload bridge) ---
 if (window.oscBridge) {
   window.oscBridge.onMessage((address, args) => {
+    if (address === "/isAlive") {
+      markMaxAlive();
+      window.oscBridge.send("/isAlive", []);
+      return;
+    }
     console.log(`[OSC ←] ${address}`, args);
     logOsc("IN", address, args);
 
