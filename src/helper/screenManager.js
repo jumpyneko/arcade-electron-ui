@@ -1,6 +1,11 @@
 // src/screenManager.js
 import { screenChanged } from "../communication/maxOutput.js";
 
+function notifyScreenChanged(screenName, sharedData) {
+  const includeModelId = screenName === "nameScreen" || screenName === "end";
+  screenChanged(screenName, includeModelId ? sharedData.chosenModelId : null);
+}
+
 // Define the screen flow sequence
 const SCREEN_SEQUENCE = [
     "start",
@@ -44,7 +49,7 @@ const SCREEN_SEQUENCE = [
       if (screenData?.init) {
         screenData.init();
       }
-      screenChanged(screen);
+      notifyScreenChanged(screen, this.sharedData);
     }
 
     // Restart the game, sets a new round
@@ -62,7 +67,7 @@ const SCREEN_SEQUENCE = [
         nextScreenData.init();
       }
     
-      screenChanged(this.getCurrentScreen());
+      notifyScreenChanged(this.getCurrentScreen(), this.sharedData);
     }
   
     // Move to next screen in sequence
@@ -97,7 +102,7 @@ const SCREEN_SEQUENCE = [
       }
 
       // Notify Max that this screen has started
-      screenChanged(nextScreen);
+      notifyScreenChanged(nextScreen, this.sharedData);
   
       this.isTransitioning = false;
     }
@@ -119,7 +124,7 @@ const SCREEN_SEQUENCE = [
         }
 
         // Notify Max that this screen has started
-        screenChanged(this.getCurrentScreen());
+        notifyScreenChanged(this.getCurrentScreen(), this.sharedData);
       }
     }
   

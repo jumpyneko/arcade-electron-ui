@@ -20,8 +20,12 @@ function send(address, ...args) {
   }
   
   //Notifies Max that the screen has changed, so which screen is currently active
-  export function screenChanged(screenName) {
-    send("/screenChanged", screenName);
+  export function screenChanged(screenName, modelId = null) {
+    if (modelId === null || modelId === undefined) {
+      send("/screenChanged", screenName);
+    } else {
+      send("/screenChanged", screenName, modelId);
+    }
   }
 
   // Notifies Max when the title animation becomes visible after player selection.
@@ -31,6 +35,18 @@ function send(address, ...args) {
 
   export function rouletteSelected() {
     send("/RouletteSelected");
+  }
+
+  export function slotSelected(modelId1, modelId2, modelId3) {
+    send("/slotSelected", modelId1, modelId2, modelId3);
+  }
+
+  export function pickerSelected(selectedId, otherId1, otherId2) {
+    send("/pickerSelected", selectedId, otherId1, otherId2);
+  }
+
+  export function reshuffled() {
+    send("/reshuffle");
   }
 
   //Notifies Max that the models to choose have been selected

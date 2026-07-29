@@ -5,7 +5,7 @@ import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.j
 import { Sprite } from "../helper/sprite.js";
 import { drawText } from "../helper/typography.js";
 import { audioManager } from "../helper/audioManager.js";
-import { modelsToChoose } from "../communication/maxOutput.js";
+import { modelsToChoose, slotSelected, reshuffled } from "../communication/maxOutput.js";
 import { debugSettings } from "../helper/debugSettings.js";
 
 const CYCLE_MS = 120;
@@ -73,6 +73,10 @@ function stopSlotMachine() {
   if (!isSpinning || isStopping) return;
   isStopping = true;
 
+  if (modelsOutput.length >= 3) {
+    slotSelected(modelsOutput[0].id, modelsOutput[1].id, modelsOutput[2].id);
+  }
+
   if (cycleTimer) {
     clearInterval(cycleTimer);
     cycleTimer = null;
@@ -101,6 +105,7 @@ function stopSlotMachine() {
 function reshuffle() {
   if (isSpinning) return;
   if (modelsLeft.length < 3) return;
+  reshuffled();
   startSpinning();
 }
 

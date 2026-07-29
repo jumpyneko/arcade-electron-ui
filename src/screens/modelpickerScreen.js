@@ -7,7 +7,7 @@ import { Sprite } from "../helper/sprite.js";
 import { drawAttributeSliders } from "../helper/attributeSliders.js";
 import { audioManager } from "../helper/audioManager.js";
 import { setModelPlaced } from "../helper/modelData.js";
-import { modelPicked } from "../communication/maxOutput.js";
+import { modelPicked, pickerSelected } from "../communication/maxOutput.js";
 import { debugSettings } from "../helper/debugSettings.js";
 
 
@@ -24,6 +24,13 @@ let activeSpriteKey = null;
 let buttonImage = null;
 let joystickImage_left = null;
 let joystickImage_right = null;
+
+function emitPickerSelection() {
+  if (slotModels.length < 3) return;
+  const selected = slotModels[focusIndex];
+  const others = slotModels.filter((_, index) => index !== focusIndex);
+  pickerSelected(selected.id, others[0].id, others[1].id);
+}
 
 function preloadImages() {
   for (const m of slotModels) {
@@ -106,6 +113,7 @@ export function init() {
   }
 
   ensureActiveSpriteForFocus({ animateIn: false });
+  emitPickerSelection();
 }
 
 export function onButton(action) {
@@ -123,6 +131,8 @@ export function onButton(action) {
 export function onJoystick1(x, y) {
   if (slotModels.length === 0) return;
 
+  const previousFocusIndex = focusIndex;
+
   if (x > 0.5) {
     focusIndex = (focusIndex + 1) % slotModels.length;
     ensureActiveSpriteForFocus({ animateIn: true });
@@ -131,6 +141,10 @@ export function onJoystick1(x, y) {
     focusIndex = (focusIndex - 1 + slotModels.length) % slotModels.length;
     ensureActiveSpriteForFocus({ animateIn: true });
     audioManager.play("select1", { group: "joystickButton", stopGroupBeforePlay: true, restart: true, volume: 1 });
+  }
+
+  if (focusIndex !== previousFocusIndex) {
+    emitPickerSelection();
   }
 }
 
