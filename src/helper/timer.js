@@ -3,6 +3,7 @@
 import { COLORS } from "./colors.js";
 import { drawText } from "./typography.js";
 import { audioManager } from "./audioManager.js";
+import { timeRemaining } from "../communication/controlRoomOutput.js";
 
 let startTime = 0;
 let duration = 0;
@@ -10,6 +11,13 @@ let running = false;
 let onExpire = null;
 let enableCountdownSound = true;
 let lastCountdownBeepSecond = null;
+let lastReportedSecond = null;
+
+function reportRemaining(seconds) {
+  if (lastReportedSecond === seconds) return;
+  lastReportedSecond = seconds;
+  timeRemaining(seconds);
+}
 
 export function startTimer(seconds, expireCallback) {
   startTime = Date.now();
@@ -17,9 +25,11 @@ export function startTimer(seconds, expireCallback) {
   running = true;
   onExpire = expireCallback;
   lastCountdownBeepSecond = null;
+  reportRemaining(Math.max(0, Math.ceil(seconds)));
 }
 
 export function stopTimer() {
+  reportRemaining(0);
   running = false;
   onExpire = null;
 }
@@ -52,6 +62,7 @@ export function updateTimer() {
   if (!running) return;
 
   const seconds = getRemaining();
+  reportRemaining(seconds);
 
   // countdown beep once per second from 10..1
   if (enableCountdownSound && seconds <= 10 && seconds >= 1) {

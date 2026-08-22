@@ -38,6 +38,7 @@ window.addEventListener("keydown", (event) => {
 }, true);
 
 export function logOsc(dir, address, args = []) {
+  if (address === "/isAlive") return;
   const flat = (Array.isArray(args) ? args : [args]).map((a) =>
     a?.value !== undefined ? a.value : a
   );
@@ -52,6 +53,10 @@ export function logOsc(dir, address, args = []) {
 
 export function getOscLog() {
   return log.map((entry) => ({ ...entry, args: [...entry.args] }));
+}
+
+export function clearOscLog() {
+  log.length = 0;
 }
 
 export function renderDebugOverlay(ctx, canvas) {
@@ -122,7 +127,7 @@ export function renderDebugOverlay(ctx, canvas) {
   timingSettingDefinitions.forEach((definition, index) => {
     const selected = index === selectedSetting;
     const prefix = selected ? ">" : " ";
-    drawText(ctx, `${prefix}${definition.label}: ${debugSettings[definition.key]}`, dividerX + 8, settingsY, "h2", {
+    drawText(ctx, `${prefix}${definition.label}: ${debugSettings[definition.key]} s.`, dividerX + 8, settingsY, "h2", {
       align: "left",
       color: selected ? "#FFD800" : "#CCCCCC",
     });

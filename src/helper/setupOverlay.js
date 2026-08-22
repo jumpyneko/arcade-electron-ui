@@ -1,14 +1,16 @@
 import { screenManager } from "./screenManager.js";
 import { drawText } from "./typography.js";
-import { getOscLog } from "./debugOverlay.js";
+import { getOscLog, clearOscLog } from "./debugOverlay.js";
 import {
   debugSettings,
   timingSettingDefinitions,
   adjustTimingSetting,
 } from "./debugSettings.js";
 
-const PAGES = ["INPUT", "NETWORK", "TIMERS", "OSC LOG"];
+const PAGES = ["INPUT", "TIMERS", "OSC LOG", "NETWORK"];
 const INPUT_ROWS = ["mode", "device", "refresh"];
+const SETUP_BUTTONS = new Set(["buttonA", "buttonB", "buttonC", "player1Pressed", "player2Pressed"]);
+const SETUP_HOLD_MS = 3000;
 
 let visible = false;
 let pageIndex = 0;
@@ -19,6 +21,8 @@ let status = null;
 let lastControlEvent = null;
 let lastHidReport = null;
 let operationMessage = "";
+const heldSetupButtons = new Set();
+let setupHoldTimer = null;
 
 function updateStatus(nextStatus) {
   status = nextStatus;
@@ -98,6 +102,83 @@ export function toggleSetupOverlay() {
   if (visible) refreshStatus();
 }
 
+function movePage(direction) {
+  pageIndex = (pageIndex + direction + PAGES.length) % PAGES.length;
+}
+
+function moveSelection(direction) {
+  if (PAGES[pageIndex] === "INPUT") {
+    inputRowIndex = (inputRowIndex + direction + INPUT_ROWS.length) % INPUT_ROWS.length;
+  }
+  if (PAGES[pageIndex] === "TIMERS") {
+    timerSettingIndex = (timerSettingIndex + direction + timingSettingDefinitions.length) % timingSettingDefinitions.length;
+  }
+}
+
+function changeSelection(direction) {
+  if (PAGES[pageIndex] === "INPUT") {
+    const row = INPUT_ROWS[inputRowIndex];
+    if (row === "mode") chooseMode(direction);
+    if (row === "device") chooseDevice(direction);
+  }
+  if (PAGES[pageIndex] === "TIMERS") adjustTimingSetting(timerSettingIndex, direction, false);
+}
+
+function applySelection() {
+  if (PAGES[pageIndex] === "INPUT") {
+    const row = INPUT_ROWS[inputRowIndex];
+    if (row === "mode") chooseMode(1);
+    if (row === "device") chooseDevice(1);
+    if (row === "refresh") refreshDevices();
+  }
+  if (PAGES[pageIndex] === "OSC LOG") {
+    clearOscLog();
+    operationMessage = "OSC log cleared";
+  }
+}
+
+function updateSetupHold(event) {
+  if (event.kind !== "digital" || !SETUP_BUTTONS.has(event.action) || event.source === "controlRoom") return;
+  if (event.pressed) heldSetupButtons.add(event.action);
+  else heldSetupButtons.delete(event.action);
+
+  if (heldSetupButtons.size === SETUP_BUTTONS.size && !setupHoldTimer) {
+    setupHoldTimer = setTimeout(() => {
+      setupHoldTimer = null;
+      if (heldSetupButtons.size !== SETUP_BUTTONS.size) return;
+      visible = !visible;
+      if (visible) refreshStatus();
+    }, SETUP_HOLD_MS);
+  } else if (heldSetupButtons.size !== SETUP_BUTTONS.size && setupHoldTimer) {
+    clearTimeout(setupHoldTimer);
+    setupHoldTimer = null;
+  }
+}
+
+export function handleSetupControl(event) {
+  if (event?.observedOnly) return false;
+  updateSetupHold(event);
+  if (!visible || event.kind === "command") return false;
+
+  if (event.kind === "joystick") {
+    if (event.joystickId === 1) {
+      if (event.y > 0) moveSelection(-1);
+      if (event.y < 0) moveSelection(1);
+      if (event.x < 0) changeSelection(-1);
+      if (event.x > 0) changeSelection(1);
+    }
+    return true;
+  }
+  if (event.kind !== "digital" || !event.pressed) return true;
+
+  if (event.action === "player1Pressed") movePage(-1);
+  if (event.action === "player2Pressed") movePage(1);
+  if (event.action === "buttonA") changeSelection(-1);
+  if (event.action === "buttonB") changeSelection(1);
+  if (event.action === "buttonC") applySelection();
+  return true;
+}
+
 window.addEventListener("keydown", (event) => {
   if (!visible) return;
   const key = event.key.toLowerCase();
@@ -105,7 +186,7 @@ window.addEventListener("keydown", (event) => {
   if (key === "tab") {
     event.preventDefault();
     event.stopImmediatePropagation();
-    pageIndex = (pageIndex + (event.shiftKey ? -1 : 1) + PAGES.length) % PAGES.length;
+    movePage(event.shiftKey ? -1 : 1);
     return;
   }
 
@@ -149,11 +230,10 @@ function clipped(value, length = 43) {
   return string.length > length ? `${string.slice(0, length - 2)}..` : string;
 }
 
-function age(timestamp) {
-  if (!timestamp) return "never";
-  const elapsed = Math.max(0, Date.now() - timestamp);
-  if (elapsed < 1000) return `${elapsed}ms ago`;
-  return `${(elapsed / 1000).toFixed(1)}s ago`;
+function interval(value) {
+  if (!Number.isFinite(value)) return "waiting";
+  if (value < 1000) return `${value}ms`;
+  return `${(value / 1000).toFixed(2)}s`;
 }
 
 function drawInputPage(ctx, x, y) {
@@ -215,12 +295,10 @@ function drawNetworkPage(ctx, x, y) {
   const network = status?.network || {};
   const lines = [
     [`MAX LISTEN  ${network.maxHost || "127.0.0.1"}:${network.maxInputPort || 9000}`, network.maxListening],
-    [`MAX LAST    ${age(network.lastMaxMessageAt)}`, Boolean(network.lastMaxMessageAt)],
+    [`MAX GAP     ${interval(network.maxMessageIntervalMs)}`, Number.isFinite(network.maxMessageIntervalMs)],
     [`CR LISTEN   0.0.0.0:${network.controlRoomInputPort || 8886}`, network.controlRoomListening],
-    [`CR LAST     ${age(network.lastControlRoomMessageAt)}`, Boolean(network.lastControlRoomMessageAt)],
+    [`CR GAP      ${interval(network.controlRoomMessageIntervalMs)}`, Number.isFinite(network.controlRoomMessageIntervalMs)],
     [`CR TARGET   ${network.controlRoomHost || "192.168.10.103"}:${network.controlRoomOutputPort || 8885}`, network.controlRoomReady],
-    ["ISALIVE     CR ONLY", true],
-    ["MAX OUTPUT  DISABLED", true],
   ];
   lines.forEach(([line, ok], index) => text(ctx, line, x, y + index * 15, ok ? "#00FF88" : "#FFAA44"));
 }
@@ -228,19 +306,20 @@ function drawNetworkPage(ctx, x, y) {
 function drawTimersPage(ctx, x, y) {
   timingSettingDefinitions.forEach((definition, index) => {
     const selected = index === timerSettingIndex;
-    text(ctx, `${selected ? ">" : " "}${definition.label}: ${debugSettings[definition.key]}`,
+    text(ctx, `${selected ? ">" : " "}${definition.label}: ${debugSettings[definition.key]} s.`,
       x, y + index * 14, selected ? "#FFD800" : "#CCCCCC");
   });
 }
 
 function drawOscPage(ctx, x, y) {
-  const entries = [...getOscLog()].reverse();
+  const entries = [...getOscLog()].filter((entry) => entry.address !== "/isAlive").reverse().slice(0, 8);
   if (entries.length === 0) text(ctx, "No OSC traffic yet", x, y, "#888888");
   entries.forEach((entry, index) => {
     const args = entry.args.length ? ` ${entry.args.join(" ")}` : "";
     text(ctx, clipped(`${entry.dir} ${entry.address}${args}`, 44), x, y + index * 17,
       entry.dir.includes("CR→UI") ? "#66CCFF" : "#FFAA44");
   });
+  text(ctx, "> C: CLEAR LOG", x, y + 154, "#FFD800");
 }
 
 export function renderSetupOverlay(ctx, canvas) {
@@ -271,5 +350,6 @@ export function renderSetupOverlay(ctx, canvas) {
   if (PAGES[pageIndex] === "TIMERS") drawTimersPage(ctx, contentX, contentY);
   if (PAGES[pageIndex] === "OSC LOG") drawOscPage(ctx, contentX, contentY);
 
-  text(ctx, "O CLOSE   TAB PAGE   ARROWS SELECT/CHANGE   ENTER APPLY", x + 8, y + h - 14, "#777777");
+  text(ctx, "1/2 PAGE  JOYSTICK 1 SELECT/CHANGE", x + 8, y + h - 25, "#777777");
+  text(ctx, "A/B CHANGE  C APPLY  HOLD ABC12 CLOSE", x + 8, y + h - 13, "#777777");
 }

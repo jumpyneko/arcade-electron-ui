@@ -55,6 +55,7 @@ const UI_STATE_ADDRESSES = new Set([
   "/pickerSelected",
   "/reshuffle",
   "/modelsToChoose",
+  "/time",
 ]);
 
 function unwrapOscArg(arg) {

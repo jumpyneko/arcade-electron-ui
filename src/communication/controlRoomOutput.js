@@ -41,3 +41,7 @@ export function reshuffled() {
 export function modelsToChoose(modelId1, modelId2, modelId3) {
   send("/modelsToChoose", modelId1, modelId2, modelId3);
 }
+
+export function timeRemaining(seconds) {
+  send("/time", Math.max(0, Math.trunc(Number(seconds) || 0)));
+}

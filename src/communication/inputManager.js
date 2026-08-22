@@ -5,6 +5,7 @@
 import { screenManager } from "../helper/screenManager.js";
 import { applyPlacedModelIds } from "../helper/modelData.js";
 import { logOsc } from "../helper/debugOverlay.js";
+import { handleSetupControl } from "../helper/setupOverlay.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
 const KEY_MAP = {
@@ -25,50 +26,6 @@ const JOYSTICK_MAP = {
   "arrowleft":  [-1, 0],
   "arrowright": [1, 0],
 };
-
-const RESTART_SEQUENCE = [
-  "buttonA",
-  "buttonB",
-  "buttonC",
-  "player1Pressed",
-  "player2Pressed",
-];
-const RESTART_SEQUENCE_WINDOW_MS = 2000;
-let restartSequenceIndex = 0;
-let restartSequenceStartedAt = 0;
-
-function completesRestartSequence(action) {
-  const now = performance.now();
-
-  if (
-    restartSequenceIndex > 0 &&
-    now - restartSequenceStartedAt > RESTART_SEQUENCE_WINDOW_MS
-  ) {
-    restartSequenceIndex = 0;
-    restartSequenceStartedAt = 0;
-  }
-
-  if (action === RESTART_SEQUENCE[restartSequenceIndex]) {
-    if (restartSequenceIndex === 0) restartSequenceStartedAt = now;
-    restartSequenceIndex += 1;
-
-    if (restartSequenceIndex === RESTART_SEQUENCE.length) {
-      const completedInTime =
-        now - restartSequenceStartedAt <= RESTART_SEQUENCE_WINDOW_MS;
-      restartSequenceIndex = 0;
-      restartSequenceStartedAt = 0;
-      return completedInTime;
-    }
-
-    return false;
-  }
-
-  // A wrong button cancels the current attempt. A new A immediately starts
-  // another attempt so the operator does not need to pause between tries.
-  restartSequenceIndex = action === RESTART_SEQUENCE[0] ? 1 : 0;
-  restartSequenceStartedAt = restartSequenceIndex === 1 ? now : 0;
-  return false;
-}
 
 // Single global keyboard listener
 window.addEventListener("keydown", (e) => {
@@ -91,11 +48,12 @@ if (window.consoleBridge) {
   window.consoleBridge.onInput((event) => {
     console.log(`[CONTROL ${event.source}] ${event.address}`, event.args || []);
     window.dispatchEvent(new CustomEvent("console-control-event", { detail: event }));
+    if (handleSetupControl(event)) return;
     if (event.observedOnly) return;
 
     if (event.kind === "command") {
       const values = (event.args || []).map(unwrap);
-      if (event.address === "/nextPOV") dispatchData("nextPOV", values[0]);
+      if (event.address === "/nextPOV") setNextPov(values[0]);
       if (event.address === "/textWrite") dispatchData("textWrite", values[0]);
       if (event.address === "/textClear") dispatchData("textClear", null);
       if (event.address === "/restartGame") screenManager.restartGame();
@@ -143,11 +101,6 @@ if (window.consoleBridge) {
 // --- Dispatchers ---
 
 function dispatchButton(action) {
-  if (completesRestartSequence(action)) {
-    screenManager.restartGame();
-    return;
-  }
-
   const screenName = screenManager.getCurrentScreen();
   const screenData = screenManager.screens.get(screenName);
   if (screenData?.onButton) {
@@ -161,6 +114,13 @@ function dispatchData(type, data) {
   if (screenData?.onData) {
     screenData.onData(type, data);
   }
+}
+
+function setNextPov(value) {
+  const povId = Number(value);
+  if (!Number.isInteger(povId)) return;
+  screenManager.sharedData.nextPov = povId;
+  dispatchData("nextPOV", povId);
 }
 
 function dispatchJoystick(joystickId, x, y) {
@@ -196,7 +156,7 @@ export function buttonDPressed()     { dispatchButton("buttonD"); }
 export function buttonEPressed()     { dispatchButton("buttonE"); }
 export function joystick1Input(x, y) { dispatchJoystick(1, x, y); }
 export function joystick2Input(x, y) { dispatchJoystick(2, x, y); }
-export function nextPOV(povId)       { dispatchData("nextPOV", povId); }
+export function nextPOV(povId)       { setNextPov(povId); }
 export function textWrite(str)   { dispatchData("textWrite", str); }
 export function textClear()      { dispatchData("textClear", null); }
 export function restartGame() { screenManager.restartGame(); }

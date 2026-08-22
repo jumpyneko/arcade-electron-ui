@@ -20,6 +20,7 @@ const SCREEN_SEQUENCE = [
   class ScreenManager {
     constructor() {
       this.currentIndex = 0;
+      this.sharedData = {};
       this.screens = new Map();
       this.isTransitioning = false;
       this.transitionCallback = null;

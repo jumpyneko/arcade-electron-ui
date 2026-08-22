@@ -76,7 +76,8 @@ export function init() {
   isSpinning = false;
   isStopping = false;
   spinSpeed = 5;
-  targetPovId = null;
+  const requestedPov = Number(screenManager.sharedData.nextPov);
+  targetPovId = POVS.some((pov) => pov.id === requestedPov) ? requestedPov : null;
 
   transitionSprite = null;
 
@@ -102,7 +103,8 @@ export function onButton(action) {
 
 export function onData(type, data) {
   if (type === "nextPOV") {
-    targetPovId = data;
+    targetPovId = Number(data);
+    screenManager.sharedData.nextPov = targetPovId;
     console.log(`Roulette grid received target POV: ${targetPovId}`);
   }
 }

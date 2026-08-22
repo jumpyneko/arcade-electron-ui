@@ -21,6 +21,8 @@ let hidInput = null;
 let settingsStore = null;
 let lastMaxMessageAt = null;
 let lastControlRoomMessageAt = null;
+let maxMessageIntervalMs = null;
+let controlRoomMessageIntervalMs = null;
 
 function sendRenderer(channel, payload) {
   if (win && !win.isDestroyed() && win.webContents && !win.webContents.isDestroyed()) {
@@ -29,6 +31,7 @@ function sendRenderer(channel, payload) {
 }
 
 function logOsc(direction, address, args = [], details = {}) {
+  if (address === "/isAlive") return;
   const flatArgs = (Array.isArray(args) ? args : [args]).map((arg) =>
     arg && typeof arg === "object" && Object.hasOwn(arg, "value") ? arg.value : arg
   );
@@ -48,13 +51,13 @@ function getConsoleStatus() {
       maxHost: NETWORK.maxHost,
       maxInputPort: NETWORK.maxInputPort,
       maxListening: Boolean(maxInputPort),
-      lastMaxMessageAt,
+      maxMessageIntervalMs,
       controlRoomInputPort: NETWORK.controlRoomInputPort,
       controlRoomListening: Boolean(controlRoomPort),
       controlRoomHost: NETWORK.controlRoomHost,
       controlRoomOutputPort: NETWORK.controlRoomOutputPort,
       controlRoomReady,
-      lastControlRoomMessageAt,
+      controlRoomMessageIntervalMs,
     },
     router: router?.getStatus() || null,
     hid: hidInput?.getStatus() || null,
@@ -138,7 +141,9 @@ function setupOSC() {
   maxInputPort.on("message", (oscMsg) => {
     const address = oscMsg.address;
     const args = oscMsg.args || [];
-    lastMaxMessageAt = Date.now();
+    const receivedAt = Date.now();
+    if (lastMaxMessageAt !== null) maxMessageIntervalMs = receivedAt - lastMaxMessageAt;
+    lastMaxMessageAt = receivedAt;
     logOsc("MAX→UI", address, args);
 
     const event = parseControlMessage(address, args);
@@ -163,7 +168,9 @@ function setupOSC() {
   controlRoomPort.on("message", (oscMsg) => {
     const address = oscMsg.address;
     const args = oscMsg.args || [];
-    lastControlRoomMessageAt = Date.now();
+    const receivedAt = Date.now();
+    if (lastControlRoomMessageAt !== null) controlRoomMessageIntervalMs = receivedAt - lastControlRoomMessageAt;
+    lastControlRoomMessageAt = receivedAt;
     logOsc("CR→UI", address, args);
 
     if (address === "/isAlive") {
