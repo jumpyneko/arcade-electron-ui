@@ -127,8 +127,6 @@ function changeSelection(direction) {
 function applySelection() {
   if (PAGES[pageIndex] === "INPUT") {
     const row = INPUT_ROWS[inputRowIndex];
-    if (row === "mode") chooseMode(1);
-    if (row === "device") chooseDevice(1);
     if (row === "refresh") refreshDevices();
   }
   if (PAGES[pageIndex] === "OSC LOG") {
@@ -173,9 +171,11 @@ export function handleSetupControl(event) {
 
   if (event.action === "player1Pressed") movePage(-1);
   if (event.action === "player2Pressed") movePage(1);
-  if (event.action === "buttonA") changeSelection(-1);
-  if (event.action === "buttonB") changeSelection(1);
-  if (event.action === "buttonC") applySelection();
+  if (event.action === "buttonA") applySelection();
+  if (event.action === "buttonC") {
+    visible = false;
+    heldSetupButtons.clear();
+  }
   return true;
 }
 
@@ -265,17 +265,6 @@ function drawInputPage(ctx, x, y) {
     hid?.decoderVerified ? "#00FF88" : "#FFAA44");
   ty += 12;
 
-  const override = status?.router;
-  let overrideText = "OFF";
-  if (override?.overrideActive) {
-    overrideText = override.overrideCanEnd && override.overrideExpiresAt
-      ? `${Math.max(0, override.overrideExpiresAt - Date.now())}ms`
-      : "WAITING FOR RELEASE";
-  }
-  text(ctx, `CR OVERRIDE: ${overrideText}`, x, ty,
-    override?.overrideActive ? "#FF8844" : "#00FF88");
-  ty += 12;
-
   if (lastControlEvent) {
     const args = lastControlEvent.kind === "joystick"
       ? ` ${lastControlEvent.x},${lastControlEvent.y}`
@@ -319,7 +308,7 @@ function drawOscPage(ctx, x, y) {
     text(ctx, clipped(`${entry.dir} ${entry.address}${args}`, 44), x, y + index * 17,
       entry.dir.includes("CR→UI") ? "#66CCFF" : "#FFAA44");
   });
-  text(ctx, "> C: CLEAR LOG", x, y + 154, "#FFD800");
+  text(ctx, "> A: CLEAR LOG", x, y + 154, "#FFD800");
 }
 
 export function renderSetupOverlay(ctx, canvas) {
@@ -351,5 +340,5 @@ export function renderSetupOverlay(ctx, canvas) {
   if (PAGES[pageIndex] === "OSC LOG") drawOscPage(ctx, contentX, contentY);
 
   text(ctx, "1/2 PAGE  JOYSTICK 1 SELECT/CHANGE", x + 8, y + h - 25, "#777777");
-  text(ctx, "A/B CHANGE  C APPLY  HOLD ABC12 CLOSE", x + 8, y + h - 13, "#777777");
+  text(ctx, "A ACTION/CLEAR  C EXIT", x + 8, y + h - 13, "#777777");
 }

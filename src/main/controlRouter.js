@@ -88,6 +88,11 @@ class ControlRouter {
       return false;
     }
 
+    if (this._matchesLocalPhysicalState(event)) {
+      this._emitObserved(event, source, "duplicateState");
+      return false;
+    }
+
     this._updateLocalPhysicalState(event);
 
     if (this.overrideActive) {
@@ -166,6 +171,15 @@ class ControlRouter {
     } else if (event.kind === "joystick") {
       this.localPhysicalState.set(event.control, { x: event.x, y: event.y });
     }
+  }
+
+  _matchesLocalPhysicalState(event) {
+    if (event.kind === "digital") return this.localPhysicalState.get(event.control) === event.pressed;
+    if (event.kind === "joystick") {
+      const current = this.localPhysicalState.get(event.control);
+      return current?.x === event.x && current?.y === event.y;
+    }
+    return false;
   }
 
   _updateOverrideState(event) {

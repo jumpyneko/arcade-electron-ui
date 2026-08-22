@@ -2,6 +2,10 @@
 import { screenChanged } from "../communication/controlRoomOutput.js";
 
 function notifyScreenChanged(screenName, sharedData) {
+  if (screenName === "playmode") {
+    screenChanged(screenName, sharedData.lastRouletteSector ?? sharedData.nextPov ?? null);
+    return;
+  }
   const includeModelId = screenName === "nameScreen" || screenName === "end";
   screenChanged(screenName, includeModelId ? sharedData.chosenModelId : null);
 }
@@ -20,7 +24,6 @@ const SCREEN_SEQUENCE = [
   class ScreenManager {
     constructor() {
       this.currentIndex = 0;
-      this.sharedData = {};
       this.screens = new Map();
       this.isTransitioning = false;
       this.transitionCallback = null;
@@ -62,6 +65,7 @@ const SCREEN_SEQUENCE = [
       }
     
       this.currentIndex = 0;
+      this.sharedData = {};
     
       const nextScreenData = this.screens.get(this.getCurrentScreen());
       if (nextScreenData?.init) {

@@ -106,3 +106,19 @@ test("inactive local source is observed but cannot operate or forward", () => {
   assert.equal(h.renderer[0].reason, "inactiveSource");
   assert.equal(h.controlRoom.length, 0);
 });
+
+test("unchanged digital and joystick states are not forwarded twice", () => {
+  const h = harness();
+  h.router.handleLocalEvent("max", parseControlMessage("/buttonBPressed"));
+  h.router.handleLocalEvent("max", parseControlMessage("/buttonBPressed"));
+  h.router.handleLocalEvent("max", parseControlMessage("/buttonBUnpressed"));
+  h.router.handleLocalEvent("max", parseControlMessage("/buttonBUnpressed"));
+  h.router.handleLocalEvent("max", parseControlMessage("/joystick1Input", [1, 0]));
+  h.router.handleLocalEvent("max", parseControlMessage("/joystick1Input", [1, 0]));
+
+  assert.deepEqual(
+    h.controlRoom.map((message) => message.address),
+    ["/buttonBPressed", "/buttonBUnpressed", "/joystick1Input"]
+  );
+  assert.equal(h.renderer.filter((event) => event.reason === "duplicateState").length, 3);
+});
