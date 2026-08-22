@@ -17,13 +17,7 @@
 
 
 
-
-This world is loud to me. 
-
-
-
-
-
+This world is loud to me 
 
 
 
@@ -65,14 +59,6 @@ Can I enter these buildings?
 
 
 
-
-
-
-
-
-
-
-
 clear
 
 
@@ -89,15 +75,6 @@ clear
 
 
 
-
-
-
-
-
-
-
-
- 
 Are there aphids in this world? 
 
 
@@ -113,6 +90,14 @@ Are there aphids in this world?
 
 
 
+clear
+
+
+
+
+
+I have no nest in this world
+
 
 
 
@@ -126,36 +111,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-I have no nest in this world.
-
-
-
-
-
-
-
-
-
-
-
+I went too far exploring. Not even my pheromones tricks will bring me back home 
 
 
 
@@ -179,27 +135,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-I went too far exploring. Not even my pheromones tricks will bring me back home. 
-
-
-
-
-
-
-
-
-
+Can’t wait for this world to become a complete ruin 
 
 
 
@@ -221,81 +157,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Can’t wait for this world to become a complete ruin. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-I hope nobady steps on me
-
-
-
-
-
-
-
-
-
-
-
-
-
+I hope nobody steps on me
 
 
 

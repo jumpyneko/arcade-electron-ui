@@ -9,9 +9,152 @@
             "modernui": 1
         },
         "classnamespace": "box",
-        "rect": [ 45.0, 110.0, 669.0, 607.0 ],
+        "rect": [ 34.0, 77.0, 2493.0, 1330.0 ],
         "openinpresentation": 1,
         "boxes": [
+            {
+                "box": {
+                    "id": "obj-108",
+                    "linecount": 2,
+                    "maxclass": "comment",
+                    "numinlets": 1,
+                    "numoutlets": 0,
+                    "patching_rect": [ 2223.0, 577.0, 122.0, 34.0 ],
+                    "presentation": 1,
+                    "presentation_rect": [ 356.0, 187.0, 156.0, 20.0 ],
+                    "text": "Control Room connected"
+                }
+            },
+            {
+                "box": {
+                    "bgcolor": [ 0.125490196078431, 0.125490196078431, 0.125490196078431, 1.0 ],
+                    "color": [ 0.5137254901960784, 0.0, 1.0, 1.0 ],
+                    "id": "obj-107",
+                    "maxclass": "newobj",
+                    "numinlets": 1,
+                    "numoutlets": 0,
+                    "patching_rect": [ 656.0, 970.0, 165.0, 22.0 ],
+                    "text": "udpsend 192.168.10.50 8885"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-104",
+                    "maxclass": "newobj",
+                    "numinlets": 2,
+                    "numoutlets": 2,
+                    "outlettype": [ "", "" ],
+                    "patching_rect": [ 698.25, 809.0, 141.0, 22.0 ],
+                    "text": "routepass /isAliveControl"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-105",
+                    "ignoreclick": 1,
+                    "maxclass": "button",
+                    "numinlets": 1,
+                    "numoutlets": 1,
+                    "outlettype": [ "bang" ],
+                    "parameter_enable": 0,
+                    "patching_rect": [ 656.0, 912.0, 24.0, 24.0 ],
+                    "presentation": 1,
+                    "presentation_rect": [ 329.0, 185.0, 24.0, 24.0 ]
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-106",
+                    "maxclass": "newobj",
+                    "numinlets": 2,
+                    "numoutlets": 2,
+                    "outlettype": [ "bang", "" ],
+                    "patching_rect": [ 685.25, 857.0, 104.0, 22.0 ],
+                    "text": "sel /isAliveControl"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-103",
+                    "maxclass": "comment",
+                    "numinlets": 1,
+                    "numoutlets": 0,
+                    "patching_rect": [ 710.5, 735.0, 126.0, 20.0 ],
+                    "presentation": 1,
+                    "presentation_linecount": 2,
+                    "presentation_rect": [ 33.0, 486.0, 86.0, 34.0 ],
+                    "text": "Control Room - Max",
+                    "textcolor": [ 0.4549019607843137, 0.0, 1.0, 1.0 ]
+                }
+            },
+            {
+                "box": {
+                    "bgcolor": [ 0.125490196078431, 0.125490196078431, 0.125490196078431, 1.0 ],
+                    "color": [ 0.5137254901960784, 0.0, 1.0, 1.0 ],
+                    "id": "obj-92",
+                    "maxclass": "newobj",
+                    "numinlets": 1,
+                    "numoutlets": 1,
+                    "outlettype": [ "" ],
+                    "patching_rect": [ 704.25, 762.0, 97.0, 22.0 ],
+                    "text": "udpreceive 8884"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-101",
+                    "maxclass": "message",
+                    "numinlets": 2,
+                    "numoutlets": 1,
+                    "outlettype": [ "" ],
+                    "patching_rect": [ 18.0, 26.0, 29.5, 22.0 ],
+                    "text": "0"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-29",
+                    "maxclass": "newobj",
+                    "numinlets": 1,
+                    "numoutlets": 0,
+                    "patching_rect": [ 18.0, 66.0, 91.0, 22.0 ],
+                    "text": "s KALLAX OFF"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-40",
+                    "maxclass": "message",
+                    "numinlets": 2,
+                    "numoutlets": 1,
+                    "outlettype": [ "" ],
+                    "patching_rect": [ 1990.0, 545.0, 58.0, 22.0 ],
+                    "text": "/reshuffle"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-38",
+                    "linecount": 2,
+                    "maxclass": "message",
+                    "numinlets": 2,
+                    "numoutlets": 1,
+                    "outlettype": [ "" ],
+                    "patching_rect": [ 1336.0, 1273.0, 50.0, 36.0 ],
+                    "text": "placement 31"
+                }
+            },
+            {
+                "box": {
+                    "id": "obj-3",
+                    "maxclass": "newobj",
+                    "numinlets": 0,
+                    "numoutlets": 1,
+                    "outlettype": [ "" ],
+                    "patching_rect": [ 1331.0, 1221.0, 49.0, 22.0 ],
+                    "text": "r Kallax"
+                }
+            },
             {
                 "box": {
                     "id": "obj-138",
@@ -52,14 +195,15 @@
             {
                 "box": {
                     "id": "obj-137",
+                    "linecount": 2,
                     "maxclass": "message",
                     "numinlets": 2,
                     "numoutlets": 1,
                     "outlettype": [ "" ],
-                    "patching_rect": [ 303.0, 1125.0, 51.0, 22.0 ],
+                    "patching_rect": [ 303.0, 1125.0, 51.0, 36.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 17.0, 368.0, 275.30433958768845, 22.0 ],
-                    "text": "name 4"
+                    "text": "placement 31"
                 }
             },
             {
@@ -91,7 +235,7 @@
                             "modernui": 1
                         },
                         "classnamespace": "box",
-                        "rect": [ -14.0, 246.0, 954.0, 480.0 ],
+                        "rect": [ 678.0, 325.0, 541.0, 480.0 ],
                         "boxes": [
                             {
                                 "box": {
@@ -100,8 +244,8 @@
                                     "numinlets": 2,
                                     "numoutlets": 1,
                                     "outlettype": [ "" ],
-                                    "patching_rect": [ 437.0, 104.0, 29.5, 22.0 ],
-                                    "text": "slot"
+                                    "patching_rect": [ 437.0, 104.0, 54.0, 22.0 ],
+                                    "text": "reshuffle"
                                 }
                             },
                             {
@@ -427,11 +571,10 @@
             {
                 "box": {
                     "id": "obj-43",
-                    "linecount": 3,
                     "maxclass": "comment",
                     "numinlets": 1,
                     "numoutlets": 0,
-                    "patching_rect": [ 2156.0, 792.0, 62.0, 48.0 ],
+                    "patching_rect": [ 2208.0, 562.0, 122.0, 20.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 356.0, 213.0, 119.0, 20.0 ],
                     "text": "Console connected"
@@ -440,11 +583,10 @@
             {
                 "box": {
                     "id": "obj-42",
-                    "linecount": 3,
                     "maxclass": "comment",
                     "numinlets": 1,
                     "numoutlets": 0,
-                    "patching_rect": [ 2141.0, 777.0, 62.0, 48.0 ],
+                    "patching_rect": [ 2016.0, 847.0, 120.0, 20.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 356.0, 239.0, 119.0, 20.0 ],
                     "text": "Unreal connected"
@@ -1461,7 +1603,7 @@
                     "numinlets": 1,
                     "numoutlets": 1,
                     "outlettype": [ "" ],
-                    "patching_rect": [ 991.0, 751.0, 97.0, 22.0 ],
+                    "patching_rect": [ 907.0, 751.0, 97.0, 22.0 ],
                     "text": "udpreceive 8886"
                 }
             },
@@ -1941,11 +2083,11 @@
                 "box": {
                     "id": "obj-44",
                     "maxclass": "newobj",
-                    "numinlets": 8,
-                    "numoutlets": 8,
-                    "outlettype": [ "", "", "", "", "", "", "", "" ],
-                    "patching_rect": [ 1556.0, 700.0, 442.0, 22.0 ],
-                    "text": "route rouletteStrip playmode infomode slotmachine modelpicker nameScreen end"
+                    "numinlets": 9,
+                    "numoutlets": 9,
+                    "outlettype": [ "", "", "", "", "", "", "", "", "" ],
+                    "patching_rect": [ 1556.0, 700.0, 491.0, 22.0 ],
+                    "text": "route rouletteStrip playmode infomode slotmachine modelpicker nameScreen end reshuffle"
                 }
             },
             {
@@ -2358,7 +2500,7 @@
                     "maxclass": "comment",
                     "numinlets": 1,
                     "numoutlets": 0,
-                    "patching_rect": [ 2068.0, 800.0, 62.0, 20.0 ],
+                    "patching_rect": [ 2038.0, 800.0, 62.0, 20.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 327.0, 326.0, 62.0, 20.0 ],
                     "text": "ID"
@@ -9726,15 +9868,15 @@
             {
                 "box": {
                     "id": "obj-67",
-                    "linecount": 3,
+                    "linecount": 2,
                     "maxclass": "message",
                     "numinlets": 2,
                     "numoutlets": 1,
                     "outlettype": [ "" ],
-                    "patching_rect": [ 540.0, 1188.0, 51.0, 50.0 ],
+                    "patching_rect": [ 540.0, 1188.0, 51.0, 36.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 20.0, 409.0, 275.30433958768845, 22.0 ],
-                    "text": "/mode selection name"
+                    "text": "/joystick 1 0 0"
                 }
             },
             {
@@ -9847,7 +9989,7 @@
                     "patching_rect": [ 2194.0, 776.0, 228.0, 47.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 388.0, 344.0, 265.0, 28.0 ],
-                    "text": "A"
+                    "text": "BCC"
                 }
             },
             {
@@ -11211,15 +11353,15 @@
             {
                 "box": {
                     "id": "obj-127",
-                    "linecount": 5,
+                    "linecount": 3,
                     "maxclass": "message",
                     "numinlets": 2,
                     "numoutlets": 1,
                     "outlettype": [ "" ],
-                    "patching_rect": [ 1488.0, 602.0, 50.0, 77.0 ],
+                    "patching_rect": [ 1488.0, 602.0, 50.0, 50.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 18.0, 449.0, 275.30433958768845, 22.0 ],
-                    "text": "/screenChanged nameScreen 4"
+                    "text": "/screenChanged start"
                 }
             },
             {
@@ -11243,7 +11385,7 @@
                     "patching_rect": [ 138.0, 766.0, 53.0, 50.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 18.0, 325.0, 279.9999908208847, 22.0 ],
-                    "text": "/buttonCPressed"
+                    "text": "/joystick1Input 1 1"
                 }
             },
             {
@@ -11376,7 +11518,7 @@
                     "patching_rect": [ 1159.0, 432.0, 228.0, 47.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 14.0, 228.0, 282.0, 45.0 ],
-                    "text": "My boss was a pig."
+                    "text": "I only exist here"
                 }
             },
             {
@@ -11396,7 +11538,7 @@
                     "maxclass": "comment",
                     "numinlets": 1,
                     "numoutlets": 0,
-                    "patching_rect": [ 1036.0, 718.0, 86.0, 20.0 ],
+                    "patching_rect": [ 952.0, 726.0, 86.0, 20.0 ],
                     "presentation": 1,
                     "presentation_rect": [ 18.0, 471.0, 86.0, 20.0 ],
                     "text": "Unreal - Max",
@@ -11538,6 +11680,30 @@
                 "patchline": {
                     "destination": [ "obj-2", 0 ],
                     "source": [ "obj-1", 0 ]
+                }
+            },
+            {
+                "patchline": {
+                    "destination": [ "obj-29", 0 ],
+                    "source": [ "obj-101", 0 ]
+                }
+            },
+            {
+                "patchline": {
+                    "destination": [ "obj-106", 0 ],
+                    "source": [ "obj-104", 0 ]
+                }
+            },
+            {
+                "patchline": {
+                    "destination": [ "obj-107", 0 ],
+                    "source": [ "obj-105", 0 ]
+                }
+            },
+            {
+                "patchline": {
+                    "destination": [ "obj-105", 0 ],
+                    "source": [ "obj-106", 0 ]
                 }
             },
             {
@@ -12147,6 +12313,12 @@
             },
             {
                 "patchline": {
+                    "destination": [ "obj-38", 1 ],
+                    "source": [ "obj-3", 0 ]
+                }
+            },
+            {
+                "patchline": {
                     "destination": [ "obj-62", 0 ],
                     "source": [ "obj-30", 0 ]
                 }
@@ -12276,6 +12448,12 @@
                 "patchline": {
                     "destination": [ "obj-35", 0 ],
                     "source": [ "obj-39", 0 ]
+                }
+            },
+            {
+                "patchline": {
+                    "destination": [ "obj-33", 0 ],
+                    "source": [ "obj-40", 0 ]
                 }
             },
             {
@@ -12780,6 +12958,12 @@
                 "patchline": {
                     "destination": [ "obj-87", 0 ],
                     "source": [ "obj-91", 0 ]
+                }
+            },
+            {
+                "patchline": {
+                    "destination": [ "obj-104", 0 ],
+                    "source": [ "obj-92", 0 ]
                 }
             },
             {

@@ -26,6 +26,50 @@ const JOYSTICK_MAP = {
   "arrowright": [1, 0],
 };
 
+const RESTART_SEQUENCE = [
+  "buttonA",
+  "buttonB",
+  "buttonC",
+  "player1Pressed",
+  "player2Pressed",
+];
+const RESTART_SEQUENCE_WINDOW_MS = 2000;
+let restartSequenceIndex = 0;
+let restartSequenceStartedAt = 0;
+
+function completesRestartSequence(action) {
+  const now = performance.now();
+
+  if (
+    restartSequenceIndex > 0 &&
+    now - restartSequenceStartedAt > RESTART_SEQUENCE_WINDOW_MS
+  ) {
+    restartSequenceIndex = 0;
+    restartSequenceStartedAt = 0;
+  }
+
+  if (action === RESTART_SEQUENCE[restartSequenceIndex]) {
+    if (restartSequenceIndex === 0) restartSequenceStartedAt = now;
+    restartSequenceIndex += 1;
+
+    if (restartSequenceIndex === RESTART_SEQUENCE.length) {
+      const completedInTime =
+        now - restartSequenceStartedAt <= RESTART_SEQUENCE_WINDOW_MS;
+      restartSequenceIndex = 0;
+      restartSequenceStartedAt = 0;
+      return completedInTime;
+    }
+
+    return false;
+  }
+
+  // A wrong button cancels the current attempt. A new A immediately starts
+  // another attempt so the operator does not need to pause between tries.
+  restartSequenceIndex = action === RESTART_SEQUENCE[0] ? 1 : 0;
+  restartSequenceStartedAt = restartSequenceIndex === 1 ? now : 0;
+  return false;
+}
+
 // Single global keyboard listener
 window.addEventListener("keydown", (e) => {
   const key = e.key.toLowerCase();
@@ -45,6 +89,10 @@ if (window.oscBridge) {
     if (address === "/isAlive") {
       markMaxAlive();
       window.oscBridge.send("/isAlive", []);
+      return;
+    }
+    if (address === "/isAliveControl") {
+      window.oscBridge.send("/isAliveControl", []);
       return;
     }
     console.log(`[OSC ←] ${address}`, args);
@@ -98,6 +146,11 @@ if (window.oscBridge) {
 // --- Dispatchers ---
 
 function dispatchButton(action) {
+  if (completesRestartSequence(action)) {
+    screenManager.restartGame();
+    return;
+  }
+
   const screenName = screenManager.getCurrentScreen();
   const screenData = screenManager.screens.get(screenName);
   if (screenData?.onButton) {

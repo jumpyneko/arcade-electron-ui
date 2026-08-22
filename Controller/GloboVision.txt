@@ -12,15 +12,7 @@
 
 
 
-
-
-
-
-
-
-
-
-I love floating.
+I love floating
 
 
 
@@ -31,6 +23,47 @@ I love floating.
 
 
 
+clear
+
+
+
+
+
+
+
+
+
+
+
+
+
+Everything is lighter up here
+
+
+
+
+
+
+
+
+
+clear
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I am a bit new to The Model Nation
 
 
 
@@ -59,29 +92,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-Everything is lighter up here.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+It is so quiet
 
 
 
@@ -89,108 +100,6 @@ Everything is lighter up here.
 
 
 clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-I am a bit new to The Model Nation.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-It is so quiet.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -214,6 +123,16 @@ Is The Model Nation a fragment from another Nation?
 
 
 
+clear
+
+
+
+
+
+
+
+
+There used to be a city around The Model Nation. . . 
 
 
 
@@ -227,12 +146,6 @@ Is The Model Nation a fragment from another Nation?
 
 
 clear
-
-
-
-
-
-
 
 
 
@@ -258,81 +171,7 @@ Will I reach an end if I continue going up?
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-There used to be a city around The Model Nation…
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

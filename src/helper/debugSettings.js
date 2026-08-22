@@ -1,10 +1,10 @@
 export const debugSettings = {
   startSelectionSeconds: 2.5,
-  rouletteTimerSeconds: 20,
+  rouletteTimerSeconds: 30,
   rouletteResultSeconds: 8.5,
-  playmodeTimerSeconds: 120,
+  playmodeTimerSeconds: 180,
   infoTimerSeconds: 100,
-  slotmachineTimerSeconds: 30,
+  slotmachineTimerSeconds: 60,
   modelpickerTimerSeconds: 200,
   nameConfirmSeconds: 1.5,
 };

@@ -24,10 +24,7 @@
 
 
 
-
-
-
-This ocean was once a public swimming pool.
+This ocean was once a public swimming pool
 
 
 
@@ -54,28 +51,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-There were giant mushrooms growing from the bottom. 
-
-
+There were giant mushrooms growing from the bottom 
 
 
 
@@ -135,12 +111,6 @@ I wonder who’s stirring me?
 
 
 
-
-
-
-
-
-
 clear
 
 
@@ -152,27 +122,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Which ocean is this? Does it exist? Looks fake.
-
-
-
-
-
-
-
+Which ocean is this? Looks fake
 
 
 
@@ -188,20 +138,6 @@ Which ocean is this? Does it exist? Looks fake.
 
 
 clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -234,11 +170,6 @@ Will I ever reach the limits of The Model Nation?
 
 
 clear
-
-
-
-
-
 
 
 

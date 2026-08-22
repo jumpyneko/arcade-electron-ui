@@ -16,6 +16,7 @@
 
 
 
+
 Am I useless?
 
 
@@ -28,16 +29,6 @@ Am I useless?
 
 
 
-
-
-
-
-
-
-
-
-
-
 clear
 
 
@@ -62,7 +53,7 @@ clear
 
 
 
-At least ants can nest on me.
+At least ants can nest on me
 
 
 
@@ -96,25 +87,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-I knew no human would care about me.
-
-
-
-
-
-
+I knew no human would care about me
 
 
 
@@ -150,15 +123,7 @@ clear
 
 
 
-
-
-
-
-I am bored. 
-
-
-
-
+I am bored 
 
 
 
@@ -184,6 +149,29 @@ clear
 
 
 
+
+
+
+
+
+I miss being on time. Time does not matter anymore. 
+
+
+
+
+
+
+
+clear
+
+
+Time was such a human thing
+
+
+
+
+
+clear
 
 
 

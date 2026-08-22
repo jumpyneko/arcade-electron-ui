@@ -17,9 +17,6 @@
 
 
 
-
-
-
 What do you know about mountain ranges? 
 
 
@@ -34,14 +31,6 @@ What do you know about mountain ranges?
 
 
 
-
-
-
-
-
-
-
-
 clear
 
 
@@ -59,20 +48,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-When I sing, you can dance. 
-
-
-
-
-
-
+When I sing, you can dance 
 
 
 
@@ -106,17 +82,7 @@ clear
 
 
 
-
-
-
-
-
-
-A horizon is always new.
-
-
-
-
+A horizon is always new
 
 
 
@@ -152,66 +118,7 @@ clear
 
 
 
-
-
-
-
-
-
-The sunrise is always yet to come.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-A lifetime is never enough.
-
-
-
-
-
-
-
+The sunrise is always yet to come
 
 
 
@@ -239,19 +146,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-I move, I desire. 
-
+A lifetime is never enough
 
 
 
@@ -264,8 +159,16 @@ I move, I desire.
 
 
 
+clear
 
 
+
+
+
+
+
+
+I move, I desire 
 
 
 

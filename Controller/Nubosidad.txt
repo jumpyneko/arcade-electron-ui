@@ -17,19 +17,42 @@
 
 
 
+I feel like raining
 
 
 
 
 
 
-I feel like raining.
 
 
 
 
 
 
+
+
+
+
+clear
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I like being fog and seeing those things up close
 
 
 
@@ -69,29 +92,7 @@ clear
 
 
 
-I wish I was fog to see those things closer.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
+I drift
 
 
 
@@ -114,13 +115,7 @@ clear
 
 
 
-
-I drift.
-
-
-
-
-
+And sound
 
 
 
@@ -152,66 +147,7 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-I sound.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-I feel like snowing.
-
-
-
-
+I can whisper
 
 
 
@@ -240,87 +176,6 @@ clear
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-I can whisper.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-I feel like singing.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-clear
 
 
 
