@@ -8,7 +8,6 @@ import {
 } from "./debugSettings.js";
 
 const PAGES = ["INPUT", "TIMERS", "OSC LOG", "NETWORK"];
-const INPUT_ROWS = ["mode", "device", "refresh"];
 const SETUP_BUTTONS = new Set(["buttonA", "buttonB", "buttonC", "player1Pressed", "player2Pressed"]);
 const SETUP_HOLD_MS = 3000;
 
@@ -61,6 +60,7 @@ async function chooseMode(direction = 1) {
   operationMessage = "Applying input mode...";
   try {
     updateStatus(await window.consoleBridge.setInputMode(next));
+    inputRowIndex = 0;
     operationMessage = next === "max" ? "Max Input selected" : "Direct Input selected";
   } catch (error) {
     operationMessage = error.message;
@@ -106,9 +106,16 @@ function movePage(direction) {
   pageIndex = (pageIndex + direction + PAGES.length) % PAGES.length;
 }
 
+function inputRows() {
+  return (status?.router?.inputMode || "max") === "max"
+    ? ["mode"]
+    : ["mode", "device", "refresh"];
+}
+
 function moveSelection(direction) {
   if (PAGES[pageIndex] === "INPUT") {
-    inputRowIndex = (inputRowIndex + direction + INPUT_ROWS.length) % INPUT_ROWS.length;
+    const rows = inputRows();
+    inputRowIndex = (inputRowIndex + direction + rows.length) % rows.length;
   }
   if (PAGES[pageIndex] === "TIMERS") {
     timerSettingIndex = (timerSettingIndex + direction + timingSettingDefinitions.length) % timingSettingDefinitions.length;
@@ -117,7 +124,7 @@ function moveSelection(direction) {
 
 function changeSelection(direction) {
   if (PAGES[pageIndex] === "INPUT") {
-    const row = INPUT_ROWS[inputRowIndex];
+    const row = inputRows()[inputRowIndex];
     if (row === "mode") chooseMode(direction);
     if (row === "device") chooseDevice(direction);
   }
@@ -126,7 +133,7 @@ function changeSelection(direction) {
 
 function applySelection() {
   if (PAGES[pageIndex] === "INPUT") {
-    const row = INPUT_ROWS[inputRowIndex];
+    const row = inputRows()[inputRowIndex];
     if (row === "refresh") refreshDevices();
   }
   if (PAGES[pageIndex] === "OSC LOG") {
@@ -195,9 +202,10 @@ window.addEventListener("keydown", (event) => {
   event.stopImmediatePropagation();
 
   if (PAGES[pageIndex] === "INPUT") {
-    if (key === "arrowup") inputRowIndex = (inputRowIndex - 1 + INPUT_ROWS.length) % INPUT_ROWS.length;
-    if (key === "arrowdown") inputRowIndex = (inputRowIndex + 1) % INPUT_ROWS.length;
-    const row = INPUT_ROWS[inputRowIndex];
+    const rows = inputRows();
+    if (key === "arrowup") inputRowIndex = (inputRowIndex - 1 + rows.length) % rows.length;
+    if (key === "arrowdown") inputRowIndex = (inputRowIndex + 1) % rows.length;
+    const row = rows[inputRowIndex];
     if ((key === "arrowleft" || key === "arrowright" || key === "enter") && row === "mode") {
       chooseMode(key === "arrowleft" ? -1 : 1);
     }
@@ -241,18 +249,36 @@ function drawInputPage(ctx, x, y) {
   const hid = status?.hid;
   const devices = hid?.devices || [];
   const selected = hid?.selectedDevice;
-  const rows = [
-    `MODE: ${mode === "max" ? "MAX INPUT" : "DIRECT INPUT"}`,
-    `HID: ${selected?.product || (hid?.selectedDeviceKey ? "(configured; refresh)" : "(none selected)")}`,
-    "REFRESH HID DEVICES",
-  ];
+  const rows = mode === "max"
+    ? ["MODE: MAX INPUT"]
+    : [
+      "MODE: DIRECT INPUT",
+      `HID: ${selected?.product || (hid?.selectedDeviceKey ? "(configured; refresh)" : "(none selected)")}`,
+      "REFRESH HID DEVICES",
+    ];
 
   rows.forEach((row, index) => {
     text(ctx, `${index === inputRowIndex ? ">" : " "}${clipped(row, 39)}`, x, y + index * 13,
       index === inputRowIndex ? "#FFD800" : "white");
   });
 
-  let ty = y + 44;
+  let ty = y + rows.length * 13 + 8;
+  if (mode === "max") {
+    const network = status?.network || {};
+    text(ctx, `MAX OSC: ${network.maxListening ? "LISTENING" : "OFFLINE"}`, x, ty,
+      network.maxListening ? "#00FF88" : "#FF6666");
+    ty += 12;
+    if (lastControlEvent?.source === "max") {
+      const args = lastControlEvent.kind === "joystick"
+        ? ` ${lastControlEvent.x},${lastControlEvent.y}`
+        : "";
+      text(ctx, clipped(`LAST: ${lastControlEvent.address}${args}`, 45), x, ty, "#66CCFF");
+      ty += 12;
+    }
+    if (operationMessage) text(ctx, clipped(operationMessage, 45), x, ty, "#AAAAAA");
+    return;
+  }
+
   text(ctx, `HID AVAILABLE: ${hid?.available ? "YES" : "NO"}`, x, ty,
     hid?.available ? "#00FF88" : "#FF6666");
   ty += 12;
