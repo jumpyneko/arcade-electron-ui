@@ -3,7 +3,7 @@ import { COLORS } from "../helper/colors.js";
 import { Sprite } from "../helper/sprite.js";
 import { drawTimer, isTimerRunning, setTimerExpireCallback, stopTimer, updateTimer } from "../helper/timer.js";
 import { drawText } from "../helper/typography.js";
-import { modelPicked } from "../communication/maxOutput.js";
+import { modelPicked } from "../communication/controlRoomOutput.js";
 import { audioManager } from "../helper/audioManager.js";
 import { debugSettings } from "../helper/debugSettings.js";
 import { getModelById, setModelPlaced } from "../helper/modelData.js";

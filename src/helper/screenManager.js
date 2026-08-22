@@ -1,5 +1,5 @@
 // src/screenManager.js
-import { screenChanged } from "../communication/maxOutput.js";
+import { screenChanged } from "../communication/controlRoomOutput.js";
 
 function notifyScreenChanged(screenName, sharedData) {
   const includeModelId = screenName === "nameScreen" || screenName === "end";

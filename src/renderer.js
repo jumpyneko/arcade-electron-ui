@@ -11,8 +11,8 @@ import * as endScreen from "./screens/endScreen.js";
 import * as inputManager from "./communication/inputManager.js";
 import { audioManager } from "./helper/audioManager.js";
 import { initTypography } from "./helper/typography.js";
-import { screenChanged } from "./communication/maxOutput.js";
-import { toggleDebugOverlay, renderDebugOverlay } from "./helper/debugOverlay.js";
+import { screenChanged } from "./communication/controlRoomOutput.js";
+import { toggleSetupOverlay, renderSetupOverlay } from "./helper/setupOverlay.js";
 
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
@@ -156,8 +156,8 @@ window.addEventListener("keydown", (e) => {
     testButtonScreen = null;
     updateTestButton();
   }
-  if (key === "o") {
-    toggleDebugOverlay();
+  if (key === "o" && !e.repeat) {
+    toggleSetupOverlay();
   }
 });
 
@@ -169,7 +169,7 @@ function loop() {
   // Render current screen
   screenManager.render(ctx, canvas);
 
-  renderDebugOverlay(ctx, canvas); // on top
+  renderSetupOverlay(ctx, canvas); // on top
 
   updateTestButton();
 

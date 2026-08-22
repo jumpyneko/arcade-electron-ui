@@ -7,7 +7,7 @@ import { Sprite } from "../helper/sprite.js";
 import { screenManager } from "../helper/screenManager.js";
 import { audioManager } from "../helper/audioManager.js";
 import { debugSettings } from "../helper/debugSettings.js";
-import { rouletteSelected } from "../communication/maxOutput.js";
+import { rouletteSelected } from "../communication/controlRoomOutput.js";
 
 // State
 let spinProgress = 0;

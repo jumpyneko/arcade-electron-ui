@@ -5,7 +5,7 @@ import { startTimer, stopTimer, updateTimer, drawTimer } from "../helper/timer.j
 import { Sprite } from "../helper/sprite.js";
 import { drawText } from "../helper/typography.js";
 import { audioManager } from "../helper/audioManager.js";
-import { modelsToChoose, slotSelected, reshuffled } from "../communication/maxOutput.js";
+import { modelsToChoose, slotSelected, reshuffled } from "../communication/controlRoomOutput.js";
 import { debugSettings } from "../helper/debugSettings.js";
 
 const CYCLE_MS = 120;

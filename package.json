@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "test": "node --test tests/*.test.js",
     "clean": "rm -rf dist",
     "dist:win": "npm run clean && electron-builder --win --x64"
   },
@@ -17,6 +18,7 @@
     "electron-builder": "^26.8.1"
   },
   "dependencies": {
+    "node-hid": "^3.4.0",
     "ocs": "^1.1.0",
     "osc": "^2.4.5"
   },
@@ -24,6 +26,7 @@
     "appId": "com.modelnation.console",
     "productName": "Model Nation",
     "compression": "normal",
+    "npmRebuild": false,
     "files": [
       "**/*",
       "!dist/**",
@@ -35,7 +38,8 @@
       "!README.md"
     ],
     "win": {
-      "target": ["portable"
+      "target": [
+        "portable"
       ],
       "executableName": "ModelNationArcade"
     },

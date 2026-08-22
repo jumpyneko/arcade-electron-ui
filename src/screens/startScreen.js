@@ -4,7 +4,7 @@ import { COLORS } from "../helper/colors.js";
 import { audioManager } from "../helper/audioManager.js";
 import { drawText, drawdoubleText } from "../helper/typography.js";
 import { FrameSequence } from "../helper/frameSequence.js";
-import { titleDisplayed } from "../communication/maxOutput.js";
+import { titleDisplayed } from "../communication/controlRoomOutput.js";
 import { debugSettings } from "../helper/debugSettings.js";
 
 const INTRO_FRAME_COUNT = 119;

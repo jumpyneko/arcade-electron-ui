@@ -50,6 +50,10 @@ export function logOsc(dir, address, args = []) {
   if (log.length > MAX_LOG) log.shift();
 }
 
+export function getOscLog() {
+  return log.map((entry) => ({ ...entry, args: [...entry.args] }));
+}
+
 export function renderDebugOverlay(ctx, canvas) {
   if (!debugVisible) return;
 

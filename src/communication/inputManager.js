@@ -1,10 +1,10 @@
 // src/inputManager.js
-// input from max to js
+// Normalized control input from Max, Direct HID, or Control Room.
 
 // keyboard navigation as a default
 import { screenManager } from "../helper/screenManager.js";
 import { applyPlacedModelIds } from "../helper/modelData.js";
-import { logOsc, markMaxAlive } from "../helper/debugOverlay.js";
+import { logOsc } from "../helper/debugOverlay.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
 const KEY_MAP = {
@@ -83,63 +83,60 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// --- OSC messages from Max (via preload bridge) ---
-if (window.oscBridge) {
-  window.oscBridge.onMessage((address, args) => {
-    if (address === "/isAlive") {
-      markMaxAlive();
-      window.oscBridge.send("/isAlive", []);
+function unwrap(arg) {
+  return arg?.value ?? arg;
+}
+
+if (window.consoleBridge) {
+  window.consoleBridge.onInput((event) => {
+    console.log(`[CONTROL ${event.source}] ${event.address}`, event.args || []);
+    window.dispatchEvent(new CustomEvent("console-control-event", { detail: event }));
+    if (event.observedOnly) return;
+
+    if (event.kind === "command") {
+      const values = (event.args || []).map(unwrap);
+      if (event.address === "/nextPOV") dispatchData("nextPOV", values[0]);
+      if (event.address === "/textWrite") dispatchData("textWrite", values[0]);
+      if (event.address === "/textClear") dispatchData("textClear", null);
+      if (event.address === "/restartGame") screenManager.restartGame();
+      if (event.address === "/placedModels") placedModels(values);
       return;
     }
-    if (address === "/isAliveControl") {
-      window.oscBridge.send("/isAliveControl", []);
+
+    if (event.kind === "coin") {
+      dispatchButton("coinInserted");
       return;
     }
-    console.log(`[OSC ←] ${address}`, args);
-    logOsc("IN", address, args);
 
-    // Buttons
-    if (address === "/coinInserted")    dispatchButton("coinInserted");
-    if (address === "/player1Pressed")  dispatchButton("player1Pressed");
-    if (address === "/player2Pressed")  dispatchButton("player2Pressed");
-    if (address === "/buttonAPressed")         dispatchButton("buttonA");
-    if (address === "/buttonBPressed")         dispatchButton("buttonB");
-    if (address === "/buttonCPressed")         dispatchButton("buttonC");
-    if (address === "/buttonDPressed")         dispatchButton("buttonD");
-    if (address === "/buttonEPressed")         dispatchButton("buttonE");
-
-    // Joysticks
-    if (address === "/joystick1Input") {
-      const rawX = args[0]?.value ?? args[0] ?? 1;
-      const rawY = args[1]?.value ?? args[1] ?? 1;
-    
-      // optional: ignore neutral release message
-      if (rawX === 1 && rawY === 1) return;
-    
-      dispatchJoystick(1, rawX - 1, rawY - 1);
+    if (event.kind === "digital") {
+      // Releases clear router state and are forwarded to CR, but do not trigger
+      // the UI's press-only screen actions.
+      if (event.pressed) dispatchButton(event.action);
+      return;
     }
 
-    if (address === "/joystick2Input") {
-      const rawX = args[0]?.value ?? args[0] ?? 1;
-      const rawY = args[1]?.value ?? args[1] ?? 1;
-      // optional: ignore neutral release message
-      if (rawX === 1 && rawY === 1) return;
-      dispatchJoystick(2, rawX - 1, rawY - 1);
+    if (event.kind === "joystick") {
+      // Neutral is delivered locally so held state clears, but it does not
+      // perform navigation.
+      if (event.x === 0 && event.y === 0) return;
+      dispatchJoystick(event.joystickId, event.x, event.y);
     }
+  });
 
-    // Data messages
-    if (address === "/nextPOV")    dispatchData("nextPOV", args[0]?.value ?? args[0]);
-    if (address === "/textWrite")  dispatchData("textWrite", args[0]?.value ?? args[0]);
-    if (address === "/textClear")  dispatchData("textClear", null);
+  window.consoleBridge.onStatus((status) => {
+    window.dispatchEvent(new CustomEvent("console-status", { detail: status }));
+  });
 
-    if (address === "/restartGame") {
-      screenManager.restartGame();  // or screenManager.goTo("start")
-    }
+  window.consoleBridge.getStatus().then((status) => {
+    window.dispatchEvent(new CustomEvent("console-status", { detail: status }));
+  }).catch(console.error);
 
-    if (address === "/placedModels") {
-      const ids = args.map((a) => a?.value ?? a);
-      placedModels(ids);
-    }
+  window.consoleBridge.onOscLog((entry) => {
+    logOsc(entry.direction, entry.address, entry.args || []);
+  });
+
+  window.consoleBridge.onHidReport((report) => {
+    window.dispatchEvent(new CustomEvent("console-hid-report", { detail: report }));
   });
 }
 

@@ -7,7 +7,7 @@ import { Sprite } from "../helper/sprite.js";
 import { drawAttributeSliders } from "../helper/attributeSliders.js";
 import { audioManager } from "../helper/audioManager.js";
 import { setModelPlaced } from "../helper/modelData.js";
-import { modelPicked, pickerSelected } from "../communication/maxOutput.js";
+import { modelPicked, pickerSelected } from "../communication/controlRoomOutput.js";
 import { debugSettings } from "../helper/debugSettings.js";
 
 
