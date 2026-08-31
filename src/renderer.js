@@ -14,6 +14,7 @@ import { initTypography } from "./helper/typography.js";
 import { screenChanged } from "./communication/controlRoomOutput.js";
 import { toggleSetupOverlay, renderSetupOverlay } from "./helper/setupOverlay.js";
 import { applyDisplayRotation, toggleInstallationRotation } from "./helper/playerSide.js";
+import { renderTurnAroundWarning } from "./helper/turnAroundWarning.js";
 
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
@@ -161,6 +162,7 @@ function loop() {
   // Render current screen
   screenManager.render(ctx, canvas);
 
+  renderTurnAroundWarning(ctx, canvas);
   renderSetupOverlay(ctx, canvas); // on top
 
   updateTestButton();

@@ -34,6 +34,11 @@ const SIDE_2_LAYOUTS = Object.freeze({
   end: Object.freeze({}),
 });
 
+// The buttons and the stick on side 1. A player who has not walked round to the
+// other side of the cabinet is still pressing these, which is what earns them
+// the "Turn around!" warning.
+const SIDE_1_CONTROLS = new Set(["buttonA", "buttonB", "buttonC", "joystick1"]);
+
 // Controls that belong to the cabinet rather than to one panel. They are only
 // ever read by the start screen, which is a side 1 screen, but they are passed
 // through untouched so a coin is never swallowed by the mapping.
@@ -112,6 +117,13 @@ export function mapJoystick(joystickId, x, y, screenName = currentScreenName) {
   if (!layoutForScreen(screenName)) return { joystickId, x, y };
   if (joystickId !== SIDE_2) return null;
   return { joystickId: 1, x, y };
+}
+
+// True when a control from the side that is not playing was used, which means
+// the player is still standing at the panel they started on.
+export function isWrongSideControl(control, screenName = currentScreenName) {
+  if (!layoutForScreen(screenName)) return false;
+  return SIDE_1_CONTROLS.has(control);
 }
 
 // The button a screen asks about is the side 1 one it was written against; the

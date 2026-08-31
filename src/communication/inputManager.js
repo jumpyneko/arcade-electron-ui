@@ -6,7 +6,8 @@ import { screenManager } from "../helper/screenManager.js";
 import { applyPlacedModelIds } from "../helper/modelData.js";
 import { logOsc } from "../helper/debugOverlay.js";
 import { handleSetupControl } from "../helper/setupOverlay.js";
-import { mapButtonAction, mapJoystick } from "../helper/playerSide.js";
+import { mapButtonAction, mapJoystick, isWrongSideControl } from "../helper/playerSide.js";
+import { showTurnAroundWarning } from "../helper/turnAroundWarning.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
 const KEY_MAP = {
@@ -108,7 +109,10 @@ function dispatchButton(action) {
   // On a screen played from side 2, D and E stand in for the side 1 buttons and
   // the side 1 buttons themselves are ignored.
   const mapped = mapButtonAction(action, screenName);
-  if (!mapped) return;
+  if (!mapped) {
+    if (isWrongSideControl(action, screenName)) showTurnAroundWarning();
+    return;
+  }
   const screenData = screenManager.screens.get(screenName);
   if (screenData?.onButton) {
     screenData.onButton(mapped);
@@ -118,8 +122,12 @@ function dispatchButton(action) {
 // Joystick input as the cabinet reports it: on a screen played from side 2 only
 // joystick 2 gets through, turned around to match the turned display.
 function routeJoystick(joystickId, x, y) {
-  const routed = mapJoystick(joystickId, x, y, screenManager.getCurrentScreen());
-  if (!routed) return;
+  const screenName = screenManager.getCurrentScreen();
+  const routed = mapJoystick(joystickId, x, y, screenName);
+  if (!routed) {
+    if (isWrongSideControl(`joystick${joystickId}`, screenName)) showTurnAroundWarning();
+    return;
+  }
   dispatchJoystick(routed.joystickId, routed.x, routed.y);
 }
 
