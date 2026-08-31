@@ -43,6 +43,9 @@
       ],
       "executableName": "ModelNationArcade"
     },
+    "portable": {
+      "artifactName": "${productName}.${ext}"
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
