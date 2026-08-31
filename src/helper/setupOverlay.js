@@ -6,6 +6,7 @@ import {
   timingSettingDefinitions,
   adjustTimingSetting,
 } from "./debugSettings.js";
+import { getActiveSide } from "./playerSide.js";
 
 const PAGES = ["INPUT", "TIMERS", "OSC LOG", "NETWORK"];
 const SETUP_BUTTONS = new Set(["buttonA", "buttonB", "buttonC", "player1Pressed", "player2Pressed"]);
@@ -248,6 +249,8 @@ function drawInputPage(ctx, x, y) {
   ty += 12;
   text(ctx, `DECODER: ${hid?.decoderVerified ? "VERIFIED" : "UNVERIFIED"}`, x, ty,
     hid?.decoderVerified ? "#00FF88" : "#FFAA44");
+  ty += 12;
+  text(ctx, `PLAYING FROM: SIDE ${getActiveSide()}`, x, ty, "#66CCFF");
   ty += 12;
 
   if (lastControlEvent) {

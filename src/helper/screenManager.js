@@ -1,5 +1,6 @@
 // src/screenManager.js
 import { screenChanged } from "../communication/controlRoomOutput.js";
+import { applyScreen } from "./playerSide.js";
 
 function notifyScreenChanged(screenName, sharedData) {
   if (screenName === "playmode") {
@@ -50,6 +51,9 @@ const SCREEN_SEQUENCE = [
     start() {
       const screen = this.getCurrentScreen();
       const screenData = this.screens.get(screen);
+      // The side a screen is played from decides how the display is turned, so
+      // it is applied before init() draws or loads anything for that screen.
+      applyScreen(screen);
       if (screenData?.init) {
         screenData.init();
       }
@@ -66,7 +70,8 @@ const SCREEN_SEQUENCE = [
     
       this.currentIndex = 0;
       this.sharedData = {};
-    
+
+      applyScreen(this.getCurrentScreen());
       const nextScreenData = this.screens.get(this.getCurrentScreen());
       if (nextScreenData?.init) {
         nextScreenData.init();
@@ -100,6 +105,8 @@ const SCREEN_SEQUENCE = [
       this.currentIndex++;
       const nextScreen = this.getCurrentScreen();
       const nextScreenData = this.screens.get(nextScreen);
+
+      applyScreen(nextScreen);
   
       // Initialize next screen
       if (nextScreenData?.init) {
@@ -123,6 +130,7 @@ const SCREEN_SEQUENCE = [
         }
   
         this.currentIndex = index;
+        applyScreen(this.getCurrentScreen());
         const nextScreenData = this.screens.get(this.getCurrentScreen());
         if (nextScreenData?.init) {
           nextScreenData.init();

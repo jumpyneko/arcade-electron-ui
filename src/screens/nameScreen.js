@@ -7,6 +7,7 @@ import { modelPicked } from "../communication/controlRoomOutput.js";
 import { audioManager } from "../helper/audioManager.js";
 import { debugSettings } from "../helper/debugSettings.js";
 import { getModelById, setModelPlaced } from "../helper/modelData.js";
+import { hintButtonImage } from "../helper/playerSide.js";
 
 
 const KEYBOARD_ROWS = [
@@ -265,9 +266,9 @@ export function init() {
   }
 
   buttonImageA = new Image();
-  buttonImageA.src = "assets/images/UI/button_A.png";
+  buttonImageA.src = hintButtonImage("buttonA");
   buttonImageB = new Image();
-  buttonImageB.src = "assets/images/UI/button_B.png";
+  buttonImageB.src = hintButtonImage("buttonB");
   joystickImageLeft = new Image();
   joystickImageLeft.src = "assets/images/UI/joystick_left.png";
   joystickImageRight = new Image();

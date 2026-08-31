@@ -13,22 +13,14 @@ import { audioManager } from "./helper/audioManager.js";
 import { initTypography } from "./helper/typography.js";
 import { screenChanged } from "./communication/controlRoomOutput.js";
 import { toggleSetupOverlay, renderSetupOverlay } from "./helper/setupOverlay.js";
+import { applyDisplayRotation, toggleInstallationRotation } from "./helper/playerSide.js";
 
 window.audioManager = audioManager; // temporary, for testing
 window.inputManager = inputManager; // temporary, for testing
 
-let displayRotated180 = true;
-
-function applyDisplayRotation() {
-  document.body.classList.toggle("rotated-180", displayRotated180);
-}
-
-function toggleDisplayRotation() {
-  displayRotated180 = !displayRotated180;
-  applyDisplayRotation();
-}
-
 // Match the physical installation orientation on every application launch.
+// From here on the screen manager turns the display whenever the round moves to
+// a screen played from the other side of the cabinet.
 applyDisplayRotation();
 
 audioManager.registerMany({
@@ -145,7 +137,7 @@ window.addEventListener("keydown", (e) => {
   const key = e.key.toLowerCase();
   if (key === "r" && !e.repeat) {
     e.preventDefault();
-    toggleDisplayRotation();
+    toggleInstallationRotation();
   }
   if (e.code === "Space" && !e.repeat) {
     e.preventDefault();
