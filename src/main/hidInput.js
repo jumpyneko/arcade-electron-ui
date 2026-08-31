@@ -2,6 +2,15 @@ const { EventEmitter } = require("node:events");
 const { decodeGenericUsbJoystickReport } = require("./hidDecoder");
 const { parseControlMessage, DIGITAL_BY_CONTROL } = require("./oscProtocol");
 
+// The encoder streams at ~100 Hz whether or not anything is being touched, so
+// the raw report goes to the setup overlay at a rate a person can read. Control
+// events are not throttled - those only fire when something actually changed.
+const REPORT_EMIT_INTERVAL_MS = 100;
+
+// A cabinet gets power-cycled and re-plugged; poll so Direct Input comes back
+// on its own instead of waiting for someone to open the setup overlay.
+const RECONNECT_INTERVAL_MS = 2000;
+
 function deviceKey(device) {
   return [
     device.vendorId ?? "",
@@ -44,8 +53,11 @@ class HidInput extends EventEmitter {
     this.previousSnapshot = null;
     this.lastReportAt = null;
     this.lastRawReport = [];
+    this.lastReportEmittedAt = 0;
     this.error = null;
     this.decoderVerified = false;
+    this.autoSelected = false;
+    this.reconnectTimer = null;
 
     try {
       this.hid = require("node-hid");
@@ -63,6 +75,7 @@ class HidInput extends EventEmitter {
       selectedDeviceKey: this.selectedDeviceKey,
       selectedDevice:
         this.devices.find((device) => device.key === this.selectedDeviceKey) || null,
+      autoSelected: this.autoSelected,
       devices: this.devices.map(({ path, ...device }) => device),
       lastReportAt: this.lastReportAt,
       lastRawReport: this.lastRawReport,
@@ -83,11 +96,12 @@ class HidInput extends EventEmitter {
         .filter((device) => device.path && isPossibleJoystick(device))
         .map((device) => ({ ...publicDevice(device), path: device.path }));
       this.error = null;
-      const selected = this.devices.find((device) => device.key === this.selectedDeviceKey);
-      if (this.enabled && !this.selectedDeviceKey) {
-        this.error = "Direct Input selected, but no HID device is configured";
-      } else if (this.enabled && !selected) {
-        this.error = "The configured HID device is not connected";
+
+      const selected = this._findSelectedDevice();
+      if (this.enabled && !selected) {
+        this.error = this.selectedDeviceKey
+          ? "The configured HID device is not connected"
+          : "No joystick HID device found";
       } else if (this.enabled && reconnect && selected && !this.device) {
         await this._openDevice(selected);
       }
@@ -102,6 +116,7 @@ class HidInput extends EventEmitter {
 
   async selectDevice(key) {
     this.selectedDeviceKey = key || null;
+    this.autoSelected = false;
     this.error = null;
     if (this.enabled) await this._openSelectedDevice();
     this._emitStatus();
@@ -116,10 +131,12 @@ class HidInput extends EventEmitter {
 
     if (this.devices.length === 0) await this.refreshDevices({ reconnect: false });
     await this._openSelectedDevice();
+    this._startReconnectPolling();
   }
 
   async stop() {
     this.enabled = false;
+    this._stopReconnectPolling();
     await this._closeDevice();
     this.error = null;
     this._emitStatus();
@@ -127,7 +144,40 @@ class HidInput extends EventEmitter {
 
   async close() {
     this.enabled = false;
+    this._stopReconnectPolling();
     await this._closeDevice();
+  }
+
+  _findSelectedDevice() {
+    this._autoSelectSingleDevice();
+    return this.devices.find((device) => device.key === this.selectedDeviceKey) || null;
+  }
+
+  // The cabinet carries exactly one encoder, so when a single joystick is
+  // present there is nothing to disambiguate. Choosing it automatically keeps
+  // Direct Input working before anyone has picked a device in the setup
+  // overlay, which is otherwise reachable only by holding five buttons.
+  _autoSelectSingleDevice() {
+    if (this.selectedDeviceKey || this.devices.length !== 1) return;
+    this.selectedDeviceKey = this.devices[0].key;
+    this.autoSelected = true;
+  }
+
+  _startReconnectPolling() {
+    if (this.reconnectTimer || !this.hid) return;
+    this.reconnectTimer = setInterval(() => {
+      if (!this.enabled || this.device) return;
+      this.refreshDevices({ reconnect: true }).catch((error) => {
+        this.error = `Could not reconnect to the HID device: ${error.message}`;
+      });
+    }, RECONNECT_INTERVAL_MS);
+    this.reconnectTimer.unref?.();
+  }
+
+  _stopReconnectPolling() {
+    if (!this.reconnectTimer) return;
+    clearInterval(this.reconnectTimer);
+    this.reconnectTimer = null;
   }
 
   async _openSelectedDevice() {
@@ -135,19 +185,16 @@ class HidInput extends EventEmitter {
     this.previousSnapshot = null;
 
     if (!this.enabled) return;
-    if (!this.selectedDeviceKey) {
-      this.error = "Direct Input selected, but no HID device is configured";
-      this._emitStatus();
-      return;
-    }
 
-    let selected = this.devices.find((device) => device.key === this.selectedDeviceKey);
+    let selected = this._findSelectedDevice();
     if (!selected) {
       await this.refreshDevices({ reconnect: false });
-      selected = this.devices.find((device) => device.key === this.selectedDeviceKey);
+      selected = this._findSelectedDevice();
     }
     if (!selected) {
-      this.error = "The configured HID device is not connected";
+      this.error = this.selectedDeviceKey
+        ? "The configured HID device is not connected"
+        : "No joystick HID device found";
       this._emitStatus();
       return;
     }
@@ -180,22 +227,27 @@ class HidInput extends EventEmitter {
   }
 
   _handleReport(report) {
+    let snapshot;
     try {
-      const snapshot = decodeGenericUsbJoystickReport(report);
-      this.lastReportAt = Date.now();
-      this.lastRawReport = snapshot.raw;
-      this.error = null;
-      this.emit("report", {
-        timestamp: this.lastReportAt,
-        raw: snapshot.raw,
-        tightValues: snapshot.tightValues,
-      });
-      this._emitSnapshotChanges(snapshot);
-      this.previousSnapshot = snapshot;
+      snapshot = decodeGenericUsbJoystickReport(report);
     } catch (error) {
       this.error = `HID report decoder: ${error.message}`;
       this._emitStatus();
+      return;
     }
+
+    this.lastReportAt = Date.now();
+    this.lastRawReport = snapshot.raw;
+    this.decoderVerified = snapshot.plausible;
+    this.error = null;
+
+    if (this.lastReportAt - this.lastReportEmittedAt >= REPORT_EMIT_INTERVAL_MS) {
+      this.lastReportEmittedAt = this.lastReportAt;
+      this.emit("report", { timestamp: this.lastReportAt, raw: snapshot.raw });
+    }
+
+    this._emitSnapshotChanges(snapshot);
+    this.previousSnapshot = snapshot;
   }
 
   _emitSnapshotChanges(snapshot) {
@@ -225,7 +277,7 @@ class HidInput extends EventEmitter {
   }
 
   _handleDeviceError(error) {
-    this.device = null;
+    this._closeDevice().catch(() => {});
     this.previousSnapshot = null;
     this.error = `HID device disconnected: ${error.message}`;
     this._emitStatus();
