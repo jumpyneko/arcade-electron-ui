@@ -7,94 +7,115 @@ const {
   quantizeAxis,
 } = require("../src/main/hidDecoder");
 
-// Captured from the cabinet encoder (DragonRise 0x0079:0x0006) with nothing
-// touched. Byte 2 is an unconnected axis that free-runs, so its value here is
-// just one of the many the device sends while idle.
-const IDLE_REPORT = [127, 127, 132, 127, 127, 15, 0, 192];
+// Every report below was captured at the cabinet on 2026-08-31, one control
+// held at a time, on the encoder the console actually runs against. Byte 2 is
+// an unconnected axis that free-runs, so its value is incidental.
+const IDLE = [127, 127, 128, 127, 127, 15, 0, 192];
 
-// Buttons 1..4 live in the high nibble of byte 5, 5..12 in byte 6, 13 in byte 7.
-function withButtons(...buttonNumbers) {
-  const report = [...IDLE_REPORT];
-  for (const button of buttonNumbers) {
-    if (button <= 4) report[5] |= 1 << (button + 3);
-    else if (button <= 12) report[6] |= 1 << (button - 5);
-    else report[7] |= 1;
+const CAPTURED = {
+  "button A": [127, 127, 128, 127, 127, 79, 0, 192],
+  "button B": [127, 127, 128, 127, 127, 143, 0, 192],
+  "button C": [127, 127, 128, 127, 127, 15, 1, 192],
+  "button D": [127, 127, 128, 127, 127, 31, 0, 192],
+  "button E": [127, 127, 128, 127, 127, 47, 0, 192],
+  "player 1": [127, 127, 128, 127, 127, 15, 128, 192],
+  "player 2": [127, 127, 128, 127, 127, 15, 32, 192],
+  coin: [127, 127, 128, 127, 127, 15, 16, 192],
+  "joystick 1 up": [127, 127, 128, 127, 127, 15, 2, 192],
+  "joystick 1 down": [127, 127, 128, 127, 127, 15, 8, 192],
+  "joystick 1 left": [127, 127, 128, 127, 127, 15, 64, 192],
+  "joystick 1 right": [127, 127, 128, 127, 127, 15, 4, 192],
+  "joystick 2 up": [255, 127, 128, 127, 127, 15, 0, 192],
+  "joystick 2 down": [0, 127, 128, 127, 127, 15, 0, 192],
+  "joystick 2 left": [127, 0, 128, 127, 127, 15, 0, 192],
+  "joystick 2 right": [127, 255, 128, 127, 127, 15, 0, 192],
+};
+
+// Everything the decoder reports as active, flattened so one held control can be
+// compared against one expected label.
+function activeControls(report) {
+  const decoded = decodeGenericUsbJoystickReport(report);
+  const active = Object.entries(decoded.digital)
+    .filter(([, pressed]) => pressed)
+    .map(([control]) => control);
+  if (decoded.coinInserted) active.push("coinInserted");
+  for (const [name, { x, y }] of Object.entries(decoded.joysticks)) {
+    if (x !== 0 || y !== 0) active.push(`${name}(${x},${y})`);
   }
-  return report;
-}
-
-function withAxes(x, y) {
-  const report = [...IDLE_REPORT];
-  report[0] = x;
-  report[1] = y;
-  return report;
+  return active;
 }
 
 test("a resting report produces no controls at all", () => {
-  const decoded = decodeGenericUsbJoystickReport(IDLE_REPORT);
-  assert.deepEqual(decoded.joysticks.joystick1, { x: 0, y: 0 });
-  assert.deepEqual(decoded.joysticks.joystick2, { x: 0, y: 0 });
-  assert.equal(Object.values(decoded.digital).some(Boolean), false);
-  assert.equal(decoded.coinInserted, false);
-  assert.equal(decoded.plausible, true);
+  assert.deepEqual(activeControls(IDLE), []);
+  assert.equal(decodeGenericUsbJoystickReport(IDLE).plausible, true);
 });
 
-test("the idle axis jitter on byte 2 never reaches a control", () => {
+test("the free-running axis on byte 2 never reaches a control", () => {
   for (let noise = 120; noise <= 140; noise += 1) {
-    const report = [...IDLE_REPORT];
+    const report = [...IDLE];
     report[2] = noise;
-    const decoded = decodeGenericUsbJoystickReport(report);
-    assert.deepEqual(decoded.joysticks.joystick2, { x: 0, y: 0 });
-    assert.equal(Object.values(decoded.digital).some(Boolean), false);
+    assert.deepEqual(activeControls(report), [], `byte 2 = ${noise} produced controls`);
   }
 });
 
-// Wiring taken from Controller V.2.0.maxpat: the harness order is D, E, A, B, C
-// for the action buttons, not the alphabetical one.
-test("action buttons follow the harness order from the Max patch", () => {
-  const cases = [
-    [1, "buttonD"],
-    [2, "buttonE"],
-    [3, "buttonA"],
-    [4, "buttonB"],
-    [5, "buttonC"],
-    [10, "player2"],
-    [12, "player1"],
-  ];
+// The harness order is not alphabetical: D and E sit ahead of A on the encoder.
+test("each captured control decodes to exactly that one control", () => {
+  const expected = {
+    "button A": ["buttonA"],
+    "button B": ["buttonB"],
+    "button C": ["buttonC"],
+    "button D": ["buttonD"],
+    "button E": ["buttonE"],
+    "player 1": ["player1"],
+    "player 2": ["player2"],
+    coin: ["coinInserted"],
+    "joystick 1 up": ["joystick1(0,1)"],
+    "joystick 1 down": ["joystick1(0,-1)"],
+    "joystick 1 left": ["joystick1(-1,0)"],
+    "joystick 1 right": ["joystick1(1,0)"],
+    "joystick 2 up": ["joystick2(0,1)"],
+    "joystick 2 down": ["joystick2(0,-1)"],
+    "joystick 2 left": ["joystick2(-1,0)"],
+    "joystick 2 right": ["joystick2(1,0)"],
+  };
 
-  for (const [button, control] of cases) {
-    const decoded = decodeGenericUsbJoystickReport(withButtons(button));
-    assert.equal(decoded.digital[control], true, `button ${button} should be ${control}`);
-    const others = Object.entries(decoded.digital).filter(([name]) => name !== control);
-    assert.equal(others.every(([, pressed]) => !pressed), true, `button ${button} set extra controls`);
-    assert.equal(decoded.coinInserted, false);
+  for (const [name, report] of Object.entries(CAPTURED)) {
+    assert.deepEqual(activeControls(report), expected[name], `${name} decoded wrongly`);
   }
 });
 
-test("the coin button is reported separately from the digital controls", () => {
-  const decoded = decodeGenericUsbJoystickReport(withButtons(9));
-  assert.equal(decoded.coinInserted, true);
-  assert.equal(Object.values(decoded.digital).some(Boolean), false);
+test("both sticks agree that up and right are positive", () => {
+  const up1 = decodeGenericUsbJoystickReport(CAPTURED["joystick 1 up"]).joysticks.joystick1;
+  const up2 = decodeGenericUsbJoystickReport(CAPTURED["joystick 2 up"]).joysticks.joystick2;
+  assert.equal(up1.y, 1);
+  assert.equal(up2.y, 1);
+
+  const right1 = decodeGenericUsbJoystickReport(CAPTURED["joystick 1 right"]).joysticks.joystick1;
+  const right2 = decodeGenericUsbJoystickReport(CAPTURED["joystick 2 right"]).joysticks.joystick2;
+  assert.equal(right1.x, 1);
+  assert.equal(right2.x, 1);
 });
 
-test("joystick 1 comes off four button inputs, up and right positive", () => {
-  assert.deepEqual(decodeGenericUsbJoystickReport(withButtons(6)).joysticks.joystick1, { x: 0, y: 1 });
-  assert.deepEqual(decodeGenericUsbJoystickReport(withButtons(8)).joysticks.joystick1, { x: 0, y: -1 });
-  assert.deepEqual(decodeGenericUsbJoystickReport(withButtons(7)).joysticks.joystick1, { x: 1, y: 0 });
-  assert.deepEqual(decodeGenericUsbJoystickReport(withButtons(11)).joysticks.joystick1, { x: -1, y: 0 });
-  assert.deepEqual(decodeGenericUsbJoystickReport(withButtons(6, 7)).joysticks.joystick1, { x: 1, y: 1 });
+test("a centred axis is a positive zero, not -0", () => {
+  const { joystick2 } = decodeGenericUsbJoystickReport(IDLE).joysticks;
+  assert.equal(Object.is(joystick2.x, 0), true);
+  assert.equal(Object.is(joystick2.y, 0), true);
 });
 
 test("holding both ends of a joystick 1 axis cancels out", () => {
-  assert.deepEqual(decodeGenericUsbJoystickReport(withButtons(6, 8)).joysticks.joystick1, { x: 0, y: 0 });
-  assert.deepEqual(decodeGenericUsbJoystickReport(withButtons(7, 11)).joysticks.joystick1, { x: 0, y: 0 });
+  const upAndDown = [...IDLE];
+  upAndDown[6] = 2 | 8;
+  const leftAndRight = [...IDLE];
+  leftAndRight[6] = 64 | 4;
+  assert.deepEqual(activeControls(upAndDown), []);
+  assert.deepEqual(activeControls(leftAndRight), []);
 });
 
-test("joystick 2 reads the analog axes with HID Y flipped to up-positive", () => {
-  assert.deepEqual(decodeGenericUsbJoystickReport(withAxes(255, 127)).joysticks.joystick2, { x: 1, y: 0 });
-  assert.deepEqual(decodeGenericUsbJoystickReport(withAxes(0, 127)).joysticks.joystick2, { x: -1, y: 0 });
-  assert.deepEqual(decodeGenericUsbJoystickReport(withAxes(127, 0)).joysticks.joystick2, { x: 0, y: 1 });
-  assert.deepEqual(decodeGenericUsbJoystickReport(withAxes(127, 255)).joysticks.joystick2, { x: 0, y: -1 });
+test("two controls at once decode independently", () => {
+  const coinAndButtonA = [...IDLE];
+  coinAndButtonA[5] = 79;
+  coinAndButtonA[6] = 16;
+  assert.deepEqual(activeControls(coinAndButtonA), ["buttonA", "coinInserted"]);
 });
 
 test("axis quantization keeps a wide dead band around centre", () => {
@@ -108,16 +129,14 @@ test("axis quantization keeps a wide dead band around centre", () => {
 });
 
 test("button 13 is not wired to anything on the cabinet", () => {
-  const decoded = decodeGenericUsbJoystickReport(withButtons(13));
-  assert.equal(Object.values(decoded.digital).some(Boolean), false);
-  assert.equal(decoded.coinInserted, false);
-  assert.deepEqual(decoded.joysticks.joystick1, { x: 0, y: 0 });
+  const report = [...IDLE];
+  report[7] |= 1;
+  assert.deepEqual(activeControls(report), []);
 });
 
 test("a prepended report ID is dropped rather than shifting every control", () => {
-  assert.deepEqual(normalizeReport([0, ...IDLE_REPORT]), IDLE_REPORT);
-  const decoded = decodeGenericUsbJoystickReport([0, ...withButtons(3)]);
-  assert.equal(decoded.digital.buttonA, true);
+  assert.deepEqual(normalizeReport([0, ...IDLE]), IDLE);
+  assert.deepEqual(activeControls([0, ...CAPTURED["button A"]]), ["buttonA"]);
 });
 
 test("a report of the wrong length fails visibly instead of inventing controls", () => {
@@ -128,6 +147,5 @@ test("a report of the wrong length fails visibly instead of inventing controls",
 });
 
 test("a report from some other device is flagged as implausible", () => {
-  const notTheEncoder = [0, 0, 0, 0, 0, 0, 0, 0];
-  assert.equal(decodeGenericUsbJoystickReport(notTheEncoder).plausible, false);
+  assert.equal(decodeGenericUsbJoystickReport([0, 0, 0, 0, 0, 0, 0, 0]).plausible, false);
 });

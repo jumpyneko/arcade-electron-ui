@@ -3,8 +3,8 @@
 // keeps streaming while nothing is being touched, because byte 2 is an
 // unconnected analog axis that free-runs a few counts either side of 128:
 //
-//   byte 0   analog X, resting at 127
-//   byte 1   analog Y, resting at 127
+//   byte 0   joystick 2 vertical:   0 down, 127 centred, 255 up
+//   byte 1   joystick 2 horizontal: 0 left, 127 centred, 255 right
 //   byte 2   unconnected analog axis - free-runs, never read it
 //   byte 3   unconnected analog axis
 //   byte 4   unconnected analog axis
@@ -52,9 +52,14 @@ const COIN_BUTTON = 9;
 // as four independent bits rather than an axis pair.
 const JOYSTICK1_BUTTONS = Object.freeze({ up: 6, right: 7, down: 8, left: 11 });
 
-// Joystick 2 rides the encoder's analog X/Y, which this hardware drives to
+// Joystick 2 rides the encoder's two analog axes, which this hardware drives to
 // 0 / 127 / 255 rather than a continuous range. The wide dead band keeps a
 // resting axis at zero even if a stick is slightly off centre.
+//
+// The cabinet wires the encoder's first axis to vertical and its second to
+// horizontal, and drives both so that up and right read high - so neither axis
+// needs the usual flip for HID's downward-growing Y. Confirmed by pushing the
+// stick at the cabinet (2026-08-31); the Max patch had these two transposed.
 const AXIS_CENTRE = 127;
 const AXIS_DEADZONE = 64;
 
@@ -81,12 +86,6 @@ function isButtonPressed(bytes, buttonNumber) {
   if (!bit) return false;
   const [index, mask] = bit;
   return (Number(bytes[index]) & mask) !== 0;
-}
-
-// Negating a centred axis would hand the rest of the app -0, which survives
-// into the status payload and the OSC arguments.
-function invertAxis(value) {
-  return value === 0 ? 0 : -value;
 }
 
 function axisFromButtons(bytes, positiveButton, negativeButton) {
@@ -120,9 +119,8 @@ function decodeGenericUsbJoystickReport(report) {
         y: axisFromButtons(bytes, JOYSTICK1_BUTTONS.up, JOYSTICK1_BUTTONS.down),
       },
       joystick2: {
-        // HID Y grows downwards; the rest of the app takes +1 as up.
-        x: quantizeAxis(bytes[0]),
-        y: invertAxis(quantizeAxis(bytes[1])),
+        x: quantizeAxis(bytes[1]),
+        y: quantizeAxis(bytes[0]),
       },
     },
     plausible: looksLikeCabinetEncoder(bytes),
