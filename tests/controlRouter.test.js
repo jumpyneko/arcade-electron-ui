@@ -40,14 +40,14 @@ function harness() {
 
 test("CR override releases held local controls before applying its first input", () => {
   const h = harness();
-  h.router.handleLocalEvent("max", parseControlMessage("/buttonAPressed"));
+  h.router.handleLocalEvent(parseControlMessage("/buttonAPressed"));
   h.router.handleControlRoomEvent(parseControlMessage("/buttonBPressed"));
 
   assert.deepEqual(
     h.renderer.map((event) => [event.address, event.source, event.synthetic]),
     [
-      ["/buttonAPressed", "max", false],
-      ["/buttonAUnpressed", "max", true],
+      ["/buttonAPressed", "directHid", false],
+      ["/buttonAUnpressed", "directHid", true],
       ["/buttonBPressed", "controlRoom", false],
     ]
   );
@@ -77,17 +77,17 @@ test("override waits for release and then one second of inactivity", () => {
 
 test("a held physical control stays suppressed until release and re-press", () => {
   const h = harness();
-  h.router.handleLocalEvent("max", parseControlMessage("/buttonAPressed"));
+  h.router.handleLocalEvent(parseControlMessage("/buttonAPressed"));
   h.router.handleControlRoomEvent(parseControlMessage("/coinInserted"));
   h.advance(1000);
   h.runLatestTimer();
   assert.equal(h.router.getStatus().overrideActive, false);
 
-  h.router.handleLocalEvent("max", parseControlMessage("/buttonAUnpressed"));
+  h.router.handleLocalEvent(parseControlMessage("/buttonAUnpressed"));
   assert.equal(h.renderer.at(-1).observedOnly, true);
   assert.equal(h.renderer.at(-1).reason, "waitingForPhysicalRelease");
 
-  h.router.handleLocalEvent("max", parseControlMessage("/buttonAPressed"));
+  h.router.handleLocalEvent(parseControlMessage("/buttonAPressed"));
   assert.equal(h.renderer.at(-1).observedOnly, undefined);
   assert.equal(h.renderer.at(-1).address, "/buttonAPressed");
 });
@@ -99,22 +99,14 @@ test("CR controls are never fed back to Control Room", () => {
   assert.equal(h.renderer[0].address, "/coinInserted");
 });
 
-test("inactive local source is observed but cannot operate or forward", () => {
-  const h = harness();
-  h.router.handleLocalEvent("directHid", parseControlMessage("/buttonAPressed"));
-  assert.equal(h.renderer[0].observedOnly, true);
-  assert.equal(h.renderer[0].reason, "inactiveSource");
-  assert.equal(h.controlRoom.length, 0);
-});
-
 test("unchanged digital and joystick states are not forwarded twice", () => {
   const h = harness();
-  h.router.handleLocalEvent("max", parseControlMessage("/buttonBPressed"));
-  h.router.handleLocalEvent("max", parseControlMessage("/buttonBPressed"));
-  h.router.handleLocalEvent("max", parseControlMessage("/buttonBUnpressed"));
-  h.router.handleLocalEvent("max", parseControlMessage("/buttonBUnpressed"));
-  h.router.handleLocalEvent("max", parseControlMessage("/joystick1Input", [1, 0]));
-  h.router.handleLocalEvent("max", parseControlMessage("/joystick1Input", [1, 0]));
+  h.router.handleLocalEvent(parseControlMessage("/buttonBPressed"));
+  h.router.handleLocalEvent(parseControlMessage("/buttonBPressed"));
+  h.router.handleLocalEvent(parseControlMessage("/buttonBUnpressed"));
+  h.router.handleLocalEvent(parseControlMessage("/buttonBUnpressed"));
+  h.router.handleLocalEvent(parseControlMessage("/joystick1Input", [1, 0]));
+  h.router.handleLocalEvent(parseControlMessage("/joystick1Input", [1, 0]));
 
   assert.deepEqual(
     h.controlRoom.map((message) => message.address),

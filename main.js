@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("node:path");
 const osc = require("osc");
-const { ControlRouter, INPUT_MODES } = require("./src/main/controlRouter");
+const { ControlRouter } = require("./src/main/controlRouter");
 const { HidInput } = require("./src/main/hidInput");
 const { SettingsStore } = require("./src/main/settingsStore");
 const {
@@ -12,16 +12,13 @@ const {
 } = require("./src/main/oscProtocol");
 
 let win = null;
-let maxInputPort = null;
 let controlRoomPort = null;
 let controlRoomReady = false;
 let controlRoomQueue = [];
 let router = null;
 let hidInput = null;
 let settingsStore = null;
-let lastMaxMessageAt = null;
 let lastControlRoomMessageAt = null;
-let maxMessageIntervalMs = null;
 let controlRoomMessageIntervalMs = null;
 
 function sendRenderer(channel, payload) {
@@ -48,10 +45,6 @@ function logOsc(direction, address, args = [], details = {}) {
 function getConsoleStatus() {
   return {
     network: {
-      maxHost: NETWORK.maxHost,
-      maxInputPort: NETWORK.maxInputPort,
-      maxListening: Boolean(maxInputPort),
-      maxMessageIntervalMs,
       controlRoomInputPort: NETWORK.controlRoomInputPort,
       controlRoomListening: Boolean(controlRoomPort),
       controlRoomHost: NETWORK.controlRoomHost,
@@ -133,31 +126,6 @@ function createWindow() {
 }
 
 function setupOSC() {
-  maxInputPort = new osc.UDPPort({
-    localAddress: NETWORK.maxHost,
-    localPort: NETWORK.maxInputPort,
-  });
-
-  maxInputPort.on("message", (oscMsg) => {
-    const address = oscMsg.address;
-    const args = oscMsg.args || [];
-    const receivedAt = Date.now();
-    if (lastMaxMessageAt !== null) maxMessageIntervalMs = receivedAt - lastMaxMessageAt;
-    lastMaxMessageAt = receivedAt;
-    logOsc("MAX→UI", address, args);
-
-    const event = parseControlMessage(address, args);
-    if (event) router.handleLocalEvent("max", event);
-    else logOsc("MAX INVALID", address, args, { rejected: true });
-    broadcastStatus();
-  });
-  maxInputPort.on("error", (error) => {
-    console.error("Max OSC input error:", error);
-    broadcastStatus();
-  });
-  maxInputPort.on("ready", broadcastStatus);
-  maxInputPort.open();
-
   controlRoomPort = new osc.UDPPort({
     localAddress: "0.0.0.0",
     localPort: NETWORK.controlRoomInputPort,
@@ -210,20 +178,18 @@ function setupOSC() {
 function setupInputServices() {
   const settings = settingsStore.load();
   router = new ControlRouter({
-    inputMode: settings.inputMode,
     sendToRenderer: (event) => sendRenderer("console-input", event),
     sendToControlRoom,
     onStatus: broadcastStatus,
   });
 
   hidInput = new HidInput({ selectedDeviceKey: settings.hidDeviceKey });
-  hidInput.on("control", (event) => router.handleLocalEvent("directHid", event));
+  hidInput.on("control", (event) => router.handleLocalEvent(event));
   hidInput.on("report", (report) => sendRenderer("console-hid-report", report));
   hidInput.on("status", broadcastStatus);
 
-  if (settings.inputMode === "directHid") {
-    hidInput.start().catch((error) => console.error("Could not start Direct Input:", error));
-  }
+  // The cabinet reads its encoder directly; there is no other local input path.
+  hidInput.start().catch((error) => console.error("Could not start Direct Input:", error));
 }
 
 function setupIPC() {
@@ -236,17 +202,6 @@ function setupIPC() {
   });
 
   ipcMain.handle("console-get-status", () => getConsoleStatus());
-
-  ipcMain.handle("console-set-input-mode", async (event, inputMode) => {
-    if (!INPUT_MODES.has(inputMode)) throw new Error(`Invalid input mode: ${inputMode}`);
-    const changed = router.setInputMode(inputMode);
-    if (changed) settingsStore.update({ inputMode });
-
-    if (inputMode === "directHid") await hidInput.start();
-    else await hidInput.stop();
-    broadcastStatus();
-    return getConsoleStatus();
-  });
 
   ipcMain.handle("console-refresh-hid-devices", async () => {
     await hidInput.refreshDevices();
@@ -266,10 +221,6 @@ async function closeServices() {
   router?.close();
   await hidInput?.close();
 
-  if (maxInputPort) {
-    maxInputPort.close();
-    maxInputPort = null;
-  }
   if (controlRoomPort) {
     controlRoomPort.close();
     controlRoomPort = null;

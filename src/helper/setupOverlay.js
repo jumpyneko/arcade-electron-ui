@@ -52,21 +52,6 @@ async function refreshStatus() {
   }
 }
 
-async function chooseMode(direction = 1) {
-  if (!window.consoleBridge) return;
-  const current = status?.router?.inputMode || "max";
-  const next = current === "max" ? "directHid" : "max";
-  if (direction === 0) return;
-  operationMessage = "Applying input mode...";
-  try {
-    updateStatus(await window.consoleBridge.setInputMode(next));
-    inputRowIndex = 0;
-    operationMessage = next === "max" ? "Max Input selected" : "Direct Input selected";
-  } catch (error) {
-    operationMessage = error.message;
-  }
-}
-
 async function chooseDevice(direction) {
   if (!window.consoleBridge) return;
   const devices = status?.hid?.devices || [];
@@ -107,9 +92,7 @@ function movePage(direction) {
 }
 
 function inputRows() {
-  return (status?.router?.inputMode || "max") === "max"
-    ? ["mode"]
-    : ["mode", "device", "refresh"];
+  return ["device", "refresh"];
 }
 
 function moveSelection(direction) {
@@ -125,7 +108,6 @@ function moveSelection(direction) {
 function changeSelection(direction) {
   if (PAGES[pageIndex] === "INPUT") {
     const row = inputRows()[inputRowIndex];
-    if (row === "mode") chooseMode(direction);
     if (row === "device") chooseDevice(direction);
   }
   if (PAGES[pageIndex] === "TIMERS") adjustTimingSetting(timerSettingIndex, direction, false);
@@ -206,9 +188,6 @@ window.addEventListener("keydown", (event) => {
     if (key === "arrowup") inputRowIndex = (inputRowIndex - 1 + rows.length) % rows.length;
     if (key === "arrowdown") inputRowIndex = (inputRowIndex + 1) % rows.length;
     const row = rows[inputRowIndex];
-    if ((key === "arrowleft" || key === "arrowright" || key === "enter") && row === "mode") {
-      chooseMode(key === "arrowleft" ? -1 : 1);
-    }
     if ((key === "arrowleft" || key === "arrowright" || key === "enter") && row === "device") {
       chooseDevice(key === "arrowleft" ? -1 : 1);
     }
@@ -245,17 +224,13 @@ function interval(value) {
 }
 
 function drawInputPage(ctx, x, y) {
-  const mode = status?.router?.inputMode || "max";
   const hid = status?.hid;
   const devices = hid?.devices || [];
   const selected = hid?.selectedDevice;
-  const rows = mode === "max"
-    ? ["MODE: MAX INPUT"]
-    : [
-      "MODE: DIRECT INPUT",
-      `HID: ${selected?.product || (hid?.selectedDeviceKey ? "(configured; refresh)" : "(none selected)")}`,
-      "REFRESH HID DEVICES",
-    ];
+  const rows = [
+    `HID: ${selected?.product || (hid?.selectedDeviceKey ? "(configured; refresh)" : "(none selected)")}`,
+    "REFRESH HID DEVICES",
+  ];
 
   rows.forEach((row, index) => {
     text(ctx, `${index === inputRowIndex ? ">" : " "}${clipped(row, 39)}`, x, y + index * 13,
@@ -263,22 +238,6 @@ function drawInputPage(ctx, x, y) {
   });
 
   let ty = y + rows.length * 13 + 8;
-  if (mode === "max") {
-    const network = status?.network || {};
-    text(ctx, `MAX OSC: ${network.maxListening ? "LISTENING" : "OFFLINE"}`, x, ty,
-      network.maxListening ? "#00FF88" : "#FF6666");
-    ty += 12;
-    if (lastControlEvent?.source === "max") {
-      const args = lastControlEvent.kind === "joystick"
-        ? ` ${lastControlEvent.x},${lastControlEvent.y}`
-        : "";
-      text(ctx, clipped(`LAST: ${lastControlEvent.address}${args}`, 45), x, ty, "#66CCFF");
-      ty += 12;
-    }
-    if (operationMessage) text(ctx, clipped(operationMessage, 45), x, ty, "#AAAAAA");
-    return;
-  }
-
   text(ctx, `HID AVAILABLE: ${hid?.available ? "YES" : "NO"}`, x, ty,
     hid?.available ? "#00FF88" : "#FF6666");
   ty += 12;
@@ -309,8 +268,6 @@ function drawInputPage(ctx, x, y) {
 function drawNetworkPage(ctx, x, y) {
   const network = status?.network || {};
   const lines = [
-    [`MAX LISTEN  ${network.maxHost || "127.0.0.1"}:${network.maxInputPort || 9000}`, network.maxListening],
-    [`MAX GAP     ${interval(network.maxMessageIntervalMs)}`, Number.isFinite(network.maxMessageIntervalMs)],
     [`CR LISTEN   0.0.0.0:${network.controlRoomInputPort || 8886}`, network.controlRoomListening],
     [`CR GAP      ${interval(network.controlRoomMessageIntervalMs)}`, Number.isFinite(network.controlRoomMessageIntervalMs)],
     [`CR TARGET   ${network.controlRoomHost || "192.168.10.103"}:${network.controlRoomOutputPort || 8885}`, network.controlRoomReady],

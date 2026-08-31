@@ -2,7 +2,6 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const DEFAULT_SETTINGS = Object.freeze({
-  inputMode: "max",
   hidDeviceKey: null,
 });
 
@@ -15,10 +14,11 @@ class SettingsStore {
   load() {
     try {
       const saved = JSON.parse(fs.readFileSync(this.filePath, "utf8"));
+      // Only known keys are carried forward, so a settings file left behind by
+      // an older build - one still naming an input mode - is simply outgrown.
       this.settings = {
         ...DEFAULT_SETTINGS,
-        ...saved,
-        inputMode: saved.inputMode === "directHid" ? "directHid" : "max",
+        hidDeviceKey: saved.hidDeviceKey ?? DEFAULT_SETTINGS.hidDeviceKey,
       };
     } catch (error) {
       if (error.code !== "ENOENT") console.error("Could not load input settings:", error);

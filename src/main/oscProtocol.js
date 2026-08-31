@@ -1,6 +1,4 @@
 const NETWORK = Object.freeze({
-  maxHost: "127.0.0.1",
-  maxInputPort: 9000,
   controlRoomHost: "192.168.10.103",
   controlRoomInputPort: 8886,
   controlRoomOutputPort: 8885,

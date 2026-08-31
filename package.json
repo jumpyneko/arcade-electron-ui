@@ -1,6 +1,6 @@
 {
   "name": "arcade-electron",
-  "version": "1.0.7",
+  "version": "2.0.0",
   "description": "Arcade Electron App",
   "main": "main.js",
   "scripts": {

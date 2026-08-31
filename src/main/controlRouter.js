@@ -4,7 +4,10 @@ const {
   isControlReleased,
 } = require("./oscProtocol");
 
-const INPUT_MODES = new Set(["max", "directHid"]);
+// Every local control comes from the cabinet's own HID encoder. The label still
+// travels with each event so the renderer can tell cabinet input apart from a
+// Control Room override.
+const LOCAL_SOURCE = "directHid";
 const OVERRIDE_TIMEOUT_MS = 1000;
 
 function defaultPhysicalState() {
@@ -23,7 +26,6 @@ function defaultPhysicalState() {
 
 class ControlRouter {
   constructor({
-    inputMode = "max",
     sendToRenderer,
     sendToControlRoom,
     onStatus = () => {},
@@ -31,9 +33,6 @@ class ControlRouter {
     schedule = (callback, delay) => setTimeout(callback, delay),
     cancelSchedule = (timer) => clearTimeout(timer),
   }) {
-    if (!INPUT_MODES.has(inputMode)) throw new Error(`Invalid input mode: ${inputMode}`);
-
-    this.inputMode = inputMode;
     this.sendToRenderer = sendToRenderer;
     this.sendToControlRoom = sendToControlRoom;
     this.onStatus = onStatus;
@@ -56,7 +55,6 @@ class ControlRouter {
   getStatus() {
     const overrideCanEnd = this._overrideControlsAreReleased();
     return {
-      inputMode: this.inputMode,
       overrideActive: this.overrideActive,
       overrideLastInputAt: this.overrideLastInputAt || null,
       overrideCanEnd,
@@ -68,28 +66,9 @@ class ControlRouter {
     };
   }
 
-  setInputMode(inputMode) {
-    if (!INPUT_MODES.has(inputMode)) throw new Error(`Invalid input mode: ${inputMode}`);
-    if (inputMode === this.inputMode) return false;
-
-    if (!this.overrideActive) this._releaseActiveLocalControls("modeChange");
-    this.inputMode = inputMode;
-    this.localPhysicalState = defaultPhysicalState();
-    this.blockedUntilRelease.clear();
-    this._emitStatus();
-    return true;
-  }
-
-  handleLocalEvent(source, event) {
-    if (!INPUT_MODES.has(source)) return false;
-
-    if (source !== this.inputMode) {
-      this._emitObserved(event, source, "inactiveSource");
-      return false;
-    }
-
+  handleLocalEvent(event) {
     if (this._matchesLocalPhysicalState(event)) {
-      this._emitObserved(event, source, "duplicateState");
+      this._emitObserved(event, LOCAL_SOURCE, "duplicateState");
       return false;
     }
 
@@ -100,19 +79,19 @@ class ControlRouter {
         if (isControlActive(event)) this.blockedUntilRelease.add(event.control);
         if (isControlReleased(event)) this.blockedUntilRelease.delete(event.control);
       }
-      this._emitObserved(event, source, "overrideActive");
+      this._emitObserved(event, LOCAL_SOURCE, "overrideActive");
       this._emitStatus();
       return false;
     }
 
     if (this.blockedUntilRelease.has(event.control)) {
       if (isControlReleased(event)) this.blockedUntilRelease.delete(event.control);
-      this._emitObserved(event, source, "waitingForPhysicalRelease");
+      this._emitObserved(event, LOCAL_SOURCE, "waitingForPhysicalRelease");
       this._emitStatus();
       return false;
     }
 
-    this._deliver(event, source, { forwardToControlRoom: true });
+    this._deliver(event, LOCAL_SOURCE, { forwardToControlRoom: true });
     return true;
   }
 
@@ -157,7 +136,7 @@ class ControlRouter {
       const release = makeReleaseEvent(control);
       if (!release) continue;
       this.blockedUntilRelease.add(control);
-      this._deliver(release, this.inputMode, {
+      this._deliver(release, LOCAL_SOURCE, {
         forwardToControlRoom: true,
         synthetic: true,
         reason,
@@ -249,4 +228,4 @@ class ControlRouter {
   }
 }
 
-module.exports = { ControlRouter, INPUT_MODES, OVERRIDE_TIMEOUT_MS };
+module.exports = { ControlRouter, LOCAL_SOURCE, OVERRIDE_TIMEOUT_MS };

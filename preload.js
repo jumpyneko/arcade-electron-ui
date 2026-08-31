@@ -11,7 +11,6 @@ contextBridge.exposeInMainWorld("consoleBridge", {
     ipcRenderer.send("cr-osc-send", address, args);
   },
   getStatus: () => ipcRenderer.invoke("console-get-status"),
-  setInputMode: (mode) => ipcRenderer.invoke("console-set-input-mode", mode),
   refreshHidDevices: () => ipcRenderer.invoke("console-refresh-hid-devices"),
   selectHidDevice: (key) => ipcRenderer.invoke("console-select-hid-device", key),
   onInput: (callback) => subscribe("console-input", callback),
