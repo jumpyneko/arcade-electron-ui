@@ -9,6 +9,7 @@ import { audioManager } from "../helper/audioManager.js";
 import { setModelPlaced } from "../helper/modelData.js";
 import { modelPicked, pickerSelected } from "../communication/controlRoomOutput.js";
 import { debugSettings } from "../helper/debugSettings.js";
+import { hintButtonImage } from "../helper/playerSide.js";
 
 
 let slotModels = [];
@@ -100,7 +101,7 @@ export function init() {
   preloadImages();
 
   buttonImage = new Image();
-  buttonImage.src = "assets/images/UI/button_C.png";
+  buttonImage.src = hintButtonImage("buttonC");
   joystickImage_left = new Image();
   joystickImage_left.src = "assets/images/UI/joystick_left.png";
   joystickImage_right = new Image();

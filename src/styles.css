@@ -24,3 +24,10 @@ body.rotated-180 {
   transform: rotate(180deg);
   transform-origin: center center;
 }
+
+/* Turning the display over to the other side of the cabinet is something the
+   players should see happen. The class is only added after the installation
+   orientation has been applied, so the very first frame does not spin. */
+body.rotation-animated {
+  transition: transform 700ms ease-in-out;
+}

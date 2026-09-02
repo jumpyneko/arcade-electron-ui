@@ -7,6 +7,7 @@ import { drawText } from "../helper/typography.js";
 import { audioManager } from "../helper/audioManager.js";
 import { modelsToChoose, slotSelected, reshuffled } from "../communication/controlRoomOutput.js";
 import { debugSettings } from "../helper/debugSettings.js";
+import { hintButtonImage } from "../helper/playerSide.js";
 
 const CYCLE_MS = 120;
 
@@ -130,10 +131,11 @@ export function init() {
 
   audioManager.stopLoop("slotSpin");
 
+  // Played from side 2, so STOP and CONTINUE sit on D and E.
   buttonImage_A = new Image();
-  buttonImage_A.src = "assets/images/UI/button_A.png";
+  buttonImage_A.src = hintButtonImage("buttonA");
   buttonImage_C = new Image();
-  buttonImage_C.src = "assets/images/UI/button_C.png";
+  buttonImage_C.src = hintButtonImage("buttonC");
   joystickImage = new Image();
   joystickImage.src = "assets/images/UI/joystick_down.png";
 

@@ -6,6 +6,8 @@ import { screenManager } from "../helper/screenManager.js";
 import { applyPlacedModelIds } from "../helper/modelData.js";
 import { logOsc } from "../helper/debugOverlay.js";
 import { handleSetupControl } from "../helper/setupOverlay.js";
+import { mapButtonAction, mapJoystick, isWrongSideControl } from "../helper/playerSide.js";
+import { showTurnAroundWarning } from "../helper/turnAroundWarning.js";
 
 // --- Keyboard → button mapping (for testing without arcade hardware) ---
 const KEY_MAP = {
@@ -36,6 +38,8 @@ window.addEventListener("keydown", (e) => {
   }
   const joystick = JOYSTICK_MAP[key];
   if (joystick) {
+    // Arrow keys stand in for whichever stick is playing, and they are already
+    // in screen directions, so they skip the side 2 axis flip.
     dispatchJoystick(1, joystick[0], joystick[1]);
   }
 });
@@ -77,7 +81,7 @@ if (window.consoleBridge) {
       // Neutral is delivered locally so held state clears, but it does not
       // perform navigation.
       if (event.x === 0 && event.y === 0) return;
-      dispatchJoystick(event.joystickId, event.x, event.y);
+      routeJoystick(event.joystickId, event.x, event.y);
     }
   });
 
@@ -102,10 +106,29 @@ if (window.consoleBridge) {
 
 function dispatchButton(action) {
   const screenName = screenManager.getCurrentScreen();
+  // On a screen played from side 2, D and E stand in for the side 1 buttons and
+  // the side 1 buttons themselves are ignored.
+  const mapped = mapButtonAction(action, screenName);
+  if (!mapped) {
+    if (isWrongSideControl(action, screenName)) showTurnAroundWarning();
+    return;
+  }
   const screenData = screenManager.screens.get(screenName);
   if (screenData?.onButton) {
-    screenData.onButton(action);
+    screenData.onButton(mapped);
   }
+}
+
+// Joystick input as the cabinet reports it: on a screen played from side 2 only
+// joystick 2 gets through, turned around to match the turned display.
+function routeJoystick(joystickId, x, y) {
+  const screenName = screenManager.getCurrentScreen();
+  const routed = mapJoystick(joystickId, x, y, screenName);
+  if (!routed) {
+    if (isWrongSideControl(`joystick${joystickId}`, screenName)) showTurnAroundWarning();
+    return;
+  }
+  dispatchJoystick(routed.joystickId, routed.x, routed.y);
 }
 
 function dispatchData(type, data) {
@@ -154,8 +177,8 @@ export function buttonBPressed()     { dispatchButton("buttonB"); }
 export function buttonCPressed()     { dispatchButton("buttonC"); }
 export function buttonDPressed()     { dispatchButton("buttonD"); }
 export function buttonEPressed()     { dispatchButton("buttonE"); }
-export function joystick1Input(x, y) { dispatchJoystick(1, x, y); }
-export function joystick2Input(x, y) { dispatchJoystick(2, x, y); }
+export function joystick1Input(x, y) { routeJoystick(1, x, y); }
+export function joystick2Input(x, y) { routeJoystick(2, x, y); }
 export function nextPOV(povId)       { setNextPov(povId); }
 export function textWrite(str)   { dispatchData("textWrite", str); }
 export function textClear()      { dispatchData("textClear", null); }
