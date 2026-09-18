@@ -332,7 +332,7 @@
   },
   {
     "id": 23,
-    "name": "Waled City",
+    "name": "Walled City",
     "image": "assets/models/model23.png",
     "description": "Extremely dense walled city structured through informal vertical construction, narrow circulation, and mixed residential and industrial use.",
     "attributes": {
@@ -482,7 +482,7 @@
   },
   {
     "id": 33,
-    "name": "Oberlisk",
+    "name": "Obelisk",
     "image": "assets/models/model33.png",
     "description": "Monumental vertical structure positioned in a central urban axis, functioning as a symbolic landmark and point of civic orientation.",
     "attributes": {
@@ -542,7 +542,7 @@
   },
   {
     "id": 37,
-    "name": "Sambodromo",
+    "name": "Sambódromo",
     "image": "assets/models/model37.png",
     "description": "700-meter-long multi-purpose open-air venue. Open to the public to dance Samba, organise endless festivals, carnivals, parades and races.",
     "attributes": {
@@ -647,7 +647,7 @@
   },
   {
     "id": 44,
-    "name": "Memorial For A Reknowned Scientist",
+    "name": "Memorial For A Renowned Scientist",
     "image": "assets/models/model44.png",
     "description": "Spherical imaginary building designed as an homage to a renowned scientist who discovered the mechanics of the Model Nation’s world.",
     "attributes": {
