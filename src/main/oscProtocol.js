@@ -2,6 +2,9 @@ const NETWORK = Object.freeze({
   controlRoomHost: "192.168.10.103",
   controlRoomInputPort: 8886,
   controlRoomOutputPort: 8885,
+  // A second listening port, apart from 8886 so a power-off never lands in the
+  // on-screen OSC log the way ordinary Control Room traffic does.
+  shutdownPort: 8887,
 });
 
 const DIGITAL_DEFINITIONS = [

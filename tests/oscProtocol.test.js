@@ -10,9 +10,13 @@ const {
 
 test("uses the connection-map ports and Control Room host", () => {
   assert.deepEqual(NETWORK, {
+    // A fallback only: replies follow whoever last polled, so a Control Room
+    // running anywhere other than .103 still gets its heartbeat answered.
     controlRoomHost: "192.168.10.103",
     controlRoomInputPort: 8886,
     controlRoomOutputPort: 8885,
+    // Apart from 8886 so a power-off never reaches the on-screen OSC log.
+    shutdownPort: 8887,
   });
 });
 

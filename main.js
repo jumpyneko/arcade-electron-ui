@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("node:path");
 const osc = require("osc");
+const { execFile } = require("node:child_process");
 const { ControlRouter } = require("./src/main/controlRouter");
 const { HidInput } = require("./src/main/hidInput");
 const { SettingsStore } = require("./src/main/settingsStore");
@@ -11,8 +12,19 @@ const {
   parseControlMessage,
 } = require("./src/main/oscProtocol");
 
+// The one address the shutdown listener maps. It takes no arguments.
+const SHUTDOWN_ADDRESS = "/system/shutdown";
+
 let win = null;
 let controlRoomPort = null;
+let shutdownPort = null;
+// Where /isAlive answers and every other reply are sent: whoever last talked
+// to us, falling back to the configured host until someone has. NETWORK.
+// controlRoomHost is a fixed .103, so without this the console answers a
+// machine that may not be running Control Room at all - which is exactly how
+// its heartbeat stayed dark while the cabinets' worked. The cabinets already
+// do this; see max_led.py on either Pi.
+let controlRoomReplyHost = null;
 let controlRoomReady = false;
 let controlRoomQueue = [];
 let router = null;
@@ -67,7 +79,10 @@ function sendToControlRoom(message, details = {}) {
   logOsc("UI→CR", outgoing.address, outgoing.args, details);
 
   if (controlRoomReady && controlRoomPort) {
-    controlRoomPort.send(outgoing);
+    // Explicit target rather than the port's default remoteAddress: the reply
+    // follows Control Room, but always to its own listener port, never the
+    // ephemeral port a poll happened to come from.
+    controlRoomPort.send(outgoing, controlRoomReplyHost || NETWORK.controlRoomHost, NETWORK.controlRoomOutputPort);
     return;
   }
 
@@ -77,7 +92,9 @@ function sendToControlRoom(message, details = {}) {
 
 function flushControlRoomQueue() {
   if (!controlRoomReady || !controlRoomPort) return;
-  for (const message of controlRoomQueue) controlRoomPort.send(message);
+  for (const message of controlRoomQueue) {
+    controlRoomPort.send(message, controlRoomReplyHost || NETWORK.controlRoomHost, NETWORK.controlRoomOutputPort);
+  }
   controlRoomQueue = [];
 }
 
@@ -133,8 +150,11 @@ function setupOSC() {
     remotePort: NETWORK.controlRoomOutputPort,
   });
 
-  controlRoomPort.on("message", (oscMsg) => {
+  controlRoomPort.on("message", (oscMsg, timeTag, info) => {
     const address = oscMsg.address;
+    // Remember who is polling, so replies follow Control Room rather than the
+    // fixed address baked into NETWORK.
+    if (info?.address) controlRoomReplyHost = info.address;
     const args = oscMsg.args || [];
     const receivedAt = Date.now();
     if (lastControlRoomMessageAt !== null) controlRoomMessageIntervalMs = receivedAt - lastControlRoomMessageAt;
@@ -173,6 +193,48 @@ function setupOSC() {
     broadcastStatus();
   });
   controlRoomPort.open();
+}
+
+/**
+ * Control Room's POWER OFF CONSOLE, on a listening port of its own.
+ *
+ * Deliberately separate from the 8886 handler in two ways. It binds its own
+ * socket, so a power-off never reaches logOsc and never appears in the
+ * console's on-screen OSC log; and it does not go through parseControlMessage,
+ * so nothing in the ordinary command vocabulary can ever reach a shutdown.
+ *
+ * There is no shared code on this route, unlike the Kallax Pis: the port and
+ * the address are the whole contract. That is a deliberate choice - the code
+ * on the Pi route guards a machine that needs someone to walk to the cabinet,
+ * while this one comes back by unplugging the kiosk cable and plugging it in
+ * again.
+ *
+ * Nothing is answered, on success or on a wrong address alike. Control Room
+ * therefore only ever learns that its packet left, which is why its button
+ * confirms before sending rather than reporting afterwards.
+ */
+function setupShutdownListener() {
+  shutdownPort = new osc.UDPPort({
+    localAddress: "0.0.0.0",
+    localPort: NETWORK.shutdownPort,
+  });
+
+  shutdownPort.on("message", (oscMsg) => {
+    if (oscMsg.address !== SHUTDOWN_ADDRESS) return;
+    if (process.platform !== "win32") {
+      console.error(`Shutdown requested, but ${process.platform} is not supported.`);
+      return;
+    }
+    // /t 0 rather than a delay: the operator has already confirmed in Control
+    // Room, and a pending shutdown that someone could abort from the console
+    // has no one standing at it to abort it.
+    execFile("shutdown", ["/s", "/t", "0"], (error) => {
+      if (error) console.error("Shutdown failed:", error);
+    });
+  });
+
+  shutdownPort.on("error", (error) => console.error("Shutdown listener error:", error));
+  shutdownPort.open();
 }
 
 function setupInputServices() {
@@ -234,6 +296,7 @@ app.whenReady().then(() => {
   setupIPC();
   createWindow();
   setupOSC();
+  setupShutdownListener();
 });
 
 app.on("window-all-closed", () => app.quit());
