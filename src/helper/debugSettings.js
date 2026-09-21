@@ -1,5 +1,4 @@
 export const debugSettings = {
-  startSelectionSeconds: 2.5,
   rouletteTimerSeconds: 30,
   rouletteResultSeconds: 8.5,
   playmodeTimerSeconds: 180,
@@ -10,7 +9,6 @@ export const debugSettings = {
 };
 
 export const timingSettingDefinitions = [
-  { key: "startSelectionSeconds", label: "Start select", min: 0.5, max: 10, step: 0.5 },
   { key: "rouletteTimerSeconds", label: "Roulette", min: 5, max: 300, step: 5 },
   { key: "rouletteResultSeconds", label: "Roulette result", min: 0.5, max: 30, step: 0.5 },
   { key: "playmodeTimerSeconds", label: "Play mode", min: 5, max: 600, step: 5 },

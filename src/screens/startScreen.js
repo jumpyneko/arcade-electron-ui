@@ -2,10 +2,9 @@ import { screenManager } from "../helper/screenManager.js";
 import { Sprite } from "../helper/sprite.js";
 import { COLORS } from "../helper/colors.js";
 import { audioManager } from "../helper/audioManager.js";
-import { drawText, drawdoubleText } from "../helper/typography.js";
+import { drawdoubleText } from "../helper/typography.js";
 import { FrameSequence } from "../helper/frameSequence.js";
 import { titleDisplayed } from "../communication/controlRoomOutput.js";
-import { debugSettings } from "../helper/debugSettings.js";
 
 const INTRO_FRAME_COUNT = 119;
 const INTRO_FRAME_SPEED = 7;
@@ -15,8 +14,20 @@ const INTRO_FRAME_PATHS = Array.from(
     `assets/sprites/Transitions/intro_frames/frame_${String(i + 1).padStart(3, "0")}.png`
 );
 
-const BLINK_INTERVAL_MS = 120;
 const COIN_SOUND_DELAY_MS = 1000;
+
+// The coin is in and the round is one press away. The player is standing at
+// side 1, so any button they can actually reach starts it; D and E belong to
+// the panel across the cabinet and are ignored here, as on every other side 1
+// screen. Which button it is carries no meaning - the cabinet asked "1 or 2
+// players?" until 2026-09-21, and nothing downstream ever read the answer.
+const START_BUTTONS = new Set([
+  "buttonA",
+  "buttonB",
+  "buttonC",
+  "player1Pressed",
+  "player2Pressed",
+]);
 
 let introAnim = null;
 let isPlayingIntro = false;
@@ -27,10 +38,6 @@ let coinSprite = null;
 
 let coinIsInserted = false;
 let isStarting = false;
-
-/** @type {null | "p1" | "p2"} */
-let soloPlayerChoice = null;
-let soloFlickerUntil = 0;
 
 let flowGeneration = 0;
 let coinSoundTimeout = null;
@@ -59,14 +66,6 @@ function clearCoinSoundTimeout() {
   }
 }
 
-function flickerColor(which, baseColor) {
-  if (soloPlayerChoice !== which || performance.now() >= soloFlickerUntil) {
-    return baseColor;
-  }
-  const flashOn = Math.floor(performance.now() / BLINK_INTERVAL_MS) % 2 === 0;
-  return flashOn ? "#FFFFFF" : baseColor;
-}
-
 function scheduleCoinSound(generation) {
   clearCoinSoundTimeout();
   coinSoundTimeout = setTimeout(() => {
@@ -88,25 +87,13 @@ async function waitForFirstIntroFrame(frame) {
   });
 }
 
-async function runStartFlow(generation, playerAction) {
+async function runStartFlow(generation) {
   void audioManager.play("select2", {
     group: "select",
     restart: true,
     stopGroupBeforePlay: true,
     volume: 1,
   });
-
-  soloPlayerChoice = playerAction === "player1Pressed" ? "p1" : "p2";
-  soloFlickerUntil = performance.now() + debugSettings.startSelectionSeconds * 1000;
-
-  const remaining = soloFlickerUntil - performance.now();
-  if (remaining > 0) {
-    await sleep(remaining);
-  }
-  if (!isFlowActive(generation)) return;
-
-  soloPlayerChoice = null;
-  soloFlickerUntil = 0;
 
   isPlayingIntro = true;
   introAnim = new FrameSequence(INTRO_FRAME_PATHS, 320, 240, INTRO_FRAME_SPEED);
@@ -144,8 +131,6 @@ export function init() {
 
   coinIsInserted = false;
   isStarting = false;
-  soloPlayerChoice = null;
-  soloFlickerUntil = 0;
 
   backgroundImage = new Image();
   backgroundImage.src = "assets/images/blue_bg.png";
@@ -174,10 +159,9 @@ export async function onButton(action) {
   if (!coinIsInserted || isStarting) return;
   if (!coinSprite?.isFinished()) return;
 
-  if (action === "player1Pressed" || action === "player2Pressed") {
-    if (isStarting) return;
+  if (START_BUTTONS.has(action)) {
     isStarting = true;
-    await runStartFlow(generation, action);
+    await runStartFlow(generation);
   }
 }
 
@@ -209,34 +193,11 @@ export function render(ctx, canvas) {
     drawdoubleText(ctx, "INSERT COIN TO PLAY", centerX, centerY + 15, "h1", {
       shadowColor: COLORS.arcadeYellow,
     });
-  } else if (animDone) {
-    const inSoloFlicker =
-      isStarting &&
-      soloPlayerChoice &&
-      performance.now() < soloFlickerUntil;
-
-    if (inSoloFlicker) {
-      if (soloPlayerChoice === "p1") {
-        drawText(ctx, "1 Player", centerX, centerY - 25, "h1", {
-          color: flickerColor("p1", COLORS.arcadeYellow),
-        });
-      } else {
-        drawText(ctx, "2 Players", centerX, centerY + 5, "h1", {
-          color: flickerColor("p2", COLORS.arcadeOrange),
-        });
-      }
-    } else if (!isStarting) {
-      drawdoubleText(ctx, "PRESS TO CONTINUE", centerX, centerY - 60, "h1", {
-        shadowColor: COLORS.arcadeYellow,
-      });
-
-      drawText(ctx, "1 Player", centerX, centerY - 25, "h1", {
-        color: COLORS.arcadeYellow,
-      });
-      drawText(ctx, "2 Players", centerX, centerY + 5, "h1", {
-        color: COLORS.arcadeOrange,
-      });
-    }
+  } else if (animDone && !isStarting) {
+    // Two lines: the one-line form is 284px wide at h1 on a 320px canvas.
+    drawdoubleText(ctx, "PRESS ANY BUTTON\nTO START", centerX, centerY - 25, "h1", {
+      shadowColor: COLORS.arcadeYellow,
+    });
   }
 
   if (!animDone) {
@@ -251,8 +212,6 @@ export function cleanup() {
 
   isStarting = false;
   coinIsInserted = false;
-  soloPlayerChoice = null;
-  soloFlickerUntil = 0;
 
   coinSprite?.reset();
   coinSprite = null;
