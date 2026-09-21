@@ -29,5 +29,5 @@ body.rotated-180 {
    players should see happen. The class is only added after the installation
    orientation has been applied, so the very first frame does not spin. */
 body.rotation-animated {
-  transition: transform 700ms ease-in-out;
+  transition: transform 1400ms ease-in-out;
 }

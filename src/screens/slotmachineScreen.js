@@ -224,7 +224,7 @@ export function render(ctx, canvas) {
       ctx.imageSmoothingEnabled = false;
       
       ctx.drawImage(buttonImage_C, canvas.width - 40, canvas.height - 20, 12, 12);
-      drawText(ctx, "CONTINUE", canvas.width - 95 , canvas.height - 16, "h2", { align: "left"});
+      drawText(ctx, "PRE-SELECT", canvas.width - 107 , canvas.height - 16, "h2", { align: "left"});
 
       ctx.drawImage(joystickImage, 40, canvas.height - 20, 12, 12);
       drawText(ctx, "RESHUFFLE", 60 , canvas.height - 16, "h2", { align: "left"});
