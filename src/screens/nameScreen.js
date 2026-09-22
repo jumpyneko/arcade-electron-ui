@@ -35,6 +35,7 @@ const KEYBOARD_ROWS = [
 
 const BASE_NAME_LENGTH = 12;
 const MAX_NAME_LENGTH = 25;
+const MIN_NAME_LENGTH = 3;
 const JOYSTICK_REPEAT_MS = 140;
 const CELL_W = 20;
 const CELL_H = 14;
@@ -119,6 +120,10 @@ function addCurrentCharacter() {
 
   typedName += key === "SPACE" ? " " : key;
   screenManager.sharedData.selectedModelNickname = typedName;
+}
+
+function canContinue() {
+  return typedName.trim().length >= MIN_NAME_LENGTH;
 }
 
 function undoCharacter() {
@@ -243,7 +248,7 @@ function drawControls(ctx) {
     drawText(ctx, "SELECT", 176, CONTROLS_Y + 4, "h2", { align: "left" });
   } 
 
-  if (buttonImageB?.complete) {
+  if (buttonImageB?.complete && canContinue()) {
     ctx.drawImage(buttonImageB, 220, CONTROLS_Y, 12, 12);
     drawText(ctx, "CONTINUE", 236, CONTROLS_Y + 4, "h2", { align: "left" });
   } 
@@ -289,6 +294,7 @@ export function onButton(action) {
       volume: 1,
     });
   } else if (action === "buttonB") {
+    if (!canContinue()) return;
     audioManager.play("select2", {
       group: "selectButton",
       stopGroupBeforePlay: true,
