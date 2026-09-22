@@ -4,6 +4,7 @@
 // keyboard navigation as a default
 import { screenManager } from "../helper/screenManager.js";
 import { applyPlacedModelIds } from "../helper/modelData.js";
+import { parsePlacedModelIds } from "../helper/placedModelIds.js";
 import { logOsc } from "../helper/debugOverlay.js";
 import { handleSetupControl } from "../helper/setupOverlay.js";
 import { mapButtonAction, mapJoystick, isWrongSideControl } from "../helper/playerSide.js";
@@ -184,7 +185,7 @@ export function textWrite(str)   { dispatchData("textWrite", str); }
 export function textClear()      { dispatchData("textClear", null); }
 export function restartGame() { screenManager.restartGame(); }
 export function placedModels(ids) {
-  const list = Array.isArray(ids) ? ids : [ids];
+  const list = parsePlacedModelIds(ids);
   applyPlacedModelIds(list);
   console.log(`[placedModels] → ${list.join(", ") || "(none)"}`);
 }
