@@ -5,6 +5,7 @@ const { execFile } = require("node:child_process");
 const { ControlRouter } = require("./src/main/controlRouter");
 const { HidInput } = require("./src/main/hidInput");
 const { SettingsStore } = require("./src/main/settingsStore");
+const { OscFileLog } = require("./src/main/oscFileLog");
 const {
   NETWORK,
   COMMAND_ADDRESSES,
@@ -39,12 +40,15 @@ function sendRenderer(channel, payload) {
   }
 }
 
+let oscFileLog = null;
+
 function logOsc(direction, address, args = [], details = {}) {
   if (address === "/isAlive") return;
   const flatArgs = (Array.isArray(args) ? args : [args]).map((arg) =>
     arg && typeof arg === "object" && Object.hasOwn(arg, "value") ? arg.value : arg
   );
   console.log(`[OSC ${direction}] ${address}`, flatArgs);
+  oscFileLog?.write(direction, address, flatArgs, details);
   sendRenderer("console-osc-log", {
     direction,
     address,
@@ -159,7 +163,10 @@ function setupOSC() {
     const receivedAt = Date.now();
     if (lastControlRoomMessageAt !== null) controlRoomMessageIntervalMs = receivedAt - lastControlRoomMessageAt;
     lastControlRoomMessageAt = receivedAt;
-    logOsc("CR→UI", address, args);
+    // The sender is recorded because two of them reach this port: Control
+    // Room, and Unreal sending /placedModels directly.
+    const from = info?.address ? `${info.address}:${info.port}` : undefined;
+    logOsc("CR→UI", address, args, { from });
 
     if (address === "/isAlive") {
       sendToControlRoom({ address: "/isAlive", args: [] }, { heartbeat: true });
@@ -180,7 +187,7 @@ function setupOSC() {
       return;
     }
 
-    logOsc("CR INVALID", address, args, { rejected: true });
+    logOsc("CR INVALID", address, args, { rejected: true, from });
     broadcastStatus();
   });
   controlRoomPort.on("ready", () => {
@@ -292,6 +299,7 @@ async function closeServices() {
 
 app.whenReady().then(() => {
   settingsStore = new SettingsStore(app.getPath("userData"));
+  oscFileLog = new OscFileLog(path.join(app.getPath("userData"), "logs"));
   setupInputServices();
   setupIPC();
   createWindow();
